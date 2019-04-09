@@ -22,6 +22,11 @@ let validateCreateUser = (objectValue) => {
 
 // validation for login of user at API level
 let validateLogin = (objectValue) => {
+	let schema = Joi.object().keys({
+		username: Joi.string().min(3).max(255).required(),
+		password: Joi.string().min(8),
+	});
+	return Joi.validate(objectValue, schema);
 };
 
 export { validateCreateUser, validateLogin };
