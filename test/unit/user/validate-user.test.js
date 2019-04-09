@@ -175,6 +175,37 @@ describe('Validation of new user creation details', () => {
   });
 });
 
+
+describe('Validation of user Login details', () => {
+  describe('test cases for username', () => {
+		it('should return error if username is not given', () => {
+			let testData = {
+				password: '12345678',
+			};
+			let { error } = validateCreateUser(testData);
+			expect(error).not.toBeNull();
+    });
+		it('should return error if username is less than 3', () => {
+			let testData = {
+        username: 'Te',
+				password: '12345678'
+			};
+			let { error } = validateCreateUser(testData);
+			expect(error).not.toBeNull();
+    });
+  });
+  describe('test case for password', () => {
+		it('should return error if password is less than 8', () => {
+			let testData = {
+        username: 'TestData',
+				password: '1234567'
+			};
+			let { error } = validateCreateUser(testData);
+			expect(error).not.toBeNull();
+    });
+  });
+
+});
 // let testData = {
 // 	username: 'TestData',
 // 	name: {
