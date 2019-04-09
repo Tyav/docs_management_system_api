@@ -58,7 +58,7 @@ describe('Validation of new user creation details', () => {
     });
     it('should return error if firstName is not provided', () => {
 			let testData = {
-				username: 43543,
+				username: 'TestData',
 				name: {
 					lastName: 'TestData',
 				},
@@ -71,7 +71,7 @@ describe('Validation of new user creation details', () => {
 		});
     it('should return error if lastName is not provided', () => {
 			let testData = {
-				username: 43543,
+				username: 'TestData',
 				name: {
 					firstName: 'TestData',
 				},
@@ -86,7 +86,7 @@ describe('Validation of new user creation details', () => {
   describe('test cases for email', () => {
     it('should return error if email is not in the email format', () => {
 			let testData = {
-				username: 43543,
+				username: 'TestData',
 				name: {
 					firstName: 'TestData',
 					lastName: 'TestData',
@@ -100,7 +100,7 @@ describe('Validation of new user creation details', () => {
 		});
     it('should return error if email is not given', () => {
 			let testData = {
-				username: 43543,
+				username: 'TestData',
 				name: {
 					firstName: 'TestData',
 					lastName: 'TestData',
@@ -111,7 +111,35 @@ describe('Validation of new user creation details', () => {
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
 		});
-
+  });
+  describe('test cases for password', () => {
+    it('should return error if password is not provided', () => {
+			let testData = {
+				username: 'TestData',
+				name: {
+					firstName: 'TestData',
+					lastName: 'TestData',
+				},
+				email: 'testdata@test.data',
+				roleId: 'dfe5343fef4e3f3r4',
+			};
+			let { error } = validateCreateUser(testData);
+			expect(error).not.toBeNull();
+		});
+    it('should return error if password is less that 8 characters', () => {
+			let testData = {
+				username: 'TestData',
+				name: {
+					firstName: 'TestData',
+					lastName: 'TestData',
+				},
+				email: 'testdata@test.data',
+				password: '1234567',
+				roleId: 'dfe5343fef4e3f3r4',
+			};
+			let { error } = validateCreateUser(testData);
+			expect(error).not.toBeNull();
+    });
   });
 });
 
