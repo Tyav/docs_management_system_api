@@ -141,6 +141,38 @@ describe('Validation of new user creation details', () => {
 			expect(error).not.toBeNull();
     });
   });
+  describe('test case for roleId', () => {
+    it('should return error if roleId not provided', () => {
+			let testData = {
+				username: 'TestData',
+				name: {
+					firstName: 'TestData',
+					lastName: 'TestData',
+				},
+				email: 'testdata@test.data',
+				password: '12345678',
+			};
+			let { error } = validateCreateUser(testData);
+			expect(error).not.toBeNull();
+    });
+  });
+  describe('test to pass validation', () => {
+    it('should pass validation and return error of null value', () => {
+			let testData = {
+				username: 'TestData',
+				name: {
+					firstName: 'TestData',
+					lastName: 'TestData',
+				},
+				email: 'testdata@test.data',
+				password: '12345678',
+				roleId: 'dfe5343fef4e3f3r4',
+			};
+			let { error } = validateCreateUser(testData);
+			expect(error).toBeNull();
+    });
+
+  });
 });
 
 // let testData = {
