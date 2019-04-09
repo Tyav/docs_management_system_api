@@ -98,6 +98,19 @@ describe('Validation of new user creation details', () => {
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
 		});
+    it('should return error if email is not given', () => {
+			let testData = {
+				username: 43543,
+				name: {
+					firstName: 'TestData',
+					lastName: 'TestData',
+				},
+				password: '12345678',
+				roleId: 'dfe5343fef4e3f3r4',
+			};
+			let { error } = validateCreateUser(testData);
+			expect(error).not.toBeNull();
+		});
 
   });
 });
