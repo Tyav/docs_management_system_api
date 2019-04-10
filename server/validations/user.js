@@ -1,4 +1,6 @@
 import Joi from 'joi';
+import objId from 'joi-objectid';
+Joi.objectId = objId(Joi)
 
 //validation for creation of a new user at the API level
 
@@ -12,7 +14,7 @@ let validateCreateUser = (objectValue) => {
 			}),
 			email: Joi.string().email({ minDomainAtoms: 2 }),
 			password: Joi.string().min(8),
-			roleId: Joi.string().token(),
+			roleId: Joi.objectId(),
 		})
 		.and('username', 'name', 'email', 'password', 'roleId');
 

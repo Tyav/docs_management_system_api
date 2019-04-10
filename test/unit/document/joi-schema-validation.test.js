@@ -7,9 +7,9 @@ describe('Test for Document data validator', () => {
     let testDoc = {
       title: 'Title',
       content: 'Some test content',
-      creatorId: new mongoose.Types.ObjectId(),
+      creatorId: new mongoose.Types.ObjectId().toHexString(),
       access: 'public',
-      categoryId: new mongoose.Types.ObjectId(),
+      categoryId: new mongoose.Types.ObjectId().toHexString(),
     }
     const {error} = validateDoc(testDoc);
     expect(error).toBeNull()
@@ -18,12 +18,12 @@ describe('Test for Document data validator', () => {
     let testDoc = {
       //title is not given
       content: 'Some test content',
-      creatorId: new mongoose.Types.ObjectId(),
+      creatorId: new mongoose.Types.ObjectId().toHexString(),
       access: 'public',
-      categoryId: new mongoose.Types.ObjectId(),
+      categoryId: new mongoose.Types.ObjectId().toHexString(),
     }
     const {error} = validateDoc(testDoc);
     expect(error).not.toBeNull()
   });
-
 });
+
