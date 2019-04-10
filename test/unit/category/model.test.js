@@ -1,4 +1,4 @@
-//import 'babel-polyfill'
+import 'babel-polyfill'
 import { Category } from "../../../server/model/category";
 
 describe('Test for Category model', () => {
