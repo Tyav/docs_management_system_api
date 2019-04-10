@@ -1,6 +1,6 @@
 import 'babel-polyfill';
 import { validateCreateUser, validateLogin } from '../../../server/validations/user';
-
+import mongoose from 'mongoose'
 describe('Validation of new user creation details', () => {
 	describe('test cases for username', () => {
 		it('should return error if username is not given', () => {
@@ -11,7 +11,7 @@ describe('Validation of new user creation details', () => {
 				},
 				email: 'testdata@test.data',
 				password: '12345678',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -25,7 +25,7 @@ describe('Validation of new user creation details', () => {
 				},
 				email: 'testdata@test.data',
 				password: '12345678',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -39,7 +39,7 @@ describe('Validation of new user creation details', () => {
 				},
 				email: 'testdata@test.data',
 				password: '12345678',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -51,7 +51,7 @@ describe('Validation of new user creation details', () => {
 				username: 'TestData',
 				email: 'testdata@test.data',
 				password: '12345678',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -64,7 +64,7 @@ describe('Validation of new user creation details', () => {
 				},
 				email: 'testdata@test.data',
 				password: '12345678',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -77,7 +77,7 @@ describe('Validation of new user creation details', () => {
 				},
 				email: 'testdata@test.data',
 				password: '12345678',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -93,7 +93,7 @@ describe('Validation of new user creation details', () => {
 				},
 				email: 'testdata@tes',
 				password: '12345678',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -106,7 +106,7 @@ describe('Validation of new user creation details', () => {
 					lastName: 'TestData',
 				},
 				password: '12345678',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -121,7 +121,7 @@ describe('Validation of new user creation details', () => {
 					lastName: 'TestData',
 				},
 				email: 'testdata@test.data',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -135,7 +135,7 @@ describe('Validation of new user creation details', () => {
 				},
 				email: 'testdata@test.data',
 				password: '1234567',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
@@ -166,7 +166,7 @@ describe('Validation of new user creation details', () => {
 				},
 				email: 'testdata@test.data',
 				password: '12345678',
-				roleId: 'dfe5343fef4e3f3r4',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).toBeNull();
@@ -214,5 +214,5 @@ describe('Validation of user Login details', () => {
 // 	},
 // 	email: 'testdata@test.data',
 // 	password: '12345678',
-// 	roleId: 'dfe5343fef4e3f3r4',
+// 	roleId: new mongoose.Types.ObjectId().toHexString(),
 // };
