@@ -182,7 +182,7 @@ describe('Validation of user Login details', () => {
 			let testData = {
 				password: '12345678',
 			};
-			let { error } = validateCreateUser(testData);
+			let { error } = validateLogin(testData);
 			expect(error).not.toBeNull();
     });
 		it('should return error if username is less than 3', () => {
@@ -190,7 +190,7 @@ describe('Validation of user Login details', () => {
         username: 'Te',
 				password: '12345678'
 			};
-			let { error } = validateCreateUser(testData);
+			let { error } = validateLogin(testData);
 			expect(error).not.toBeNull();
     });
   });
@@ -200,19 +200,9 @@ describe('Validation of user Login details', () => {
         username: 'TestData',
 				password: '1234567'
 			};
-			let { error } = validateCreateUser(testData);
+			let { error } = validateLogin(testData);
 			expect(error).not.toBeNull();
     });
   });
 
 });
-// let testData = {
-// 	username: 'TestData',
-// 	name: {
-// 		firstName: 'TestData',
-// 		lastName: 'TestData',
-// 	},
-// 	email: 'testdata@test.data',
-// 	password: '12345678',
-// 	roleId: new mongoose.Types.ObjectId().toHexString(),
-// };

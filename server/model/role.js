@@ -8,16 +8,29 @@ const roleSchema = new Schema({
 		type: String,
 		required: true,
 		minlength: 3,
-		unique: true,
+    unique: true,
+    lowercase: true
 	},
 	publicWrite: {//right to edit or delete any document
 		type: Boolean,
-    default: false,
+    default: function() {
+      if (this.title === 'admin'){
+
+        return true;
+      }
+      return false
+    },
     required: true
   },
   readAll: {//right to read all documents including deleted files
     type: Boolean,
-    default: false,
+    default: function() {
+
+      if (this.publicWrite){
+        return true;
+      }
+      return false
+    },
     required: true
   }
 });

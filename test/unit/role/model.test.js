@@ -15,6 +15,12 @@ describe('Test for Role model', () => {
       });
       expect(user.validateSync()).toBeDefined()
     });
+    it('should set the publicWrite property true if title is admin', async () => {
+      let user = new Role({
+        title: 'admin'
+      });
+      expect(user.publicWrite).toBeTruthy()
+    });
 
   });
 });

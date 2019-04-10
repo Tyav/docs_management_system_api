@@ -4,7 +4,7 @@
   "description": "A Document Management System API",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose",
+    "test": "jest --verbose --coverage",
     "start": "nodemon --exec babel-node index.js"
   },
   "repository": {
