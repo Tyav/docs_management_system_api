@@ -1,15 +1,8 @@
 import 'babel-polyfill'
-import mongoose from 'mongoose';
-
-import db from '../../../startup/db';
-//db(mongoose)
-
 import { User } from "../../../server/model/user";
+import mongoose from 'mongoose'
 
 describe('Test for User model', () => {
-  beforeEach(async() => {
-    await db(mongoose)
-  });
   describe('Creation Test', () => {
     it('should pass validation if all required infomation is supplied', async () => {
       let user = new User({
@@ -24,7 +17,7 @@ describe('Test for User model', () => {
       });
       expect(user.validateSync()).not.toBeDefined()
     });
-    it('should fail validation if any required infomation is supplied', async () => {
+    it('should fail validation if any required infomation is not supplied', async () => {
       let user = new User({
         //username is omitted
         name: {
