@@ -1,19 +1,12 @@
-import mongoose from 'mongoose';
 import 'dotenv/config';
 import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
 
 import express from 'express';
 const app = express();
 
-const username = process.env.USERNAME;
-const password = process.env.PASSWORD;
-const database = process.env.DATABASE;
-
-
-const uris = `mongodb+srv://${username}:${password}@dmsdb-ht5wo.mongodb.net/${database}`;
-mongoose.connect(uris, { useNewUrlParser: true },()=>{
-  console.log('connected to online dbAtlas...')
-});
+import db from './startup/db';
+db(mongoose)
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));

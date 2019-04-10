@@ -24,7 +24,7 @@ let validateCreateUser = (objectValue) => {
 let validateLogin = (objectValue) => {
 	let schema = Joi.object().keys({
 		username: Joi.string().min(3).max(255).required(),
-		password: Joi.string().min(8),
+		password: Joi.string().min(8).required(),
 	});
 	return Joi.validate(objectValue, schema);
 };
