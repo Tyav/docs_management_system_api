@@ -1,5 +1,6 @@
 import 'babel-polyfill';
 import { Document } from '../../../server/model/document';
+import mongoose from 'mongoose'
 
 describe('Test for Role model', () => {
 	describe('Creation Test', () => {
