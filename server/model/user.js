@@ -8,13 +8,13 @@ const nameSchema = new Schema({
 		type: String,
 		minlength: 3,
 		maxlength: 255,
-		required: true,
+		required: [true, 'firstName is required'],
 	},
-	LastName: {
+	lastName: {
 		type: String,
 		minlength: 3,
 		maxlength: 255,
-		required: true,
+		required: [true, 'lastName is required'],
 	},
 });
 
@@ -22,7 +22,7 @@ const nameSchema = new Schema({
 const userSchema = new Schema({
 	username: {
 		type: String,
-		required: true,
+		required: [true, 'Username is required'],
 		minlength: 3,
 		maxlength: 255,
 		unique: true,
@@ -33,25 +33,26 @@ const userSchema = new Schema({
 	},
 	email: {
 		type: String,
-		required: true,
+		required: [true, 'email is required'],
 		unique: true,
 	},
 	password: {
 		type: String,
 		minlength: 8,
-		required: true,
+		required: [true, 'password is required'],
 	},
 	roleId: {
-		type: mongoose.Types.ObjectId,
-		required: true,
+		type: Schema.Types.ObjectId,
+		required: [true, 'roleId is required'],
 	},
 	createAt: {
 		type: Date,
-		required: true,
 		default: Date.now(),
+		required: true,
 	},
 });
 
-const Users = mongoose.model('users', userSchema);
+const User = mongoose.model('users', userSchema);
 
-export { Users };
+
+export { User };
