@@ -118,8 +118,59 @@ describe('Test for User', () => {
 			};
 			const res = await request(app).post('/api/users/').send(failedPayload);
 			expect(res.status).toBe(400);
-			expect(res.body.message).toBe('Invalid Role Id')
-
+			expect(res.body.message).toBe('Invalid Role Id');
+		});
+		it('should check that username is unique or return 400', async () => {
+			let payload = {
+				username: 'testUserName',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			};
+			let payload1 = {
+				username: 'testUserName',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test12@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			};
+			const res1 = await request(app).post('/api/users/').send(payload);
+			const res = await request(app).post('/api/users/').send(payload1);
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('Username is taken');
+		});
+		it('should check that username is unique or return 400', async () => {
+			let payload = {
+				username: 'testUserName1',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			};
+			let payload1 = {
+				username: 'testUserName2',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			};
+			const res1 = await request(app).post('/api/users/').send(payload);
+			const res = await request(app).post('/api/users/').send(payload1);
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('Email is already in use');
 		});
 	});
 });
