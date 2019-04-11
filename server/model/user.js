@@ -47,7 +47,7 @@ const userSchema = new Schema({
 	},
 	createAt: {
 		type: Date,
-		default: Date.now(),
+		default: Date.now,
 		required: true,
 	},
 });

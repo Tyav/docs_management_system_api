@@ -1,5 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import _ from 'lodash'
+import bcrypt from 'bcrypt'
 
 const router = express.Router();
 import { User } from '../../../server/model/user';
@@ -61,7 +63,20 @@ router.post('/', async (req, res) => {
   let checkUsername = await User.findOne({username: req.body.username})
   if (checkUsername) return res.status(400).send({ Error: 'Bad Request', message: 'Username is taken' });
 
-	res.status(201).send({ username: 'testUserName' });
+  //CREATE USER
+  const user = new User(req.body);
+
+  // user = new User(_.pick(req.body, ['name', 'email', 'password']));
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(user.password, salt);
+  await user.save();
+
+  //const token = user.generateAuthToken();
+  //res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
+
+
+
+	res.status(201).send(_.pick(user, ['_id', 'username', 'email']));
 });
 
 //LOGIN USER [POST /users/login]
@@ -69,6 +84,9 @@ router.post('/', async (req, res) => {
 //LOGOUT USER [POST /users/logout]
 
 // EDIT USER [PUT /users/<id>]
+router.put('/:id', (req, res)=>{
+  
+})
 
 //DELETE USER [DELETE /users/<id>]
 
