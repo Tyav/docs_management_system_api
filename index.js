@@ -11,9 +11,14 @@ import users from './api/v1/routes/users';
 import db from './startup/db';
 db(mongoose);
 
+
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+//SWAGGER DOCS ROUTE
+import swag from './startup/swagger';
+swag(app)
 
 //USERS API ROUTES
 app.use('/api/users', users);
