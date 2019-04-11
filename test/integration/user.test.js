@@ -1,15 +1,15 @@
 import 'babel-polyfill';
+import mongoose from 'mongoose';
 import { server } from '../../index';
 import request from 'supertest';
 import { User } from '../../server/model/user';
 import { Role } from '../../server/model/role';
-
 let app;
 describe('Test for User', () => {
 	let role = new Role({
-		title: 'regular'
-	})
-	console.log(role)
+		title: 'regular',
+	});
+	role.save();
 
 	let payload = [
 		{
@@ -33,33 +33,34 @@ describe('Test for User', () => {
 			roleId: role._id,
 		},
 	];
-	beforeEach(() => {
+	beforeEach(async () => {
+		await server.close();
 		app = server;
 	});
 	afterEach(async () => {
 		await app.close();
 		await User.deleteMany({});
 	});
-
+	afterAll(async () => {
+		await Role.deleteMany({});
+	});
 	describe('GET all users', () => {
 		beforeEach(async () => {
 			await User.insertMany(payload);
 		});
 
 		it('should return a 200 status', async () => {
-
 			const res = await request(app).get('/api/users');
 			expect(res.statusCode).toBe(200);
 		});
 		it('should return two user objects', async () => {
-
 			const res = await request(app).get('/api/users');
 			expect(res.body.length).toBe(2);
 		});
 	});
 	describe('/GET single user by id', () => {
-		let user
-		beforeEach(async() => {
+		let user;
+		beforeEach(async () => {
 			user = await User.create(payload[0]);
 		});
 		it('should return a user with a give id', async () => {
@@ -77,17 +78,48 @@ describe('Test for User', () => {
 		});
 	});
 	describe('/POST create user', () => {
-		it('should create a user and return a status of 201 if created', () => {
-			const res = request(app).post('/api/users/').send(payload[0]);
-			expect(res.status).toBe(201)
+		it('should create a user and return a status of 201 if created', async () => {
+			const res = await request(app).post('/api/users/').send(payload[0]);
+			expect(res.status).toBe(201);
 		});
-		it('should create a user and return the user object if successful', () => {
-			const res = request(app).post('/api/users/').send(payload[0]);
-			expect(res.body).toHaveProperty('username', payload[0].username)
+		it('should create a user and return the user object if successful', async () => {
+			const res = await request(app).post('/api/users/').send(payload[0]);
+			expect(res.body).toHaveProperty('username', payload[0].username);
 		});
-		it('should not return the user password if created', () => {
-			const res = request(app).post('/api/users/').send(payload[0]);
-			expect(res.body).not.toHaveProperty('password', payload[0].password)
+		it('should not return the user password if created', async () => {
+			const res = await request(app).post('/api/users/').send(payload[0]);
+			expect(res.body).not.toHaveProperty('password', payload[0].password);
+		});
+		it('should return a 400 if a data does not meet the input/creation requirements', async () => {
+			let failedPayload = {
+				//username is omitted
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			};
+			const res = await request(app).post('/api/users/').send(failedPayload);
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe(`"username" is required`);
+		});
+		it('should return a 404 error if roleId does not belong an exist role', async () => {
+			let failedPayload = {
+				username: 'testUserName',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: new mongoose.Types.ObjectId().toHexString(),
+			};
+			const res = await request(app).post('/api/users/').send(failedPayload);
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('Invalid Role Id')
+
 		});
 	});
 });
