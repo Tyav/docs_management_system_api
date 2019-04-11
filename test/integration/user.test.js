@@ -141,7 +141,7 @@ describe('Test for User', () => {
 				password: 'test1Password',
 				roleId: role._id,
 			};
-			const res1 = await request(app).post('/api/users/').send(payload);
+			await User.create(payload);
 			const res = await request(app).post('/api/users/').send(payload1);
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Username is taken');
@@ -167,7 +167,7 @@ describe('Test for User', () => {
 				password: 'test1Password',
 				roleId: role._id,
 			};
-			const res1 = await request(app).post('/api/users/').send(payload);
+			await User.create(payload);
 			const res = await request(app).post('/api/users/').send(payload1);
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Email is already in use');

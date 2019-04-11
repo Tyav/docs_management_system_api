@@ -53,7 +53,13 @@ router.post('/', async (req, res) => {
 	const role = await Role.findById(req.body.roleId);
   if (!role) return res.status(400).send({ Error: 'Bad Request', message: 'Invalid Role Id' });
   
+  //check if email has been taken
+  let checkEmail = await User.findOne({email: req.body.email})
+  if (checkEmail) return res.status(400).send({ Error: 'Bad Request', message: 'Email is already in use' });
   
+  //check if username has been taken
+  let checkUsername = await User.findOne({username: req.body.username})
+  if (checkUsername) return res.status(400).send({ Error: 'Bad Request', message: 'Username is taken' });
 
 	res.status(201).send({ username: 'testUserName' });
 });
