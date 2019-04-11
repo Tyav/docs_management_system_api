@@ -76,4 +76,18 @@ describe('Test for User', () => {
 			expect(res.body.message).toBe('Invalid Id');
 		});
 	});
+	describe('/POST create user', () => {
+		it('should create a user and return a status of 201 if created', () => {
+			const res = request(app).post('/api/users/').send(payload[0]);
+			expect(res.status).toBe(201)
+		});
+		it('should create a user and return the user object if successful', () => {
+			const res = request(app).post('/api/users/').send(payload[0]);
+			expect(res.body).toHaveProperty('username', payload[0].username)
+		});
+		it('should not return the user password if created', () => {
+			const res = request(app).post('/api/users/').send(payload[0]);
+			expect(res.body).not.toHaveProperty('password', payload[0].password)
+		});
+	});
 });
