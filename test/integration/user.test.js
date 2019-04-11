@@ -203,5 +203,20 @@ describe('Test for User', () => {
 			const res = await request(app).put(`/api/users/${342}`);
 			expect(res.body.message).toBe('Invalid Id');
 		});
+		it('should return a 401 status code if edit is not performed by id owner', async () => {
+			let user = new User({
+				username: 'testUserName2',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			})
+			const res = await request(app).put(`/api/users/${user._id}`);
+			expect(res.status).toBe(401);
+		});
+
 	});
 });

@@ -82,7 +82,7 @@ router.post('/', async (req, res) => {
 
 // EDIT USER [PUT /users/<id>]
 //[idAuth,tokenAuth, loginAuth], if(req.params.id == req.user._id) console.log(true)
-router.put('/:id',idAuth, (req, res) => {
+router.put('/:id',[idAuth,tokenAuth], (req, res) => {
   
 });
 
