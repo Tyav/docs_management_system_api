@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 const router = express.Router();
 import { User } from '../../../server/model/user';
+import { validateCreateUser, validateLogin } from '../../../server/validations/user';
 
 //GETS
 //ALL USERS [GET /users/]
@@ -23,7 +24,7 @@ import { User } from '../../../server/model/user';
  */
 
 router.get('/', async (req, res) => {
-	const users = await User.find();
+	const users = await User.find({});
 	res.status(200).send(users);
 });
 
@@ -39,7 +40,13 @@ router.get('/:id', async (req, res) => {
 	const user = await User.findById(req.params.id);
 	res.status(200).send(user);
 });
+
 //CREATE USER [POST /users/]
+router.post('/', async (req, res) => {
+	const { error } = validateCreateUser(req.body);
+	if (error) return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
+	res.status(201).send({ username: 'testUserName' });
+});
 
 //LOGIN USER [POST /users/login]
 
