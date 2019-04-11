@@ -1,7 +1,9 @@
 import express from 'express';
 import mongoose from 'mongoose';
+
 const router = express.Router();
 import { User } from '../../../server/model/user';
+import { Role } from '../../../server/model/role';
 import { validateCreateUser, validateLogin } from '../../../server/validations/user';
 
 //GETS
@@ -43,8 +45,16 @@ router.get('/:id', async (req, res) => {
 
 //CREATE USER [POST /users/]
 router.post('/', async (req, res) => {
+	//validate body content valid for usser creation
 	const { error } = validateCreateUser(req.body);
 	if (error) return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
+
+	//validate roleId has already be created else reject user creation
+	const role = await Role.findById(req.body.roleId);
+  if (!role) return res.status(400).send({ Error: 'Bad Request', message: 'Invalid Role Id' });
+  
+  
+
 	res.status(201).send({ username: 'testUserName' });
 });
 
