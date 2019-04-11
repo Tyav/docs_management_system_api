@@ -44,5 +44,12 @@ describe('Test for User', () => {
 			//console.log(res.body.length)
       //expect(res.body.length).toBe(2)
 		});
+		it('should return two user objects', async () => {
+			User.insertMany(userGroup);
+
+			const res = await request(app).get('/api/users');
+      expect(res.body.length).toBe(2)
+		});
+
 	});
 });
