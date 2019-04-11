@@ -61,10 +61,10 @@ describe('Test for User', () => {
 			const res = await request(app).get(`/api/users/${342}`);
 			expect(res.status).toBe(400);
 		});
-		// it('should return an INVALID ID error message if invalid id is given', async () => {
-		// 	const user = await User.create(userGroup[0]);
-		// 	const res = await request(app).get(`/api/users/${342}`);
-		// 	expect(res.body.message).toBe('Invalid Id');
-		// });
+		it('should return an INVALID ID error message if invalid id is given', async () => {
+			const user = await User.create(userGroup[0]);
+			const res = await request(app).get(`/api/users/${342}`);
+			expect(res.body.message).toBe('Invalid Id');
+		});
 	});
 });
