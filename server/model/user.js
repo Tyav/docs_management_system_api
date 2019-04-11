@@ -1,4 +1,7 @@
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+import config from 'config';
+
 
 const Schema = mongoose.Schema;
 
@@ -8,13 +11,13 @@ const nameSchema = new Schema({
 		type: String,
 		minlength: 3,
 		maxlength: 255,
-		required: [true, 'firstName is required'],
+		required: [ true, 'firstName is required' ],
 	},
 	lastName: {
 		type: String,
 		minlength: 3,
 		maxlength: 255,
-		required: [true, 'lastName is required'],
+		required: [ true, 'lastName is required' ],
 	},
 });
 
@@ -22,7 +25,7 @@ const nameSchema = new Schema({
 const userSchema = new Schema({
 	username: {
 		type: String,
-		required: [true, 'Username is required'],
+		required: [ true, 'Username is required' ],
 		minlength: 3,
 		maxlength: 255,
 		unique: true,
@@ -33,17 +36,17 @@ const userSchema = new Schema({
 	},
 	email: {
 		type: String,
-		required: [true, 'email is required'],
+		required: [ true, 'email is required' ],
 		unique: true,
 	},
 	password: {
 		type: String,
 		minlength: 8,
-		required: [true, 'password is required'],
+		required: [ true, 'password is required' ],
 	},
 	roleId: {
 		type: Schema.Types.ObjectId,
-		required: [true, 'roleId is required'],
+		required: [ true, 'roleId is required' ],
 	},
 	createAt: {
 		type: Date,
@@ -51,8 +54,11 @@ const userSchema = new Schema({
 		required: true,
 	},
 });
+userSchema.methods.generateAuthToken = function(log=false, adm=false) {
+	const token = jwt.sign({ _id: this._id, isAdmin: adm, isLogged: log }, config.get('jwtPrivateKey'));
+	return token;
+};
 
 const User = mongoose.model('users', userSchema);
-
 
 export { User };

@@ -7,7 +7,10 @@ const router = express.Router();
 import { User } from '../../../server/model/user';
 import { Role } from '../../../server/model/role';
 import { validateCreateUser, validateLogin } from '../../../server/validations/user';
-import { authId } from '../utils/validateId';
+import { authId as idAuth } from '../utils/validateId';
+import adminAuth from '../utils/admin';
+import tokenAuth from '../utils/auth';
+import loginAuth from '../utils/login'
 
 //GETS
 //ALL USERS [GET /users/]
@@ -28,14 +31,14 @@ import { authId } from '../utils/validateId';
  *            type: string
  */
 
-router.get('/', async (req, res) => {
-  
+router.get('/',[tokenAuth, loginAuth, adminAuth], async (req, res) => {
+
 	const users = await User.find({});
 	res.status(200).send(users);
 });
 
 //SINGLE USER [GET /users/<id>]
-router.get('/:id',authId, async (req, res) => {
+router.get('/:id',idAuth, async (req, res) => {
 	const user = await User.findById(req.params.id);
 	res.status(200).send(user);
 });
@@ -64,9 +67,10 @@ router.post('/', async (req, res) => {
 	// user = new User(_.pick(req.body, ['name', 'email', 'password']));
 	const salt = await bcrypt.genSalt(10);
 	user.password = await bcrypt.hash(user.password, salt);
-	await user.save();
+  await user.save();
 
-	//const token = user.generateAuthToken();
+  // console.log(role)
+  // const token = user.generateAuthToken();
 	//res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
 
 	res.status(201).send(_.pick(user, [ '_id', 'username', 'email' ]));
@@ -77,8 +81,9 @@ router.post('/', async (req, res) => {
 //LOGOUT USER [POST /users/logout]
 
 // EDIT USER [PUT /users/<id>]
-router.put('/:id',authId, (req, res) => {
-
+//[idAuth,tokenAuth, loginAuth], if(req.params.id == req.user._id) console.log(true)
+router.put('/:id',idAuth, (req, res) => {
+  
 });
 
 //DELETE USER [DELETE /users/<id>]

@@ -45,23 +45,43 @@ describe('Test for User', () => {
 		await Role.deleteMany({});
 	});
 	describe('GET all users only by admin', () => {
+		let adminToken;
+		let loginToken;
 		beforeEach(async () => {
 			await User.insertMany(payload);
+			let useradmin = new User({
+				username: 'testAdmin1',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'admin@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			});
+			// useradmin.isAdmin = true;
+			// useradmin.isLogged = true;
+			adminToken = useradmin.generateAuthToken(true, true);
+			let regular = new User();
+			//regular.isLogged = true;
+			loginToken = regular.generateAuthToken(true);
 		});
-
 		it('should return a 200 status and all users for admin', async () => {
-			const res = await request(app).get('/api/users');
+			const res = await request(app).get('/api/users').set('x-auth-token', adminToken);
 			expect(res.statusCode).toBe(200);
 		});
 		it('should return a 401 status if not logged in', async () => {
 			const res = await request(app).get('/api/users');
 			expect(res.statusCode).toBe(401);
 		});
-		it('should return a 401 status if not admin', async () => {
-			const res = await request(app).get('/api/users');
+		it('should return a 403 status if not admin', async () => {
+			const res = await request(app).get('/api/users').set('x-auth-token', loginToken);
 			expect(res.statusCode).toBe(403);
 		});
-
+		it('should return a 400 status if token is invalid', async () => {
+			const res = await request(app).get('/api/users').set('x-auth-token', 'loginToken');
+			expect(res.statusCode).toBe(400);
+		});
 	});
 	describe('/GET single user by id', () => {
 		let user;
