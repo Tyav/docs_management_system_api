@@ -4,8 +4,9 @@ import { User } from '../../../server/model/user';
 
 //GETS
 //ALL USERS [GET /users/]
-router.get('/', (req, res)=>{
-  
+router.get('/', async (req, res)=>{
+  const users = await User.find()
+ res.status(200).send(users)
 })
 
 //SINGLE USER [GET /users/<id>]
