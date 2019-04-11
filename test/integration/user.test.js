@@ -28,28 +28,29 @@ describe('Test for User', () => {
 			roleId: new mongoose.Types.ObjectId().toHexString(),
 		},
 	];
-	beforeEach(() => {
-		app = server;
-	});
-	afterEach(async () => {
-		await app.close();
-		// await User.remove()
-	});
 	describe('GET all users', () => {
+		beforeEach(() => {
+			app = server;
+		});
+		afterEach(async () => {
+			await app.close();
+			await User.deleteMany({});
+		});
+
 		it('should return a 200 status', async () => {
 			User.insertMany(userGroup);
 
 			const res = await request(app).get('/api/users');
-			expect(res.statusCode).toBe(200)
-			//console.log(res.body.length)
-      //expect(res.body.length).toBe(2)
+			expect(res.statusCode).toBe(200);
 		});
 		it('should return two user objects', async () => {
 			User.insertMany(userGroup);
 
 			const res = await request(app).get('/api/users');
-      expect(res.body.length).toBe(2)
+			expect(res.body.length).toBe(2);
 		});
-
+	});
+	describe('Name of the group', () => {
+		
 	});
 });
