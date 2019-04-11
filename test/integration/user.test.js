@@ -199,28 +199,36 @@ describe('Test for User', () => {
 		});
 	});
 	describe('Edit User information', () => {
-		let user = new User({
-			username: 'testUserName2',
-			name: {
-				firstName: 'testFirstName1',
-				lastName: 'testLastName1',
-			},
-			email: 'test1@test.com',
-			password: 'test1Password',
-			roleId: role._id,
-		})
-		let user2 = new User({
-			username: 'testUserName',
-			name: {
-				firstName: 'testFirstName1',
-				lastName: 'testLastName1',
-			},
-			email: 'test@test.com',
-			password: 'test1Password',
-			roleId: role._id,
-		})
-		let editToken = user.generateAuthToken(true)
-		let editToken2 = user2.generateAuthToken(true)
+		let user, user2;
+		beforeEach(async() => {
+			user = new User({
+				username: 'testUserName2',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			});
+			user2 = new User({
+				username: 'testUserName',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			});
+			editToken = user.generateAuthToken(true);
+			editToken2 = user2.generateAuthToken(true);
+
+			await user.save()
+			await user2.save()
+		});
+
+		let editToken, editToken2;
 		it('should return an INVALID ID error message if invalid id is given', async () => {
 			const res = await request(app).put(`/api/users/${342}`);
 			expect(res.body.message).toBe('Invalid Id');
@@ -233,15 +241,48 @@ describe('Test for User', () => {
 			const res = await request(app).put(`/api/users/${user._id}`).set('x-auth-token', editToken2);
 			expect(res.status).toBe(403);
 		});
-		it('should return a 200 status code if edit is performed by id owner', async () => {
-			const res = await request(app).put(`/api/users/${user._id}`).set('x-auth-token', editToken);
+		it('should return a 400 status code if edit parameters do not meet requirement', async () => {
+			const res = await request(app)
+				.put(`/api/users/${user._id}`)
+				.send({
+					name: {
+						firstName: 'test',
+						lastName: 't',
+					},
+					password: 'te',
+				})
+				.set('x-auth-token', editToken)
+				.set('Accept', 'application/json');
+			expect(res.status).toBe(400);
+		});
+		it('should return a 200 status code if edit is performed successfully', async () => {
+			const res = await request(app)
+				.put(`/api/users/${user._id}`)
+				.send({
+					name: {
+						firstName: 'testFirstName1',
+						lastName: 'testLastName1',
+					},
+					password: 'test1Password',
+				})
+				.set('x-auth-token', editToken)
+				.set('Accept', 'application/json');
 			expect(res.status).toBe(200);
 		});
 		it('should return a user object if edit is successfully performed by id owner', async () => {
-			const res = await request(app).put(`/api/users/${user._id}`).set('x-auth-token', editToken);
+			const res = await request(app)
+				.put(`/api/users/${user._id}`)
+				.set('x-auth-token', editToken)
+				.send({
+					name: {
+						firstName: 'testFirstName1',
+						lastName: 'testLastName1',
+					},
+					password: 'test1Password',
+				})
+				.set('Accept', 'application/json');
 			expect(res.body).toHaveProperty('username', user.username);
 			expect(res.body).toHaveProperty('email', user.email);
-			expect(res.body).toHaveProperty('_id', user._id);
 		});
 	});
 });

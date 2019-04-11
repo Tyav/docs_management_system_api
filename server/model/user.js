@@ -53,6 +53,9 @@ const userSchema = new Schema({
 		default: Date.now,
 		required: true,
 	},
+	modifiedAt:{
+		type: Date,
+	}
 });
 userSchema.methods.generateAuthToken = function(log=false, adm=false) {
 	const token = jwt.sign({ _id: this._id, isAdmin: adm, isLogged: log }, config.get('jwtPrivateKey'));

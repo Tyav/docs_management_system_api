@@ -6,11 +6,11 @@ import bcrypt from 'bcrypt';
 const router = express.Router();
 import { User } from '../../../server/model/user';
 import { Role } from '../../../server/model/role';
-import { validateCreateUser, validateLogin } from '../../../server/validations/user';
+import { validateCreateUser, validateLogin, validateEditUser } from '../../../server/validations/user';
 import { authId as idAuth } from '../utils/validateId';
 import adminAuth from '../utils/admin';
 import tokenAuth from '../utils/auth';
-import loginAuth from '../utils/login'
+import loginAuth from '../utils/login';
 
 //GETS
 //ALL USERS [GET /users/]
@@ -31,14 +31,13 @@ import loginAuth from '../utils/login'
  *            type: string
  */
 
-router.get('/',[tokenAuth, loginAuth, adminAuth], async (req, res) => {
-
+router.get('/', [ tokenAuth, loginAuth, adminAuth ], async (req, res) => {
 	const users = await User.find({});
 	res.status(200).send(users);
 });
 
 //SINGLE USER [GET /users/<id>]
-router.get('/:id',idAuth, async (req, res) => {
+router.get('/:id', idAuth, async (req, res) => {
 	const user = await User.findById(req.params.id);
 	res.status(200).send(user);
 });
@@ -67,13 +66,13 @@ router.post('/', async (req, res) => {
 	// user = new User(_.pick(req.body, ['name', 'email', 'password']));
 	const salt = await bcrypt.genSalt(10);
 	user.password = await bcrypt.hash(user.password, salt);
-  await user.save();
+	await user.save();
 
-  // console.log(role)
-  // const token = user.generateAuthToken();
+	// console.log(role)
+	const token = user.generateAuthToken(true,role.publicWrite);
 	//res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
 
-	res.status(201).send(_.pick(user, [ '_id', 'username', 'email' ]));
+	res.status(201).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email' ]));
 });
 
 //LOGIN USER [POST /users/login]
@@ -81,9 +80,31 @@ router.post('/', async (req, res) => {
 //LOGOUT USER [POST /users/logout]
 
 // EDIT USER [PUT /users/<id>]
-//[idAuth,tokenAuth, loginAuth], if(req.params.id == req.user._id) console.log(true)
-router.put('/:id',[idAuth,tokenAuth], (req, res) => {
-  
+//[idAuth,tokenAuth, loginAuth],
+router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
+	//compared id in token with id from parameter. if not same return 403
+	if (req.params.id !== req.user._id) return res.status(403).send({ Error: 403, message: 'Forbidden' });
+	const {error} = validateEditUser(req.body)
+	if (error) return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
+	const user = await User.findById(req.params.id);
+	
+	//perform salt and bcrypt
+
+
+	const firstName = req.body.name.firstName  || user.name.firstName
+	const lastName = req.body.name.lastName  || user.name.lastName
+	const password = req.body.password || user.password
+
+
+	const updatedUser = await User.findByIdAndUpdate(req.params.id, {
+	
+			name : {firstName, lastName},
+			password: password,
+			modifiedAt: Date.now(),
+
+	}, {new: true});
+	if (!updatedUser) return res.status(400).send({Error: 400, message: 'Invalid Id'})
+	res.status(200).send(_.pick(updatedUser, [ '_id', 'username', 'email','name' ]))
 });
 
 //DELETE USER [DELETE /users/<id>]

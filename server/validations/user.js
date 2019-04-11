@@ -31,4 +31,17 @@ let validateLogin = (objectValue) => {
 	return Joi.validate(objectValue, schema);
 };
 
-export { validateCreateUser, validateLogin };
+let validateEditUser = (objectValue) => {
+	let schema = Joi.object()
+		.keys({
+			name: Joi.object().keys({
+				firstName: Joi.string().min(3).max(255),
+				lastName: Joi.string().min(3).max(255),
+			}),
+			password: Joi.string().min(8),
+		})
+	return Joi.validate(objectValue, schema);
+};
+
+
+export { validateCreateUser, validateLogin, validateEditUser };
