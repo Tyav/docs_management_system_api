@@ -199,24 +199,49 @@ describe('Test for User', () => {
 		});
 	});
 	describe('Edit User information', () => {
+		let user = new User({
+			username: 'testUserName2',
+			name: {
+				firstName: 'testFirstName1',
+				lastName: 'testLastName1',
+			},
+			email: 'test1@test.com',
+			password: 'test1Password',
+			roleId: role._id,
+		})
+		let user2 = new User({
+			username: 'testUserName',
+			name: {
+				firstName: 'testFirstName1',
+				lastName: 'testLastName1',
+			},
+			email: 'test@test.com',
+			password: 'test1Password',
+			roleId: role._id,
+		})
+		let editToken = user.generateAuthToken(true)
+		let editToken2 = user2.generateAuthToken(true)
 		it('should return an INVALID ID error message if invalid id is given', async () => {
 			const res = await request(app).put(`/api/users/${342}`);
 			expect(res.body.message).toBe('Invalid Id');
 		});
-		it('should return a 401 status code if edit is not performed by id owner', async () => {
-			let user = new User({
-				username: 'testUserName2',
-				name: {
-					firstName: 'testFirstName1',
-					lastName: 'testLastName1',
-				},
-				email: 'test1@test.com',
-				password: 'test1Password',
-				roleId: role._id,
-			})
+		it('should return a 401 status code if edit is performed by User not logged in', async () => {
 			const res = await request(app).put(`/api/users/${user._id}`);
 			expect(res.status).toBe(401);
 		});
-
+		it('should return a 403 status code if edit is not performed by id owner', async () => {
+			const res = await request(app).put(`/api/users/${user._id}`).set('x-auth-token', editToken2);
+			expect(res.status).toBe(403);
+		});
+		it('should return a 200 status code if edit is performed by id owner', async () => {
+			const res = await request(app).put(`/api/users/${user._id}`).set('x-auth-token', editToken);
+			expect(res.status).toBe(200);
+		});
+		it('should return a user object if edit is successfully performed by id owner', async () => {
+			const res = await request(app).put(`/api/users/${user._id}`).set('x-auth-token', editToken);
+			expect(res.body).toHaveProperty('username', user.username);
+			expect(res.body).toHaveProperty('email', user.email);
+			expect(res.body).toHaveProperty('_id', user._id);
+		});
 	});
 });
