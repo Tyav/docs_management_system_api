@@ -44,19 +44,24 @@ describe('Test for User', () => {
 	afterAll(async () => {
 		await Role.deleteMany({});
 	});
-	describe('GET all users', () => {
+	describe('GET all users only by admin', () => {
 		beforeEach(async () => {
 			await User.insertMany(payload);
 		});
 
-		it('should return a 200 status', async () => {
+		it('should return a 200 status and all users for admin', async () => {
 			const res = await request(app).get('/api/users');
 			expect(res.statusCode).toBe(200);
 		});
-		it('should return two user objects', async () => {
+		it('should return a 401 status if not logged in', async () => {
 			const res = await request(app).get('/api/users');
-			expect(res.body.length).toBe(2);
+			expect(res.statusCode).toBe(401);
 		});
+		it('should return a 401 status if not admin', async () => {
+			const res = await request(app).get('/api/users');
+			expect(res.statusCode).toBe(403);
+		});
+
 	});
 	describe('/GET single user by id', () => {
 		let user;
@@ -171,6 +176,12 @@ describe('Test for User', () => {
 			const res = await request(app).post('/api/users/').send(payload1);
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Email is already in use');
+		});
+	});
+	describe('Edit User information', () => {
+		it('should return an INVALID ID error message if invalid id is given', async () => {
+			const res = await request(app).put(`/api/users/${342}`);
+			expect(res.body.message).toBe('Invalid Id');
 		});
 	});
 });

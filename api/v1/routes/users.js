@@ -1,12 +1,13 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import _ from 'lodash'
-import bcrypt from 'bcrypt'
+import _ from 'lodash';
+import bcrypt from 'bcrypt';
 
 const router = express.Router();
 import { User } from '../../../server/model/user';
 import { Role } from '../../../server/model/role';
 import { validateCreateUser, validateLogin } from '../../../server/validations/user';
+import { authId } from '../utils/validateId';
 
 //GETS
 //ALL USERS [GET /users/]
@@ -28,19 +29,13 @@ import { validateCreateUser, validateLogin } from '../../../server/validations/u
  */
 
 router.get('/', async (req, res) => {
+  
 	const users = await User.find({});
 	res.status(200).send(users);
 });
 
 //SINGLE USER [GET /users/<id>]
-router.get('/:id', async (req, res) => {
-	if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-		return res.status(400).send({
-			Error: 'Bad Request',
-			message: 'Invalid Id',
-		});
-	}
-
+router.get('/:id',authId, async (req, res) => {
 	const user = await User.findById(req.params.id);
 	res.status(200).send(user);
 });
@@ -53,30 +48,28 @@ router.post('/', async (req, res) => {
 
 	//validate roleId has already be created else reject user creation
 	const role = await Role.findById(req.body.roleId);
-  if (!role) return res.status(400).send({ Error: 'Bad Request', message: 'Invalid Role Id' });
-  
-  //check if email has been taken
-  let checkEmail = await User.findOne({email: req.body.email})
-  if (checkEmail) return res.status(400).send({ Error: 'Bad Request', message: 'Email is already in use' });
-  
-  //check if username has been taken
-  let checkUsername = await User.findOne({username: req.body.username})
-  if (checkUsername) return res.status(400).send({ Error: 'Bad Request', message: 'Username is taken' });
+	if (!role) return res.status(400).send({ Error: 'Bad Request', message: 'Invalid Role Id' });
 
-  //CREATE USER
-  const user = new User(req.body);
+	//check if email has been taken
+	let checkEmail = await User.findOne({ email: req.body.email });
+	if (checkEmail) return res.status(400).send({ Error: 'Bad Request', message: 'Email is already in use' });
 
-  // user = new User(_.pick(req.body, ['name', 'email', 'password']));
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt);
-  await user.save();
+	//check if username has been taken
+	let checkUsername = await User.findOne({ username: req.body.username });
+	if (checkUsername) return res.status(400).send({ Error: 'Bad Request', message: 'Username is taken' });
 
-  //const token = user.generateAuthToken();
-  //res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
+	//CREATE USER
+	const user = new User(req.body);
 
+	// user = new User(_.pick(req.body, ['name', 'email', 'password']));
+	const salt = await bcrypt.genSalt(10);
+	user.password = await bcrypt.hash(user.password, salt);
+	await user.save();
 
+	//const token = user.generateAuthToken();
+	//res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
 
-	res.status(201).send(_.pick(user, ['_id', 'username', 'email']));
+	res.status(201).send(_.pick(user, [ '_id', 'username', 'email' ]));
 });
 
 //LOGIN USER [POST /users/login]
@@ -84,9 +77,9 @@ router.post('/', async (req, res) => {
 //LOGOUT USER [POST /users/logout]
 
 // EDIT USER [PUT /users/<id>]
-router.put('/:id', (req, res)=>{
-  
-})
+router.put('/:id',authId, (req, res) => {
+
+});
 
 //DELETE USER [DELETE /users/<id>]
 
