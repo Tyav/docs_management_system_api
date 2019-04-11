@@ -6,6 +6,14 @@ import mongoose from 'mongoose';
 
 let app;
 describe('Test for User', () => {
+	beforeEach(() => {
+		app = server;
+	});
+	afterEach(async () => {
+		await app.close();
+		await User.deleteMany({});
+	});
+
 	let userGroup = [
 		{
 			username: 'testUserName',
@@ -29,14 +37,6 @@ describe('Test for User', () => {
 		},
 	];
 	describe('GET all users', () => {
-		beforeEach(() => {
-			app = server;
-		});
-		afterEach(async () => {
-			await app.close();
-			await User.deleteMany({});
-		});
-
 		it('should return a 200 status', async () => {
 			User.insertMany(userGroup);
 
@@ -50,7 +50,21 @@ describe('Test for User', () => {
 			expect(res.body.length).toBe(2);
 		});
 	});
-	describe('Name of the group', () => {
-		
+	describe('/GET single user by id', () => {
+		it('should return a user with a give id', async () => {
+			const user = await User.create(userGroup[0]);
+			const res = await request(app).get(`/api/users/${user._id}`);
+			expect(res.body).toMatchObject(userGroup[0]);
+		});
+		it('should return a 400 status if invalid id is given', async () => {
+			const user = await User.create(userGroup[0]);
+			const res = await request(app).get(`/api/users/${342}`);
+			expect(res.status).toBe(400);
+		});
+		// it('should return an INVALID ID error message if invalid id is given', async () => {
+		// 	const user = await User.create(userGroup[0]);
+		// 	const res = await request(app).get(`/api/users/${342}`);
+		// 	expect(res.body.message).toBe('Invalid Id');
+		// });
 	});
 });
