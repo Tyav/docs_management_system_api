@@ -126,15 +126,22 @@ router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
 	const passwordCheck = await bcrypt.compare(req.body.password, user.password);
 	if (!passwordCheck) return res.status(400).send({ Error: 400, message: 'Wrong Password' });
 
+	//SET NEW VALUES TO UNDEFINED
 	let newPassword;
+	let newFirstname;
+	let newLastName;
+	if(req.body.name){
+		newFirstname = req.body.name.firstName
+		newLastName = req.body.name.lastName
+	}
 	//if new password, hash it
 	if (req.body.newPassword) {
 		const salt = await bcrypt.genSalt(10);
 		newPassword = await bcrypt.hash(req.body.newPassword, salt);
 	}
 
-	const firstName = req.body.name.firstName || user.name.firstName;
-	const lastName = req.body.name.lastName || user.name.lastName;
+	const firstName =  newFirstname || user.name.firstName;
+	const lastName =  newLastName || user.name.lastName;
 	const password = newPassword || user.password;
 
 	const updatedUser = await User.findByIdAndUpdate(
