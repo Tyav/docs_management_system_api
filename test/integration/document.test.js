@@ -145,7 +145,15 @@ describe('TEST FOR DOCUMENTS', () => {
 			})
 			expect(res.body.createdAt).toBeDefined()
 		},30000);	
-
+		it('created document should be set to public by default if not specified', async() => {
+			const res = await request(app).post('/api/documents/').set('x-auth-token',isLogin).send({
+				title: 'test',
+				content: 'I am a basic test doc',
+				creatorId: regularUser._id,
+				categoryId: scifi._id
+			})
+			expect(res.body.access).toBe('public')
+		},30000);	
 	});
 	describe('/GET: all documents', () => {
 		it('', () => {
