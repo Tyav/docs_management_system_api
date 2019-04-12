@@ -44,7 +44,7 @@ describe('Test for User', () => {
 	afterAll(async () => {
 		await Role.deleteMany({});
 	});
-	describe('GET all users only by admin', () => {
+	describe('/GET all users only by admin', () => {
 		let adminToken;
 		let loginToken;
 		beforeEach(async () => {
@@ -198,7 +198,7 @@ describe('Test for User', () => {
 			expect(res.body.message).toBe('Email is already in use');
 		});
 	});
-	describe('Edit User information', () => {
+	describe('/PUT :Edit User information', () => {
 		let user, user2;
 		beforeEach(async() => {
 			user = new User({
@@ -283,6 +283,51 @@ describe('Test for User', () => {
 				.set('Accept', 'application/json');
 			expect(res.body).toHaveProperty('username', user.username);
 			expect(res.body).toHaveProperty('email', user.email);
+		});
+	});
+	describe('/DELETE a user', () => {
+		let user, user2;
+		beforeEach(async() => {
+			user = new User({
+				username: 'testUserName2',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			});
+			user2 = new User({
+				username: 'testUserName',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			});
+			editToken = user.generateAuthToken(true);
+			editToken2 = user2.generateAuthToken(true, true);
+
+			await user.save()
+			await user2.save()
+		});
+
+		let editToken, editToken2;
+
+		it('should return 401 status code if user is not logged in', async () => {
+			const res = await request(app).delete(`/api/user/${user._id}`)
+			expect(res.status).toBe(401);
+		});
+		it('should return 403 if logged in user is not the user owner of the account', async() => {
+			const res = await request(app).delete(`/api/user/${new mongoose.Types.ObjectId()}`).set('x-auth-token', editToken);
+			expect(res.status).toBe(403);
+		});
+		it('should return 200 status if logged in user is the user owner of the account', async() => {
+			const res = await request(app).delete(`/api/user/${new mongoose.Types.ObjectId()}`).set('x-auth-token', editToken);
+			expect(res.status).toBe(200);
 		});
 	});
 });
