@@ -202,6 +202,8 @@ describe('Test for User', () => {
 	describe('/PUT :Edit User information', () => {
 		let user, user2;
 		beforeEach(async () => {
+			const salt = await bcrypt.genSalt(10);
+			const testPassword = await bcrypt.hash('test1Password', salt);
 			user = new User({
 				username: 'testUserName2',
 				name: {
@@ -209,7 +211,7 @@ describe('Test for User', () => {
 					lastName: 'testLastName1',
 				},
 				email: 'test1@test.com',
-				password: 'test1Password',
+				password: testPassword,
 				roleId: role._id,
 			});
 			user2 = new User({
@@ -219,7 +221,7 @@ describe('Test for User', () => {
 					lastName: 'testLastName1',
 				},
 				email: 'test@test.com',
-				password: 'test1Password',
+				password: testPassword,
 				roleId: role._id,
 			});
 			editToken = user.generateAuthToken(true);
@@ -379,7 +381,7 @@ describe('Test for User', () => {
 		let user, user2;
 		beforeEach(async () => {
 			const salt = await bcrypt.genSalt(10);
-			const testPassword = await bcrypt.hash('test1Password', salt);	
+			const testPassword = await bcrypt.hash('test1Password', salt);
 			user = new User({
 				username: 'testUserName2',
 				name: {

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
-
+//Schema for documents
 const docSchema = new Schema({
 	title: {
 		type: String,
@@ -44,6 +44,7 @@ const docSchema = new Schema({
 	},
 });
 
+//model for documents
 const Document = mongoose.model('documents', docSchema);
 
 export { Document };

@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 
-
 const Schema = mongoose.Schema;
 
 //USER FULL NAME SCHEMA FOR DB LEVEL VALIDATION
@@ -53,11 +52,11 @@ const userSchema = new Schema({
 		default: Date.now,
 		required: true,
 	},
-	modifiedAt:{
+	modifiedAt: {
 		type: Date,
-	}
+	},
 });
-userSchema.methods.generateAuthToken = function(log=false, adm=false) {
+userSchema.methods.generateAuthToken = function(log = false, adm = false) {
 	const token = jwt.sign({ _id: this._id, isAdmin: adm, isLogged: log }, config.get('jwtPrivateKey'));
 	return token;
 };

@@ -1,6 +1,6 @@
 import 'babel-polyfill';
 import { validateCreateUser, validateLogin } from '../../../server/validations/user';
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 describe('Validation of new user creation details', () => {
 	describe('test cases for username', () => {
 		it('should return error if username is not given', () => {
@@ -15,8 +15,8 @@ describe('Validation of new user creation details', () => {
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
-    });
-    it('should return error if username is less than 3', () => {
+		});
+		it('should return error if username is less than 3', () => {
 			let testData = {
 				username: 'Te',
 				name: {
@@ -30,7 +30,7 @@ describe('Validation of new user creation details', () => {
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
 		});
-    it('should return error if username is not a string', () => {
+		it('should return error if username is not a string', () => {
 			let testData = {
 				username: 43543,
 				name: {
@@ -44,9 +44,9 @@ describe('Validation of new user creation details', () => {
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
 		});
-  });
-  describe('test case for Name', () => {
-    it('should return error if Name is not provided', () => {
+	});
+	describe('test case for Name', () => {
+		it('should return error if Name is not provided', () => {
 			let testData = {
 				username: 'TestData',
 				email: 'testdata@test.data',
@@ -55,8 +55,8 @@ describe('Validation of new user creation details', () => {
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
-    });
-    it('should return error if firstName is not provided', () => {
+		});
+		it('should return error if firstName is not provided', () => {
 			let testData = {
 				username: 'TestData',
 				name: {
@@ -69,7 +69,7 @@ describe('Validation of new user creation details', () => {
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
 		});
-    it('should return error if lastName is not provided', () => {
+		it('should return error if lastName is not provided', () => {
 			let testData = {
 				username: 'TestData',
 				name: {
@@ -82,9 +82,9 @@ describe('Validation of new user creation details', () => {
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
 		});
-  });
-  describe('test cases for email', () => {
-    it('should return error if email is not in the email format', () => {
+	});
+	describe('test cases for email', () => {
+		it('should return error if email is not in the email format', () => {
 			let testData = {
 				username: 'TestData',
 				name: {
@@ -98,7 +98,7 @@ describe('Validation of new user creation details', () => {
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
 		});
-    it('should return error if email is not given', () => {
+		it('should return error if email is not given', () => {
 			let testData = {
 				username: 'TestData',
 				name: {
@@ -111,9 +111,9 @@ describe('Validation of new user creation details', () => {
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
 		});
-  });
-  describe('test cases for password', () => {
-    it('should return error if password is not provided', () => {
+	});
+	describe('test cases for password', () => {
+		it('should return error if password is not provided', () => {
 			let testData = {
 				username: 'TestData',
 				name: {
@@ -126,7 +126,7 @@ describe('Validation of new user creation details', () => {
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
 		});
-    it('should return error if password is less that 8 characters', () => {
+		it('should return error if password is less that 8 characters', () => {
 			let testData = {
 				username: 'TestData',
 				name: {
@@ -139,10 +139,10 @@ describe('Validation of new user creation details', () => {
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
-    });
-  });
-  describe('test case for roleId', () => {
-    it('should return error if roleId not provided', () => {
+		});
+	});
+	describe('test case for roleId', () => {
+		it('should return error if roleId not provided', () => {
 			let testData = {
 				username: 'TestData',
 				name: {
@@ -154,10 +154,10 @@ describe('Validation of new user creation details', () => {
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).not.toBeNull();
-    });
-  });
-  describe('test to pass validation', () => {
-    it('should pass validation and return error of null value', () => {
+		});
+	});
+	describe('test to pass validation', () => {
+		it('should pass validation and return error of null value', () => {
 			let testData = {
 				username: 'TestData',
 				name: {
@@ -170,39 +170,36 @@ describe('Validation of new user creation details', () => {
 			};
 			let { error } = validateCreateUser(testData);
 			expect(error).toBeNull();
-    });
-
-  });
+		});
+	});
 });
 
-
 describe('Validation of user Login details', () => {
-  describe('test cases for username', () => {
+	describe('test cases for username', () => {
 		it('should return error if username is not given', () => {
 			let testData = {
 				password: '12345678',
 			};
 			let { error } = validateLogin(testData);
 			expect(error).not.toBeNull();
-    });
+		});
 		it('should return error if username is less than 3', () => {
 			let testData = {
-        username: 'Te',
-				password: '12345678'
+				username: 'Te',
+				password: '12345678',
 			};
 			let { error } = validateLogin(testData);
 			expect(error).not.toBeNull();
-    });
-  });
-  describe('test case for password', () => {
+		});
+	});
+	describe('test case for password', () => {
 		it('should return error if password is less than 8', () => {
 			let testData = {
-        username: 'TestData',
-				password: '1234567'
+				username: 'TestData',
+				password: '1234567',
 			};
 			let { error } = validateLogin(testData);
 			expect(error).not.toBeNull();
-    });
-  });
-
+		});
+	});
 });
