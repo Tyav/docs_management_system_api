@@ -69,7 +69,7 @@ router.post('/', async (req, res) => {
 	await user.save();
 
 	// console.log(role)
-	const token = user.generateAuthToken(true,role.publicWrite);
+	const token = user.generateAuthToken(true, role.publicWrite);
 	//res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
 
 	res.status(201).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email' ]));
@@ -78,36 +78,51 @@ router.post('/', async (req, res) => {
 //LOGIN USER [POST /users/login]
 
 //LOGOUT USER [POST /users/logout]
+router.post('/logout', (req, res) => {
+	//check if user is logged in, send a 400 if not logged in
+	//reset header.user and delete token, send a 200 when logged out
+});
 
 // EDIT USER [PUT /users/<id>]
 //[idAuth,tokenAuth, loginAuth],
 router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
 	//compared id in token with id from parameter. if not same return 403
 	if (req.params.id !== req.user._id) return res.status(403).send({ Error: 403, message: 'Forbidden' });
-	const {error} = validateEditUser(req.body)
+	const { error } = validateEditUser(req.body);
 	if (error) return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
 	const user = await User.findById(req.params.id);
-	
+
 	//perform salt and bcrypt
 
+	const firstName = req.body.name.firstName || user.name.firstName;
+	const lastName = req.body.name.lastName || user.name.lastName;
+	const password = req.body.password || user.password;
 
-	const firstName = req.body.name.firstName  || user.name.firstName
-	const lastName = req.body.name.lastName  || user.name.lastName
-	const password = req.body.password || user.password
-
-
-	const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-	
-			name : {firstName, lastName},
+	const updatedUser = await User.findByIdAndUpdate(
+		req.params.id,
+		{
+			name: { firstName, lastName },
 			password: password,
 			modifiedAt: Date.now(),
-
-	}, {new: true});
-	if (!updatedUser) return res.status(400).send({Error: 400, message: 'Invalid Id'})
-	res.status(200).send(_.pick(updatedUser, [ '_id', 'username', 'email','name' ]))
+		},
+		{ new: true },
+	);
+	if (!updatedUser) return res.status(400).send({ Error: 400, message: 'Invalid Id' });
+	res.status(200).send(_.pick(updatedUser, [ '_id', 'username', 'email', 'name' ]));
 });
 
 //DELETE USER [DELETE /users/<id>]
+router.delete('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
+	//401 if not logged in [done in token and login auth]
+
+	//403 if logged but not the owner
+	if (req.params.id !== req.user._id) return res.status(403).send({ Error: 403, message: 'Forbidden' });
+
+	//200 should delete user
+	await User.findByIdAndDelete(req.params.id);
+
+	res.status(200).send({ Success: 200, message: 'User deleted' });
+});
 
 module.exports = router;
 
