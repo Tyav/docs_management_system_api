@@ -4,6 +4,7 @@ import { server } from '../../index';
 import request from 'supertest';
 import { User } from '../../server/model/user';
 import { Role } from '../../server/model/role';
+import bcrypt from 'bcrypt';
 let app;
 describe('Test for User', () => {
 	let role = new Role({
@@ -200,7 +201,7 @@ describe('Test for User', () => {
 	});
 	describe('/PUT :Edit User information', () => {
 		let user, user2;
-		beforeEach(async() => {
+		beforeEach(async () => {
 			user = new User({
 				username: 'testUserName2',
 				name: {
@@ -224,8 +225,8 @@ describe('Test for User', () => {
 			editToken = user.generateAuthToken(true);
 			editToken2 = user2.generateAuthToken(true);
 
-			await user.save()
-			await user2.save()
+			await user.save();
+			await user2.save();
 		});
 
 		let editToken, editToken2;
@@ -287,7 +288,7 @@ describe('Test for User', () => {
 	});
 	describe('/DELETE a user', () => {
 		let user, user2;
-		beforeEach(async() => {
+		beforeEach(async () => {
 			user = new User({
 				username: 'testUserName2',
 				name: {
@@ -311,28 +312,28 @@ describe('Test for User', () => {
 			editToken = user.generateAuthToken(true);
 			editToken2 = user2.generateAuthToken(true);
 
-			await user.save()
-			await user2.save()
+			await user.save();
+			await user2.save();
 		});
 
 		let editToken, editToken2;
 
 		it('should return 401 status code if user is not logged in', async () => {
-			const res = await request(app).delete(`/api/users/${user._id}`)
+			const res = await request(app).delete(`/api/users/${user._id}`);
 			expect(res.status).toBe(401);
 		});
-		it('should return 403 if logged in user is not the user owner of the account', async() => {
+		it('should return 403 if logged in user is not the user owner of the account', async () => {
 			const res = await request(app).delete(`/api/users/${new mongoose.Types.ObjectId()}`).set('x-auth-token', editToken);
 			expect(res.status).toBe(403);
 		});
-		it('should return 200 status if logged in user is the user owner of the account', async() => {
+		it('should return 200 status if logged in user is the user owner of the account', async () => {
 			const res = await request(app).delete(`/api/users/${user2._id}`).set('x-auth-token', editToken2);
 			expect(res.status).toBe(200);
 		});
 	});
 	describe('/POST logout', () => {
 		let user, user2;
-		beforeEach(async() => {
+		beforeEach(async () => {
 			user = new User({
 				username: 'testUserName2',
 				name: {
@@ -353,25 +354,93 @@ describe('Test for User', () => {
 				password: 'test1Password',
 				roleId: role._id,
 			});
-			editToken = user.generateAuthToken(true);
+			editToken = user.generateAuthToken();
 			editToken2 = user2.generateAuthToken(true);
 
-			await user.save()
-			await user2.save()
+			await user.save();
+			await user2.save();
 		});
-
 		let editToken, editToken2;
+
 		it('should return a 401 status if user is already logged out', async () => {
-			const res = await request(app).post('/api/users/logout')
-			expect(res.status).toBe(401);			
+			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken);
+			expect(res.status).toBe(401);
 		});
-		it('should return a delete token if user is logged in', async () => {
-			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken2)
-			expect(res.header('x-auth-token')).not.toBeDefined();			
+		it('should delete token if user is logged in', async () => {
+			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken2);
+			expect(res.header['x-auth-token']).not.toBeDefined();
 		});
-		it('should return a delete token if user is logged in', async () => {
-			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken2)
-			expect(res.status).toBe(200);			
+		it('should return a 200 status if user is successfully logged out', async () => {
+			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken2);
+			expect(res.status).toBe(200);
+		});
+	});
+	describe('/POST login user', () => {
+		let user, user2;
+		beforeEach(async () => {
+			const salt = await bcrypt.genSalt(10);
+			const testPassword = await bcrypt.hash('test1Password', salt);	
+			user = new User({
+				username: 'testUserName2',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: testPassword,
+				roleId: role._id,
+			});
+			user2 = new User({
+				username: 'testUserName',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test@test.com',
+				password: testPassword,
+				roleId: role._id,
+			});
+			editToken = user.generateAuthToken();
+			editToken2 = user2.generateAuthToken(true);
+
+			await user.save();
+			await user2.save();
+		});
+		let editToken, editToken2;
+
+		it('should return a 401 status if user is already logged in', async () => {
+			const res = await request(app).post('/api/users/login').set('x-auth-token', editToken2);
+			expect(res.status).toBe(401);
+		});
+		it('should return a 400 status if user login details', async () => {
+			const res = await request(app).post('/api/users/login').send({
+				username: 't',
+				password: 'test1',
+			});
+			expect(res.status).toBe(400);
+		});
+		it('should return a 400 status if user email does not match any in the db', async () => {
+			const res = await request(app).post('/api/users/login').send({
+				username: 'wrongTestUserName',
+				password: 'test1Password',
+			});
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('Wrong Username or Password');
+		});
+		it('should return a 400 status if user password is wrong', async () => {
+			const res = await request(app).post('/api/users/login').send({
+				username: 'testUserName',
+				password: 'wrongTest1Password',
+			});
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('Wrong Username or Password');
+		});
+		it('should return a 200 status if user is successfully logged in', async () => {
+			const res = await request(app).post('/api/users/login').send({
+				username: 'testUserName',
+				password: 'test1Password',
+			});
+			expect(res.status).toBe(200);
 		});
 	});
 });
