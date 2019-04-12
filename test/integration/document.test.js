@@ -99,7 +99,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			})
 			const docs = await Document.findOne({title: 'testDoc'});
 			expect(docs).toHaveProperty('title','testDoc')
-		});
+		},30000);
 		it('should return document object and status code of 200', async() => {
 			const res = await request(app).post('/api/documents/').send({
 				title: 'testDoc',
@@ -110,7 +110,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			})
 			expect(res.body).toHaveProperty('title','testDoc')
 			expect(res.status).toBe(200)
-		});
+		},30000);
 
 	});
 	//POST: CREATE DOCUMENT

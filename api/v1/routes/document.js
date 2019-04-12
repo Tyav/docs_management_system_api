@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
   //CREATE DOCUMENT
   const doc = new Document(req.body);
   await doc.save();
-  res.send()
+  res.status(200).send(_.pick(doc,['title','content','creatorId']))
 });
 
 //GET: GET ALL DOCUMENT

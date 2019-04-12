@@ -56,7 +56,7 @@ describe('Test for User', () => {
 		let adminToken;
 		let loginToken;
 		beforeEach(async () => {
-			await User.create(payload);
+			//await User.create(payload);
 			let useradmin = new User({
 				username: 'testAdmin1',
 				name: {
@@ -77,19 +77,19 @@ describe('Test for User', () => {
 		it('should return a 200 status and all users for admin', async () => {
 			const res = await request(app).get('/api/users').set('x-auth-token', adminToken);
 			expect(res.statusCode).toBe(200);
-		});
+		},30000);
 		it('should return a 401 status if not logged in', async () => {
 			const res = await request(app).get('/api/users');
 			expect(res.statusCode).toBe(401);
-		});
+		},30000);
 		it('should return a 403 status if not admin', async () => {
 			const res = await request(app).get('/api/users').set('x-auth-token', loginToken);
 			expect(res.statusCode).toBe(403);
-		});
+		},30000);
 		it('should return a 400 status if token is invalid', async () => {
 			const res = await request(app).get('/api/users').set('x-auth-token', 'loginToken');
 			expect(res.statusCode).toBe(400);
-		});
+		},30000);
 	});
 	describe('/GET single user by id', () => {
 		let user;
@@ -100,29 +100,29 @@ describe('Test for User', () => {
 			const res = await request(app).get(`/api/users/${user._id}`);
 			expect(res.body).toHaveProperty('email', payload.email);
 			expect(res.body).toHaveProperty('username', payload.username);
-		});
+		},30000);
 		it('should return a 400 status if invalid id is given', async () => {
 			const res = await request(app).get(`/api/users/${342}`);
 			expect(res.status).toBe(400);
-		});
+		},30000);
 		it('should return an INVALID ID error message if invalid id is given', async () => {
 			const res = await request(app).get(`/api/users/${342}`);
 			expect(res.body.message).toBe('Invalid Id');
-		});
+		},30000);
 	});
 	describe('/POST create user', () => {
 		it('should create a user and return a status of 201 if created', async () => {
 			const res = await request(app).post('/api/users/').send(payload);
 			expect(res.status).toBe(201);
-		});
+		},30000);
 		it('should create a user and return the user object if successful', async () => {
 			const res = await request(app).post('/api/users/').send(payload);
 			expect(res.body).toHaveProperty('username', payload.username);
-		});
+		},30000);
 		it('should not return the user password if created', async () => {
 			const res = await request(app).post('/api/users/').send(payload);
 			expect(res.body).not.toHaveProperty('password', payload.password);
-		});
+		},30000);
 		it('should return a 400 if a data does not meet the input/creation requirements', async () => {
 			let failedPayload = {
 				//username is omitted
@@ -137,7 +137,7 @@ describe('Test for User', () => {
 			const res = await request(app).post('/api/users/').send(failedPayload);
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe(`"username" is required`);
-		});
+		},30000);
 		it('should return a 404 error if roleId does not belong an exist role', async () => {
 			let failedPayload = {
 				username: 'testUserName',
@@ -152,7 +152,7 @@ describe('Test for User', () => {
 			const res = await request(app).post('/api/users/').send(failedPayload);
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Invalid Role Id');
-		});
+		},30000);
 		it('should check that username is unique or return 400', async () => {
 			let payload = {
 				username: 'testUserName',
@@ -178,7 +178,7 @@ describe('Test for User', () => {
 			const res = await request(app).post('/api/users/').send(payload1);
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Username is taken');
-		});
+		},30000);
 		it('should check that username is unique or return 400', async () => {
 			let payload = {
 				username: 'testUserName1',
@@ -204,7 +204,7 @@ describe('Test for User', () => {
 			const res = await request(app).post('/api/users/').send(payload1);
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Email is already in use');
-		});
+		},30000);
 	});
 	describe('/PUT :Edit User information', () => {
 		let user, user2;
@@ -242,15 +242,15 @@ describe('Test for User', () => {
 		it('should return an INVALID ID error message if invalid id is given', async () => {
 			const res = await request(app).put(`/api/users/${342}`);
 			expect(res.body.message).toBe('Invalid Id');
-		});
+		},30000);
 		it('should return a 401 status code if edit is performed by User not logged in', async () => {
 			const res = await request(app).put(`/api/users/${user._id}`);
 			expect(res.status).toBe(401);
-		});
+		},30000);
 		it('should return a 403 status code if edit is not performed by id owner', async () => {
 			const res = await request(app).put(`/api/users/${user._id}`).set('x-auth-token', editToken2);
 			expect(res.status).toBe(403);
-		});
+		},30000);
 		it('should return a 400 status code if edit parameters do not meet requirement', async () => {
 			const res = await request(app)
 				.put(`/api/users/${user._id}`)
@@ -264,7 +264,7 @@ describe('Test for User', () => {
 				.set('x-auth-token', editToken)
 				.set('Accept', 'application/json');
 			expect(res.status).toBe(400);
-		});
+		},30000);
 		it('should return a 200 status code if edit is performed successfully', async () => {
 			const res = await request(app)
 				.put(`/api/users/${user._id}`)
@@ -278,7 +278,7 @@ describe('Test for User', () => {
 				.set('x-auth-token', editToken)
 				.set('Accept', 'application/json');
 			expect(res.status).toBe(200);
-		});
+		},30000);
 		it('should return a user object if edit is successfully performed by id owner', async () => {
 			const res = await request(app)
 				.put(`/api/users/${user._id}`)
@@ -292,7 +292,7 @@ describe('Test for User', () => {
 				.set('Accept', 'application/json');
 			expect(res.body).toHaveProperty('username', user.username);
 			expect(res.body).toHaveProperty('email', user.email);
-		});
+		},30000);
 		it('should change the password if newPassword is specified', async () => {
 			await request(app)
 				.put(`/api/users/${user._id}`)
@@ -306,7 +306,7 @@ describe('Test for User', () => {
 			const result = await bcrypt.compare('newTestPassword', testUser.password);
 
 			expect(result).toBeTruthy();
-		});
+		},30000);
 	});
 	describe('/DELETE a user', () => {
 		let user, user2;
@@ -343,15 +343,15 @@ describe('Test for User', () => {
 		it('should return 401 status code if user is not logged in', async () => {
 			const res = await request(app).delete(`/api/users/${user._id}`);
 			expect(res.status).toBe(401);
-		});
+		},30000);
 		it('should return 403 if logged in user is not the user owner of the account', async () => {
 			const res = await request(app).delete(`/api/users/${new mongoose.Types.ObjectId()}`).set('x-auth-token', editToken);
 			expect(res.status).toBe(403);
-		});
+		},30000);
 		it('should return 200 status if logged in user is the user owner of the account', async () => {
 			const res = await request(app).delete(`/api/users/${user2._id}`).set('x-auth-token', editToken2);
 			expect(res.status).toBe(200);
-		});
+		},30000);
 	});
 	describe('/POST logout', () => {
 		let user, user2;
@@ -387,15 +387,15 @@ describe('Test for User', () => {
 		it('should return a 401 status if user is already logged out', async () => {
 			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken);
 			expect(res.status).toBe(401);
-		});
+		},30000);
 		it('should delete token if user is logged in', async () => {
 			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken2);
 			expect(res.header['x-auth-token']).not.toBeDefined();
-		});
+		},30000);
 		it('should return a 200 status if user is successfully logged out', async () => {
 			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken2);
 			expect(res.status).toBe(200);
-		});
+		},30000);
 	});
 	describe('/POST login user', () => {
 		let user, user2;
@@ -433,14 +433,14 @@ describe('Test for User', () => {
 		it('should return a 401 status if user is already logged in', async () => {
 			const res = await request(app).post('/api/users/login').set('x-auth-token', editToken2);
 			expect(res.status).toBe(401);
-		});
+		},30000);
 		it('should return a 400 status if user login details', async () => {
 			const res = await request(app).post('/api/users/login').send({
 				username: 't',
 				password: 'test1',
 			});
 			expect(res.status).toBe(400);
-		});
+		},30000);
 		it('should return a 400 status if user email does not match any in the db', async () => {
 			const res = await request(app).post('/api/users/login').send({
 				username: 'wrongTestUserName',
@@ -448,7 +448,7 @@ describe('Test for User', () => {
 			});
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Wrong Username or Password');
-		});
+		},30000);
 		it('should return a 400 status if user password is wrong', async () => {
 			const res = await request(app).post('/api/users/login').send({
 				username: 'testUserName',
@@ -456,13 +456,13 @@ describe('Test for User', () => {
 			});
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Wrong Username or Password');
-		});
+		},30000);
 		it('should return a 200 status if user is successfully logged in', async () => {
 			const res = await request(app).post('/api/users/login').send({
 				username: 'testUserName',
 				password: 'test1Password',
 			});
 			expect(res.status).toBe(200);
-		});
+		},30000);
 	});
 });
