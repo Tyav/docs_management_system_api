@@ -90,7 +90,7 @@ describe('TEST FOR DOCUMENTS', () => {
 	describe('/POST: CREATE DOCUMENT', () => {
 		beforeEach(() => {});
 		it('should create a document: /api/documents', async() => {
-			const res = await request(app).post('/api/documents/').send({
+			await request(app).post('/api/documents/').send({
 				title: 'testDoc',
 				content: 'I am a basic test doc',
 				creatorId: regularUser._id,
@@ -100,6 +100,18 @@ describe('TEST FOR DOCUMENTS', () => {
 			const docs = await Document.findOne({title: 'testDoc'});
 			expect(docs).toHaveProperty('title','testDoc')
 		});
+		it('should return document object and status code of 200', async() => {
+			const res = await request(app).post('/api/documents/').send({
+				title: 'testDoc',
+				content: 'I am a basic test doc',
+				creatorId: regularUser._id,
+				access: 'public',
+				categoryId: scifi._id
+			})
+			expect(res.body).toHaveProperty('title','testDoc')
+			expect(res.status).toBe(200)
+		});
+
 	});
 	//POST: CREATE DOCUMENT
 

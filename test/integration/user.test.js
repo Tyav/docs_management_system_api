@@ -19,8 +19,7 @@ describe('Test for User', () => {
 		role.save();;
 	let payload;
 	beforeAll(() => {
-		payload = [
-			{
+		payload = {
 				username: 'testUserName',
 				name: {
 					firstName: 'testFirstName',
@@ -29,18 +28,18 @@ describe('Test for User', () => {
 				email: 'test@test.com',
 				password: 'testPassword',
 				roleId: role._id,
-			},
-			{
-				username: 'testUserName1',
-				name: {
-					firstName: 'testFirstName1',
-					lastName: 'testLastName1',
-				},
-				email: 'test1@test.com',
-				password: 'test1Password',
-				roleId: role._id,
-			},
-		];
+			}
+		// 	{
+		// 		username: 'testUserName1',
+		// 		name: {
+		// 			firstName: 'testFirstName1',
+		// 			lastName: 'testLastName1',
+		// 		},
+		// 		email: 'test1@test.com',
+		// 		password: 'test1Password',
+		// 		roleId: role._id,
+		// 	},
+		// ];
 	});
 
 	beforeEach(async () => {
@@ -57,7 +56,7 @@ describe('Test for User', () => {
 		let adminToken;
 		let loginToken;
 		beforeEach(async () => {
-			await User.insertMany(payload);
+			await User.create(payload);
 			let useradmin = new User({
 				username: 'testAdmin1',
 				name: {
@@ -95,12 +94,12 @@ describe('Test for User', () => {
 	describe('/GET single user by id', () => {
 		let user;
 		beforeEach(async () => {
-			user = await User.create(payload[0]);
+			user = await User.create(payload);
 		});
 		it('should return a user with a give id', async () => {
 			const res = await request(app).get(`/api/users/${user._id}`);
-			expect(res.body).toHaveProperty('email', payload[0].email);
-			expect(res.body).toHaveProperty('username', payload[0].username);
+			expect(res.body).toHaveProperty('email', payload.email);
+			expect(res.body).toHaveProperty('username', payload.username);
 		});
 		it('should return a 400 status if invalid id is given', async () => {
 			const res = await request(app).get(`/api/users/${342}`);
@@ -113,16 +112,16 @@ describe('Test for User', () => {
 	});
 	describe('/POST create user', () => {
 		it('should create a user and return a status of 201 if created', async () => {
-			const res = await request(app).post('/api/users/').send(payload[0]);
+			const res = await request(app).post('/api/users/').send(payload);
 			expect(res.status).toBe(201);
 		});
 		it('should create a user and return the user object if successful', async () => {
-			const res = await request(app).post('/api/users/').send(payload[0]);
-			expect(res.body).toHaveProperty('username', payload[0].username);
+			const res = await request(app).post('/api/users/').send(payload);
+			expect(res.body).toHaveProperty('username', payload.username);
 		});
 		it('should not return the user password if created', async () => {
-			const res = await request(app).post('/api/users/').send(payload[0]);
-			expect(res.body).not.toHaveProperty('password', payload[0].password);
+			const res = await request(app).post('/api/users/').send(payload);
+			expect(res.body).not.toHaveProperty('password', payload.password);
 		});
 		it('should return a 400 if a data does not meet the input/creation requirements', async () => {
 			let failedPayload = {
