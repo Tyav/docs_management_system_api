@@ -8,7 +8,7 @@ let validateDoc = (docData) => {
 		title: Joi.string().min(1).max(255).required(),
 		content: Joi.string().min(1).max(5000).required(),
 		creatorId: Joi.objectId(),
-		access: Joi.string().valid('private', 'public').required(),
+		access: Joi.string().valid('private', 'public'),
 		categoryId: Joi.objectId(),
 		createdAt: Joi.date(),
 	});

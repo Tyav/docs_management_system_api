@@ -24,7 +24,7 @@ const docSchema = new Schema({
 	access: {
 		type: String,
 		enum: [ 'public', 'private' ],
-		required: true,
+		default: 'public'
 	},
 	categoryId: {
 		type: mongoose.Schema.Types.ObjectId,
