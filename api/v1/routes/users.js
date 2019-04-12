@@ -10,7 +10,8 @@ import { validateCreateUser, validateLogin, validateEditUser } from '../../../se
 import { authId as idAuth } from '../utils/validateId';
 import adminAuth from '../utils/admin';
 import tokenAuth from '../utils/auth';
-import loginAuth from '../utils/login';
+import loginAuth from '../utils/isLogin';
+import ifLogin from '../utils/ifLogin'
 
 //GETS
 //ALL USERS [GET /users/]
@@ -36,11 +37,15 @@ router.get('/', [ tokenAuth, loginAuth, adminAuth ], async (req, res) => {
 	res.status(200).send(users);
 });
 
+
+
 //SINGLE USER [GET /users/<id>]
 router.get('/:id', idAuth, async (req, res) => {
 	const user = await User.findById(req.params.id);
 	res.status(200).send(user);
 });
+
+
 
 //CREATE USER [POST /users/]
 router.post('/', async (req, res) => {
@@ -77,7 +82,39 @@ router.post('/', async (req, res) => {
 	res.status(201).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email' ]));
 });
 
+
+
+
 //LOGIN USER [POST /users/login]
+router.post('/login',[ifLogin], async(req,res)=>{
+	console.log(req.user)
+		//check if user is not logged in [ifLogin]
+			//validate the login input :400
+		const {error} = validateLogin(req.body)	
+		if (error) return res.status(400).send({ Error: 400, message: 'Bad Request (Invalid Input)' })
+		//check if user exist by email :400
+		const user = await User.findOne({username: req.body.username})
+		if (!user) return res.status(400).send({ Error: 400, message: 'Wrong Username or Password' })
+		//check for password :400
+		//perform bcrypt check and if you need to change the salt,
+		//please do so too in the signup of users
+
+		const password = await bcrypt.compare(req.body.password, user.password);
+		if (!password) return res.status(400).send({ Error: 400, message: 'Wrong Username or Password' })
+
+		//get role of user 
+		const role = await Role.findOne({_id: user.roleId})
+		//create a token for user 
+		//user true as first parameter to make login valid, and 
+		//role.publicWrite as second parameter which decides if user is admin 
+		const token = user.generateAuthToken(true, role.publicWrite)
+
+		//keep the user logged in = 200
+		res.status(200).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email','name' ]));
+
+})
+
+
 
 //LOGOUT USER [POST /users/logout]
 router.post('/logout',tokenAuth, (req, res) => {
