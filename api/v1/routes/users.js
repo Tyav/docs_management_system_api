@@ -68,19 +68,23 @@ router.post('/', async (req, res) => {
 	user.password = await bcrypt.hash(user.password, salt);
 	await user.save();
 
-	// console.log(role)
-	const token = user.generateAuthToken(true, role.publicWrite);
-	//res.header('x-auth-token', token).send(_.pick(user, ['_id', 'name', 'email']));
+	//generate a token for user. 
+	//first parameter for isLogin and 
+	//second for isAdmin which will be set to true if role.publicWrite is set to true
+	const token = user.generateAuthToken(true, role.publicWrite)
 
+	//set the key 'x-auth-token' with generated token in the header
 	res.status(201).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email' ]));
 });
 
 //LOGIN USER [POST /users/login]
 
 //LOGOUT USER [POST /users/logout]
-router.post('/logout', (req, res) => {
+router.post('/logout',tokenAuth, (req, res) => {
 	//check if user is logged in, send a 400 if not logged in
-	//reset header.user and delete token, send a 200 when logged out
+	if (!req.user.isLogged) return res.status(401).send({Error: 401, message:'Already logged out'});
+
+	res.status(200).send({Success: 200, message: 'Successfully logged out'})
 });
 
 // EDIT USER [PUT /users/<id>]
