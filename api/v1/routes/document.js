@@ -5,6 +5,8 @@ import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
+
+
 //POST: CREATE DOCUMENT
 
 //GET: GET ALL DOCUMENT

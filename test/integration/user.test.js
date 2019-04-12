@@ -1,45 +1,53 @@
 import 'babel-polyfill';
 import mongoose from 'mongoose';
-import { server } from '../../index';
+import { app } from '../../index';
 import request from 'supertest';
 import { User } from '../../server/model/user';
 import { Role } from '../../server/model/role';
+import { Category } from '../../server/model/category';
+import { Document } from '../../server/model/document';
 import bcrypt from 'bcrypt';
-let app;
-describe('Test for User', () => {
-	let role = new Role({
-		title: 'regular',
-	});
-	role.save();
+Document.deleteMany({});
+Category.deleteMany({});
+User.deleteMany({});
+Role.deleteMany({});
 
-	let payload = [
-		{
-			username: 'testUserName',
-			name: {
-				firstName: 'testFirstName',
-				lastName: 'testLastName',
+describe('Test for User', () => {
+	let role= new Role({
+			title: 'regular',
+		});
+		role.save();;
+	let payload;
+	beforeAll(() => {
+		payload = [
+			{
+				username: 'testUserName',
+				name: {
+					firstName: 'testFirstName',
+					lastName: 'testLastName',
+				},
+				email: 'test@test.com',
+				password: 'testPassword',
+				roleId: role._id,
 			},
-			email: 'test@test.com',
-			password: 'testPassword',
-			roleId: role._id,
-		},
-		{
-			username: 'testUserName1',
-			name: {
-				firstName: 'testFirstName1',
-				lastName: 'testLastName1',
+			{
+				username: 'testUserName1',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: role._id,
 			},
-			email: 'test1@test.com',
-			password: 'test1Password',
-			roleId: role._id,
-		},
-	];
+		];
+	});
+
 	beforeEach(async () => {
-		await server.close();
-		app = server;
+		//app = server;
 	});
 	afterEach(async () => {
-		await app.close();
+		//await app.close();
 		await User.deleteMany({});
 	});
 	afterAll(async () => {
