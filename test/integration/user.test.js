@@ -309,7 +309,7 @@ describe('Test for User', () => {
 				roleId: role._id,
 			});
 			editToken = user.generateAuthToken(true);
-			editToken2 = user2.generateAuthToken(true, true);
+			editToken2 = user2.generateAuthToken(true);
 
 			await user.save()
 			await user2.save()
@@ -318,16 +318,60 @@ describe('Test for User', () => {
 		let editToken, editToken2;
 
 		it('should return 401 status code if user is not logged in', async () => {
-			const res = await request(app).delete(`/api/user/${user._id}`)
+			const res = await request(app).delete(`/api/users/${user._id}`)
 			expect(res.status).toBe(401);
 		});
 		it('should return 403 if logged in user is not the user owner of the account', async() => {
-			const res = await request(app).delete(`/api/user/${new mongoose.Types.ObjectId()}`).set('x-auth-token', editToken);
+			const res = await request(app).delete(`/api/users/${new mongoose.Types.ObjectId()}`).set('x-auth-token', editToken);
 			expect(res.status).toBe(403);
 		});
 		it('should return 200 status if logged in user is the user owner of the account', async() => {
-			const res = await request(app).delete(`/api/user/${new mongoose.Types.ObjectId()}`).set('x-auth-token', editToken);
+			const res = await request(app).delete(`/api/users/${user2._id}`).set('x-auth-token', editToken2);
 			expect(res.status).toBe(200);
+		});
+	});
+	describe('/POST logout', () => {
+		let user, user2;
+		beforeEach(async() => {
+			user = new User({
+				username: 'testUserName2',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test1@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			});
+			user2 = new User({
+				username: 'testUserName',
+				name: {
+					firstName: 'testFirstName1',
+					lastName: 'testLastName1',
+				},
+				email: 'test@test.com',
+				password: 'test1Password',
+				roleId: role._id,
+			});
+			editToken = user.generateAuthToken(true);
+			editToken2 = user2.generateAuthToken(true);
+
+			await user.save()
+			await user2.save()
+		});
+
+		let editToken, editToken2;
+		it('should return a 401 status if user is already logged out', async () => {
+			const res = await request(app).post('/api/users/logout')
+			expect(res.status).toBe(401);			
+		});
+		it('should return a delete token if user is logged in', async () => {
+			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken2)
+			expect(res.header('x-auth-token')).not.toBeDefined();			
+		});
+		it('should return a delete token if user is logged in', async () => {
+			const res = await request(app).post('/api/users/logout').set('x-auth-token', editToken2)
+			expect(res.status).toBe(200);			
 		});
 	});
 });
