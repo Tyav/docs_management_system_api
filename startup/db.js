@@ -4,7 +4,7 @@ const username = process.env.USERNAME;
 const password = process.env.PASSWORD;
 const database = process.env.DATABASE;
 
-export default (val) => {
+module.exports = (val) => {
 	const uris = 'mongodb://localhost/docs-test'
 	//const uris = `mongodb+srv://${username}:${password}@dmsdb-ht5wo.mongodb.net/${database}`;
 	val.connect(uris, { useNewUrlParser: true }, () => {

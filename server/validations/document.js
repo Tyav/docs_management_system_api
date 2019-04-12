@@ -1,8 +1,7 @@
 import Joi from 'joi';
-//import obj from 'joi-objectid';
-Joi.objectId = require('joi-objectid')(Joi);
+import obj from 'joi-objectid';
+Joi.objectId = obj(Joi);
 
-//console.log(Joi);
 
 let validateDoc = (docData) => {
 	let schema = Joi.object().keys({
