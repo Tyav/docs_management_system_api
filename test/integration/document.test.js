@@ -135,10 +135,23 @@ describe('TEST FOR DOCUMENTS', () => {
 			})
 			expect(res.status).toBe(400)
 		},30000);	
+		it('created document should have a created date', async() => {
+			const res = await request(app).post('/api/documents/').set('x-auth-token',isLogin).send({
+				title: 'test',
+				content: 'I am a basic test doc',
+				creatorId: regularUser._id,
+				access: 'public',
+				categoryId: scifi._id
+			})
+			expect(res.body.createdAt).toBeDefined()
+		},30000);	
 
 	});
-	//POST: CREATE DOCUMENT
-
+	describe('/GET: all documents', () => {
+		it('', () => {
+			
+		});
+	});
 	//GET: GET ALL DOCUMENT
 
 	//GET: GET DOCUMENT BY ID
