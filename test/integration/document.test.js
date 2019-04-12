@@ -20,6 +20,8 @@ describe('TEST FOR DOCUMENTS', () => {
 	let regularUser
 	let regularUser2
 	let scifi;
+	let isLogin;
+	let isAdmin;
 	beforeAll(async ()=>{
 
 		scifi = new Category({
@@ -49,6 +51,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			roleId: adminRole._id,
 		})
 		await adminUser.save()
+		isAdmin = adminUser.generateAuthToken(true, true)
 		regularUser= new User({
 			username: 'reg1UserName',
 			name: {
@@ -60,6 +63,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			roleId: regularRole._id,
 		})
 		await regularUser.save()
+		isLogin = regularUser.generateAuthToken(true)
 		regularUser2= new User({
 			username: 'reg2UserName',
 			name: {
@@ -90,7 +94,7 @@ describe('TEST FOR DOCUMENTS', () => {
 	describe('/POST: CREATE DOCUMENT', () => {
 		beforeEach(() => {});
 		it('should create a document: /api/documents', async() => {
-			await request(app).post('/api/documents/').send({
+			await request(app).post('/api/documents/').set('x-auth-token',isLogin).send({
 				title: 'testDoc',
 				content: 'I am a basic test doc',
 				creatorId: regularUser._id,
@@ -101,7 +105,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			expect(docs).toHaveProperty('title','testDoc')
 		},30000);
 		it('should return document object and status code of 200', async() => {
-			const res = await request(app).post('/api/documents/').send({
+			const res = await request(app).post('/api/documents/').set('x-auth-token',isLogin).send({
 				title: 'testDoc',
 				content: 'I am a basic test doc',
 				creatorId: regularUser._id,
@@ -111,6 +115,26 @@ describe('TEST FOR DOCUMENTS', () => {
 			expect(res.body).toHaveProperty('title','testDoc')
 			expect(res.status).toBe(200)
 		},30000);
+		it('should return 401 if user is not logged in', async() => {
+			const res = await request(app).post('/api/documents/').send({
+				title: 'testDoc',
+				content: 'I am a basic test doc',
+				creatorId: regularUser._id,
+				access: 'public',
+				categoryId: scifi._id
+			})
+			expect(res.status).toBe(401)
+		},30000);	
+		it('should return 400 if users inputs are wrong', async() => {
+			const res = await request(app).post('/api/documents/').set('x-auth-token',isLogin).send({
+				title: '',
+				content: 'I am a basic test doc',
+				creatorId: regularUser._id,
+				access: 'public',
+				categoryId: scifi._id
+			})
+			expect(res.status).toBe(400)
+		},30000);	
 
 	});
 	//POST: CREATE DOCUMENT
