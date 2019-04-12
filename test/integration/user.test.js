@@ -279,13 +279,26 @@ describe('Test for User', () => {
 				.send({
 					name: {
 						firstName: 'testFirstName1',
-						lastName: 'testLastName1',
 					},
 					password: 'test1Password',
 				})
 				.set('Accept', 'application/json');
 			expect(res.body).toHaveProperty('username', user.username);
 			expect(res.body).toHaveProperty('email', user.email);
+		});
+		it('should change the password if newPassword is specified', async () => {
+			await request(app)
+				.put(`/api/users/${user._id}`)
+				.set('x-auth-token', editToken)
+				.send({
+					password: 'test1Password',
+					newPassword: 'newTestPassword',
+				})
+				.set('Accept', 'application/json');
+			const testUser = await User.findById(user._id);
+			const result = await bcrypt.compare('newTestPassword', testUser.password);
+
+			expect(result).toBeTruthy();
 		});
 	});
 	describe('/DELETE a user', () => {
