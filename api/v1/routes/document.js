@@ -20,7 +20,7 @@ router.post('/',[tokenAuth, loginAuth], async (req, res) => {
 
   const doc = new Document(req.body);
   await doc.save();
-  res.status(200).send(_.pick(doc,['title','content','creatorId']))
+  res.status(200).send(doc)
 });
 
 //GET: GET ALL DOCUMENT
