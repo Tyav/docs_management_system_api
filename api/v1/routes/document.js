@@ -29,7 +29,9 @@ router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
     const adminDocs = await Document.find({});
     return res.status(200).send(adminDocs)
   }
-  
+  console.log(req.user._id)
+  const userDocs = await Document.find().or([{access: 'public'},{creatorId:req.user._id}])
+  res.status(200).send(userDocs)
 })
 
 //GET: GET DOCUMENT BY ID
@@ -39,3 +41,17 @@ router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
 //DELETE: DELETE DOCUMENT
 
 module.exports = router;
+		// .find({ author: 'Moses', isPublished: true })
+		//.find({price: { $gte : 10, $lte: 20 }})
+		//.find({price: {$in: [10, 15, 20] }})
+		// .find()
+		// .or([{author: 'Moses'},{isPublished: true}])
+		// .and([{author: 'Moses'},{isPublished: true}])
+		// .find({ author: /^Moses/ })
+		// .find({ author: /ses$/i })
+		// .find({ author: /.*Moses.*/ })
+		// .skip((pageNumber - 1) * pageSize)
+		// .limit(pageSize)
+		// .sort({ name: 1 })
+		// .select({ name: 1, tags: 1 });
+		// .count();
