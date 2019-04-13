@@ -23,8 +23,8 @@ const docSchema = new Schema({
 	},
 	access: {
 		type: String,
-		enum: [ 'public', 'private' ],
-		required: true,
+		enum: [ 'public', 'private','role' ],
+		default: 'public'
 	},
 	categoryId: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -42,6 +42,14 @@ const docSchema = new Schema({
 		type: Boolean,
 		default: false,
 	},
+	publishDate:{
+		type: Date,
+		set: v => new Date(v),
+		default: Date.now()
+	},
+	role:{
+		type:mongoose.Schema.Types.ObjectId,
+	}
 });
 
 //model for documents

@@ -37,6 +37,10 @@ const roleSchema = new Schema({
 });
 
 //using schema to generate Role model
-const Role = mongoose.model('roles', roleSchema);
+const Role = mongoose.model('Role', roleSchema);
+
+// Role.create({
+// 	title: 'regular',
+// });
 
 export { Role };

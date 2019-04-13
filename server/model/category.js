@@ -14,6 +14,6 @@ const cateSchema = new Schema({
 	},
 });
 
-const Category = mongoose.model('category', cateSchema);
+const Category = mongoose.model('Category', cateSchema);
 
 export { Category };
