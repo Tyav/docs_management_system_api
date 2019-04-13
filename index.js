@@ -8,6 +8,8 @@ const app = express();
 //IMPORT ROUTES
 import users from './api/v1/routes/users';
 import documents from './api/v1/routes/document';
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 
 import db from './startup/db';
 db(mongoose);

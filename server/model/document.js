@@ -23,7 +23,7 @@ const docSchema = new Schema({
 	},
 	access: {
 		type: String,
-		enum: [ 'public', 'private' ],
+		enum: [ 'public', 'private','role' ],
 		default: 'public'
 	},
 	categoryId: {
@@ -42,6 +42,10 @@ const docSchema = new Schema({
 		type: Boolean,
 		default: false,
 	},
+	published:{
+		type: Date,
+		set: v => new Date(v)
+	}
 });
 
 //model for documents

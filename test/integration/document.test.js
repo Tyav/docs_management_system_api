@@ -13,33 +13,32 @@ User.deleteMany({});
 Role.deleteMany({});
 
 describe('TEST FOR DOCUMENTS', () => {
-	let action;
-	let adminRole;
-	let regularRole;
-	let adminUser
-	let regularUser
-	let regularUser2
-	let scifi;
-	let isLogin;
-	let isAdmin;
-	beforeAll(async ()=>{
-
+		let action;
+		let adminRole;
+		let regularRole;
+		let adminUser
+		let regularUser
+		let regularUser2
+		let scifi;
+		let isLogin;
+		let isAdmin;
+	
 		scifi = new Category({
 			title: 'scifi',
 		});
-		await scifi.save();
+		scifi.save();
 		action = new Category({
 			title: 'action',
 		});
-		await action.save();
+		action.save();
 		regularRole = new Role({
 			title: 'regular',
 		});
-		await regularRole.save();
+		regularRole.save();
 		adminRole = new Role({
 			title: 'admin',
 		});
-		await adminRole.save();
+		adminRole.save();
 		adminUser = new User({
 			username: 'adminUserName',
 			name: {
@@ -50,7 +49,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			password: 'testPassword',
 			roleId: adminRole._id,
 		})
-		await adminUser.save()
+		adminUser.save()
 		isAdmin = adminUser.generateAuthToken(true, true)
 		regularUser= new User({
 			username: 'reg1UserName',
@@ -62,7 +61,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			password: 'reg1Password',
 			roleId: regularRole._id,
 		})
-		await regularUser.save()
+		regularUser.save()
 		isLogin = regularUser.generateAuthToken(true)
 		regularUser2= new User({
 			username: 'reg2UserName',
@@ -74,9 +73,9 @@ describe('TEST FOR DOCUMENTS', () => {
 			password: 'testPassword',
 			roleId: regularRole._id,
 		})
-		await regularUser2.save()
+		regularUser2.save()
 
-	})
+	
 	beforeEach(async () => {
 		//app = server;
 	});
@@ -103,7 +102,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			})
 			const docs = await Document.findOne({title: 'testDoc'});
 			expect(docs).toHaveProperty('title','testDoc')
-		},30000);
+		},50000);
 		it('should return document object and status code of 200', async() => {
 			const res = await request(app).post('/api/documents/').set('x-auth-token',isLogin).send({
 				title: 'testDoc',
@@ -114,7 +113,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			})
 			expect(res.body).toHaveProperty('title','testDoc')
 			expect(res.status).toBe(200)
-		},30000);
+		},50000);
 		it('should return 401 if user is not logged in', async() => {
 			const res = await request(app).post('/api/documents/').send({
 				title: 'testDoc',
@@ -124,7 +123,7 @@ describe('TEST FOR DOCUMENTS', () => {
 				categoryId: scifi._id
 			})
 			expect(res.status).toBe(401)
-		},30000);	
+		},50000);	
 		it('should return 400 if users inputs are wrong', async() => {
 			const res = await request(app).post('/api/documents/').set('x-auth-token',isLogin).send({
 				title: '',
@@ -134,7 +133,7 @@ describe('TEST FOR DOCUMENTS', () => {
 				categoryId: scifi._id
 			})
 			expect(res.status).toBe(400)
-		},30000);	
+		},50000);	
 		it('created document should have a created date', async() => {
 			const res = await request(app).post('/api/documents/').set('x-auth-token',isLogin).send({
 				title: 'test',
@@ -144,7 +143,7 @@ describe('TEST FOR DOCUMENTS', () => {
 				categoryId: scifi._id
 			})
 			expect(res.body.createdAt).toBeDefined()
-		},30000);	
+		},50000);	
 		it('created document should be set to public by default if not specified', async() => {
 			const res = await request(app).post('/api/documents/').set('x-auth-token',isLogin).send({
 				title: 'test',
@@ -153,11 +152,28 @@ describe('TEST FOR DOCUMENTS', () => {
 				categoryId: scifi._id
 			})
 			expect(res.body.access).toBe('public')
-		},30000);	
+		},50000);	
 	});
 	describe('/GET: all documents', () => {
-		it('', () => {
-			
+		beforeEach(async ()=>{
+			let docPayload = [{
+				title: 'testDoc1',
+				content: 'I am a basic test doc',
+				creatorId: regularUser._id,
+				access: 'public',
+				categoryId: scifi._id
+			},{
+				title: 'testDoc2',
+				content: 'I am a basic test doc2',
+				creatorId: regularUser._id,
+				access: 'private',
+				categoryId: scifi._id
+			}]
+			await Document.insertMany(docPayload,{ordered: false}).catch((err=>{}))
+		})
+		it('should return all documents if request is made by an admin', async() => {
+			const res = await request(app).get('/api/documents/').set('x-auth-token', isAdmin)
+			expect(res.body.length).toBe(2)
 		});
 	});
 	//GET: GET ALL DOCUMENT
