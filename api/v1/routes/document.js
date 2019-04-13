@@ -18,6 +18,8 @@ router.post('/',[tokenAuth, loginAuth], async (req, res) => {
   const {error} = validateDoc(req.body)
   if (error)return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
 
+  //check if access is set to role 
+  if (req.body.access === 'role') req.body.role = req.user.role
   const doc = new Document(req.body);
   await doc.save();
   res.status(200).send(doc)

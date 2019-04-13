@@ -134,7 +134,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access: 'role',
 					categoryId: scifi._id,
 				});
-				expect(res.body).toHaveProperty('role', regularUser.roleId);
+				expect(res.body.role).toBe(regularUser.roleId.toHexString());
 				expect(res.status).toBe(200);
 			},
 			50000,
