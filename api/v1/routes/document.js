@@ -25,11 +25,13 @@ router.post('/',[tokenAuth, loginAuth], async (req, res) => {
 
 //GET: GET ALL DOCUMENT
 router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
+  //verify that user is geniue and logged in with [tokenAuth, loginAuth]
   if (req.user.isAdmin === true){
+    //check if user is an admin, release all documents
     const adminDocs = await Document.find({});
     return res.status(200).send(adminDocs)
   }
-  console.log(req.user._id)
+  //release only public and users private documents
   const userDocs = await Document.find().or([{access: 'public'},{creatorId:req.user._id}])
   res.status(200).send(userDocs)
 })

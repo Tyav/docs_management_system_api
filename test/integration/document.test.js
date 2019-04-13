@@ -125,6 +125,21 @@ describe('TEST FOR DOCUMENTS', () => {
 			50000,
 		);
 		it(
+			'should assign a role property to the document if access is set to role',
+			async () => {
+				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
+					title: 'testDoc',
+					content: 'I am a basic test doc',
+					creatorId: regularUser._id,
+					access: 'role',
+					categoryId: scifi._id,
+				});
+				expect(res.body).toHaveProperty('role', regularUser.roleId);
+				expect(res.status).toBe(200);
+			},
+			50000,
+		);
+		it(
 			'should return 401 if user is not logged in',
 			async () => {
 				const res = await request(app).post('/api/documents/').send({
@@ -225,7 +240,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			50000,
 		);
 		it(
-			'should return documents with access type "role" where creators role matches users role',
+			'should return documents with access as role and if creator is has same role as user',
 			async () => {
 				const res = await request(app).get('/api/documents/').set('x-auth-token', isLogin2);
 				expect(res.body.length).toBe(2);

@@ -45,6 +45,9 @@ const docSchema = new Schema({
 	published:{
 		type: Date,
 		set: v => new Date(v)
+	},
+	role:{
+		type:mongoose.Schema.Types.ObjectId,
 	}
 });
 
