@@ -42,9 +42,10 @@ const docSchema = new Schema({
 		type: Boolean,
 		default: false,
 	},
-	published:{
+	publishDate:{
 		type: Date,
-		set: v => new Date(v)
+		set: v => new Date(v),
+		default: Date.now()
 	},
 	role:{
 		type:mongoose.Schema.Types.ObjectId,

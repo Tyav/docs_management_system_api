@@ -34,11 +34,10 @@ router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
 
   //get pagination values
   //set pageNumber
-  let pageNumber = Number(req.query.pageNumber) || 1;
+  let pageNumber = Number(req.query.pageNumber);
   //set pageSize
-  let pageSize = Number(req.query.pageSize) || 10;
+  let pageSize = Number(req.query.pageSize);
 
-console.log(pageNumber, pageSize)
 
   if (req.user.isAdmin === true){
     //check if user is an admin, release all documents
@@ -46,7 +45,7 @@ console.log(pageNumber, pageSize)
     //set number of values to skip
       .skip((pageNumber - 1) * pageSize)
     //number of values to display
-      .limit(pageSize)
+      .limit(pageSize).sort({ publishData: 1 })
 ;
     return res.status(200).send(adminDocs)
   }
@@ -58,18 +57,11 @@ console.log(pageNumber, pageSize)
     //set number of values to skip
     .skip((pageNumber - 1) * pageSize)
     //number of values to display
-    .limit(pageSize)
+    .limit(pageSize).sort({ publishData: -1 })
 
-  console.log(userDocs)
   res.status(200).send(userDocs)
 })
 
-router.get('/gome/', (req, res)=>{
-
-  let vaue = req.query.hope || 0
-  console.log(vaue)
-  res.send(typeof req.query.hope)
-})
 //GET: GET DOCUMENT BY ID
 
 //PUT: EDIT A DOCUMENT
@@ -77,20 +69,3 @@ router.get('/gome/', (req, res)=>{
 //DELETE: DELETE DOCUMENT
 
 module.exports = router;
-const pageNumber = 2;
-const pageSize = 10;
-
-		// .find({ author: 'Moses', isPublished: true })
-		//.find({price: { $gte : 10, $lte: 20 }})
-		//.find({price: {$in: [10, 15, 20] }})
-		// .find()
-		// .or([{author: 'Moses'},{isPublished: true}])
-		// .and([{author: 'Moses'},{isPublished: true}])
-		// .find({ author: /^Moses/ })
-		// .find({ author: /ses$/i })
-		// .find({ author: /.*Moses.*/ })
-		// .skip((pageNumber - 1) * pageSize)
-		// .limit(pageSize)
-		// .sort({ name: 1 })
-		// .select({ name: 1, tags: 1 });
-		// .count();
