@@ -208,7 +208,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			50000,
 		);
 	});
-	describe('/GET: all documents', () => {
+	describe('/GET: GET ALL DOCUMENTS', () => {
 		beforeAll(() => {
 			let docPayload = [
 				{
@@ -217,6 +217,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					creatorId: regularUser._id,
 					access: 'public',
 					categoryId: scifi._id,
+					publishDate: '4-4-2020'
 				},
 				{
 					title: 'testDoc2',
@@ -231,7 +232,8 @@ describe('TEST FOR DOCUMENTS', () => {
 					creatorId: regularUser._id,
 					access: 'role',
 					categoryId: scifi._id,
-					role: regularUser.roleId
+					role: regularUser.roleId,
+					publishDate: '4-4-1990'
 				},
 				{
 					title: 'testDoc4',
@@ -239,13 +241,17 @@ describe('TEST FOR DOCUMENTS', () => {
 					creatorId: veteranUser._id,
 					access: 'role',
 					categoryId: scifi._id,
-					role: veteranUser.roleId
+					role: veteranUser.roleId,
+					publishDate: '7-7-2019'
 				},
 
 
 			];
 			Document.insertMany(docPayload, { ordered: false }).catch((err) => {});
 		});
+		afterAll(()=>{
+			Document.deleteMany({})
+		})
 		it(
 			'should return all documents if request is made by an admin',
 			async () => {
@@ -278,8 +284,54 @@ describe('TEST FOR DOCUMENTS', () => {
 			},
 			50000,
 		);
+		it(
+			'should return documents sorted by published date',
+			async () => {
+				const res = await request(app).get('/api/documents/').set('x-auth-token', isAdmin);
+				expect(res.body[0].title).toBe('testDoc3');
+			},
+			50000,
+		);
+
 	});
-	//GET: GET ALL DOCUMENT
+	describe('GET: GET DOCUMENT BY ID', () => {
+		beforeAll(() => {
+			let docPayload = [
+				{
+					title: 'testDoc1',
+					content: 'I am a basic test doc',
+					creatorId: regularUser._id,
+					access: 'public',
+					categoryId: scifi._id,
+				},
+				{
+					title: 'testDoc2',
+					content: 'I am a basic test doc2',
+					creatorId: regularUser._id,
+					access: 'private',
+					categoryId: scifi._id,
+				},
+				{
+					title: 'testDoc3',
+					content: 'I am a basic test doc3',
+					creatorId: regularUser._id,
+					access: 'role',
+					categoryId: scifi._id,
+					role: regularUser.roleId
+				},
+				{
+					title: 'testDoc4',
+					content: 'I am a basic test doc4',
+					creatorId: veteranUser._id,
+					access: 'role',
+					categoryId: scifi._id,
+					role: veteranUser.roleId
+				},
+			];
+			Document.insertMany(docPayload, { ordered: false }).catch((err) => {});
+		});
+
+	});
 
 	//GET: GET DOCUMENT BY ID
 
