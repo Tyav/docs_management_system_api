@@ -16,12 +16,15 @@ describe('TEST FOR DOCUMENTS', () => {
 	let action;
 	let adminRole;
 	let regularRole;
+	let veteranRole;
 	let adminUser;
 	let regularUser;
-	let regularUser2;
+	let veteranUser;
+	let regularUser3;
 	let scifi;
 	let isLogin;
 	let isLogin2;
+	let isLogin3;
 	let isAdmin;
 
 	scifi = new Category({
@@ -36,6 +39,10 @@ describe('TEST FOR DOCUMENTS', () => {
 		title: 'regular',
 	});
 	regularRole.save();
+	veteranRole = new Role({
+		title: 'veteran',
+	});
+	veteranRole.save();
 	adminRole = new Role({
 		title: 'admin',
 	});
@@ -58,13 +65,26 @@ describe('TEST FOR DOCUMENTS', () => {
 			firstName: 'testFirstName',
 			lastName: 'testLastName',
 		},
-		email: 'test@test.com',
+		email: 'test1@test.com',
 		password: 'reg1Password',
 		roleId: regularRole._id,
 	});
 	regularUser.save();
 	isLogin = regularUser.generateAuthToken(true);
-	regularUser2 = new User({
+	regularUser3 = new User({
+		username: 'reg3UserName',
+		name: {
+			firstName: 'testFirstName',
+			lastName: 'testLastName',
+		},
+		email: 'test3@test.com',
+		password: 'reg1Password',
+		roleId: regularRole._id,
+	});
+	regularUser3.save();
+	isLogin3 = regularUser3.generateAuthToken(true);
+
+	veteranUser = new User({
 		username: 'reg2UserName',
 		name: {
 			firstName: 'testFirstName',
@@ -72,10 +92,10 @@ describe('TEST FOR DOCUMENTS', () => {
 		},
 		email: 'reg2@test.com',
 		password: 'testPassword',
-		roleId: regularRole._id,
+		roleId: veteranRole._id,
 	});
-	regularUser2.save();
-	isLogin2 =regularUser2.generateAuthToken(true)
+	veteranUser.save();
+	isLogin2 =veteranUser.generateAuthToken(true)
 
 	beforeEach(async () => {
 		//app = server;
@@ -100,7 +120,6 @@ describe('TEST FOR DOCUMENTS', () => {
 				await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
 					title: 'testDoc',
 					content: 'I am a basic test doc',
-					creatorId: regularUser._id,
 					access: 'public',
 					categoryId: scifi._id,
 				});
@@ -115,7 +134,6 @@ describe('TEST FOR DOCUMENTS', () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
 					title: 'testDoc',
 					content: 'I am a basic test doc',
-					creatorId: regularUser._id,
 					access: 'public',
 					categoryId: scifi._id,
 				});
@@ -130,7 +148,6 @@ describe('TEST FOR DOCUMENTS', () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
 					title: 'testDoc',
 					content: 'I am a basic test doc',
-					creatorId: regularUser._id,
 					access: 'role',
 					categoryId: scifi._id,
 				});
@@ -145,7 +162,6 @@ describe('TEST FOR DOCUMENTS', () => {
 				const res = await request(app).post('/api/documents/').send({
 					title: 'testDoc',
 					content: 'I am a basic test doc',
-					creatorId: regularUser._id,
 					access: 'public',
 					categoryId: scifi._id,
 				});
@@ -159,7 +175,6 @@ describe('TEST FOR DOCUMENTS', () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
 					title: '',
 					content: 'I am a basic test doc',
-					creatorId: regularUser._id,
 					access: 'public',
 					categoryId: scifi._id,
 				});
@@ -173,7 +188,6 @@ describe('TEST FOR DOCUMENTS', () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
 					title: 'test',
 					content: 'I am a basic test doc',
-					creatorId: regularUser._id,
 					access: 'public',
 					categoryId: scifi._id,
 				});
@@ -187,7 +201,6 @@ describe('TEST FOR DOCUMENTS', () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
 					title: 'test',
 					content: 'I am a basic test doc',
-					creatorId: regularUser._id,
 					categoryId: scifi._id,
 				});
 				expect(res.body.access).toBe('public');
@@ -218,7 +231,17 @@ describe('TEST FOR DOCUMENTS', () => {
 					creatorId: regularUser._id,
 					access: 'role',
 					categoryId: scifi._id,
+					role: regularUser.roleId
 				},
+				{
+					title: 'testDoc4',
+					content: 'I am a basic test doc4',
+					creatorId: veteranUser._id,
+					access: 'role',
+					categoryId: scifi._id,
+					role: veteranUser.roleId
+				},
+
 
 			];
 			Document.insertMany(docPayload, { ordered: false }).catch((err) => {});
@@ -227,7 +250,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return all documents if request is made by an admin',
 			async () => {
 				const res = await request(app).get('/api/documents/').set('x-auth-token', isAdmin);
-				expect(res.body.length).toBe(3);
+				expect(res.body.length).toBe(4);
 			},
 			50000,
 		);

@@ -18,8 +18,11 @@ router.post('/',[tokenAuth, loginAuth], async (req, res) => {
   const {error} = validateDoc(req.body)
   if (error)return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
 
-  //check if access is set to role 
+  //check if access is set to role then create a role property
   if (req.body.access === 'role') req.body.role = req.user.role
+  //set creatorId of document
+  req.body.creatorId = req.user._id
+
   const doc = new Document(req.body);
   await doc.save();
   res.status(200).send(doc)
@@ -33,8 +36,12 @@ router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
     const adminDocs = await Document.find({});
     return res.status(200).send(adminDocs)
   }
-  //release only public and users private documents
-  const userDocs = await Document.find().or([{access: 'public'},{creatorId:req.user._id}])
+
+  console.log(req.user.role)
+  //release only public and users private documents and documents set to same role as user
+  const userDocs = await Document.find().or([{access: 'public'},{creatorId:req.user._id}, {role: req.user.role}])
+
+  console.log(userDocs)
   res.status(200).send(userDocs)
 })
 
