@@ -24,6 +24,13 @@ router.post('/',[tokenAuth, loginAuth], async (req, res) => {
 });
 
 //GET: GET ALL DOCUMENT
+router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
+  if (req.user.isAdmin === true){
+    const adminDocs = await Document.find({});
+    return res.status(200).send(adminDocs)
+  }
+  
+})
 
 //GET: GET DOCUMENT BY ID
 
