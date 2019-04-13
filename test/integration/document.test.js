@@ -270,7 +270,14 @@ describe('TEST FOR DOCUMENTS', () => {
 			},
 			50000,
 		);
-
+		it(
+			'should return a given number of documents by query if requested',
+			async () => {
+				const res = await request(app).get('/api/documents/?pageNumber=1&pageSize=2').set('x-auth-token', isAdmin);
+				expect(res.body.length).toBe(2);
+			},
+			50000,
+		);
 	});
 	//GET: GET ALL DOCUMENT
 
