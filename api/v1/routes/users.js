@@ -106,7 +106,7 @@ router.post('/login', [ ifLogin ], async (req, res) => {
 });
 
 //LOGOUT USER [POST /users/logout]
-router.post('/logout', tokenAuth, (req, res) => {
+router.post('/logout', [tokenAuth], (req, res) => {
 	//check if user is logged in, send a 400 if not logged in
 	if (!req.user.isLogged) return res.status(401).send({ Error: 401, message: 'Already logged out' });
 

@@ -28,23 +28,48 @@ router.post('/',[tokenAuth, loginAuth], async (req, res) => {
   res.status(200).send(doc)
 });
 
-//GET: GET ALL DOCUMENT
+//GET: GET ALL DOCUMENT and with parameters [pageNumber, pagesize]
 router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
   //verify that user is geniue and logged in with [tokenAuth, loginAuth]
+
+  //get pagination values
+  //set pageNumber
+  let pageNumber = Number(req.query.pageNumber) || 1;
+  //set pageSize
+  let pageSize = Number(req.query.pageSize) || 10;
+
+console.log(pageNumber, pageSize)
+
   if (req.user.isAdmin === true){
     //check if user is an admin, release all documents
-    const adminDocs = await Document.find({});
+    const adminDocs = await Document.find()    
+    //set number of values to skip
+      .skip((pageNumber - 1) * pageSize)
+    //number of values to display
+      .limit(pageSize)
+;
     return res.status(200).send(adminDocs)
   }
 
-  console.log(req.user.role)
-  //release only public and users private documents and documents set to same role as user
-  const userDocs = await Document.find().or([{access: 'public'},{creatorId:req.user._id}, {role: req.user.role}])
+
+  const userDocs = await Document.find()
+    //release only public and users private documents and documents set to same role as user
+    .or([{access: 'public'},{creatorId:req.user._id}, {role: req.user.role}])
+    //set number of values to skip
+    .skip((pageNumber - 1) * pageSize)
+    //number of values to display
+    .limit(pageSize)
 
   console.log(userDocs)
   res.status(200).send(userDocs)
 })
 
+router.get('/gome/', (req, res)=>{
+
+  let vaue = req.query.hope || 0
+  console.log(vaue)
+  res.send(typeof req.query.hope)
+})
 //GET: GET DOCUMENT BY ID
 
 //PUT: EDIT A DOCUMENT
@@ -52,6 +77,9 @@ router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
 //DELETE: DELETE DOCUMENT
 
 module.exports = router;
+const pageNumber = 2;
+const pageSize = 10;
+
 		// .find({ author: 'Moses', isPublished: true })
 		//.find({price: { $gte : 10, $lte: 20 }})
 		//.find({price: {$in: [10, 15, 20] }})
