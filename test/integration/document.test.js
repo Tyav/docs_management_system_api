@@ -21,6 +21,7 @@ describe('TEST FOR DOCUMENTS', () => {
 	let regularUser2;
 	let scifi;
 	let isLogin;
+	let isLogin2;
 	let isAdmin;
 
 	scifi = new Category({
@@ -74,6 +75,7 @@ describe('TEST FOR DOCUMENTS', () => {
 		roleId: regularRole._id,
 	});
 	regularUser2.save();
+	isLogin2 =regularUser2.generateAuthToken(true)
 
 	beforeEach(async () => {
 		//app = server;
@@ -195,6 +197,14 @@ describe('TEST FOR DOCUMENTS', () => {
 					access: 'private',
 					categoryId: scifi._id,
 				},
+				{
+					title: 'testDoc3',
+					content: 'I am a basic test doc3',
+					creatorId: regularUser._id,
+					access: 'role',
+					categoryId: scifi._id,
+				},
+
 			];
 			Document.insertMany(docPayload, { ordered: false }).catch((err) => {});
 		});
@@ -202,7 +212,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return all documents if request is made by an admin',
 			async () => {
 				const res = await request(app).get('/api/documents/').set('x-auth-token', isAdmin);
-				expect(res.body.length).toBe(2);
+				expect(res.body.length).toBe(3);
 			},
 			50000,
 		);
@@ -210,10 +220,19 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return all only documents that a public and created by the logged in user if not admin',
 			async () => {
 				const res = await request(app).get('/api/documents/').set('x-auth-token', isLogin);
+				expect(res.body.length).toBe(3);
+			},
+			50000,
+		);
+		it(
+			'should return documents with access type "role" where creators role matches users role',
+			async () => {
+				const res = await request(app).get('/api/documents/').set('x-auth-token', isLogin2);
 				expect(res.body.length).toBe(2);
 			},
 			50000,
 		);
+
 	});
 	//GET: GET ALL DOCUMENT
 
