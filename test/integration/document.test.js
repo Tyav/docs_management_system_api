@@ -357,7 +357,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return status of 401 if user is not logged in',
 			async () => {
 				const res = await request(app).get(`/api/documents/${mongoose.Types.ObjectId()}`);
-				expect(res.status).toBe(404);
+				expect(res.status).toBe(401);
 			},
 			50000,
 		);

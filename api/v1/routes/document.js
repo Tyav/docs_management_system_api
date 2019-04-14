@@ -65,15 +65,24 @@ router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
 })
 
 //GET: GET DOCUMENT BY ID
-router.get('/:id', async (req, res)=>{
+router.get('/:id',[tokenAuth,loginAuth], async (req, res)=>{
 
+  if (req.user.isAdmin === true){
+    const adminDoc = await Document.findOne({_id:req.params.id})
+    if (!adminDoc) return res.status(404).send({ Error: 404, message: 'Document not found' })
+    return res.status(200).send(adminDoc)
+  }
 
   //query the db for the document
   const doc = await Document.findOne({_id:req.params.id})
+    //release only public and users private documents and documents set to same role as user
+    .or([{access: 'public'},{creatorId:req.user._id}, {role: req.user.role}])
     //select a set of informations to release
     .select('_id title content createdAt creatorId access categoryId');
   //check if doc exist
+  console.log(doc)
   if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' })
+  //check if doc access is private
 
   res.status(200).send(doc)
         
