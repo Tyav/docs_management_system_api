@@ -575,20 +575,23 @@ describe('TEST FOR DOCUMENTS', () => {
 		afterAll(() => {
 			Document.deleteMany({});
 		});
-		it('should return 200 on successful delete', async() => {
-			const res = await request(app).delete(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin)
+		it('should return 200 on successful delete', async () => {
+			const res = await request(app).delete(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin);
 			expect(res.status).toBe(200);
 			expect(res.body.message).toBe('Document Deleted');
-	});
-		
-		//200 on successful delete
+		});
+		it('should return 401 if user is not logged in', async () => {
+			const res = await request(app).delete(`/api/documents/${publicDoc1._id}`);
+			expect(res.status).toBe(401);
+			expect(res.body.message).toBe('Access denied, Log in');
+		});
+
 		//401 if user is not logged in
 		//404 if user is not document creator aside admin
 		//if document has been soft deleted, return 404 to yes
 		//completely delete if action is performed by admin
 		//make a soft delete if user is not admin
 		//
-
 	});
 	//DELETE: DELETE DOCUMENT
 });
