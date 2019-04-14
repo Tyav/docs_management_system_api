@@ -77,7 +77,6 @@ router.get('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 		//select a set of informations to release
 		.select('_id title content createdAt creatorId access categoryId');
 	//check if doc exist
-	console.log(doc);
 	if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' });
 	//check if doc access is private
 
@@ -107,16 +106,39 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 	const modifiedAt = Date.now();
 	const deleted = doc.deleted;
 	const publishDate = doc.publishDate;
-	const role =	req.body.access === 'role' ? req.user.role : null;
-  //Edit document.
-  const editDoc = await Document.findOneAndUpdate({_id: doc._id},{
-    $set:{
-      title, content, creatorId, access, categoryId, modifiedAt, publishDate, role
-    }
-  },{new:true})
-	res.status(200).send(_.pick(editDoc,'_id title content creatorId access categoryId modifiedAt publishDate role'.split(' ')));
+	const role =
+
+			req.body.access === 'role' ? req.user.role :
+			null;
+	//Edit document.
+	const editDoc = await Document.findOneAndUpdate(
+		{ _id: doc._id },
+		{
+			$set : {
+				title,
+				content,
+				creatorId,
+				access,
+				categoryId,
+				modifiedAt,
+				publishDate,
+				role,
+			},
+		},
+		{ new: true },
+	);
+	res.status(200).send(_.pick(editDoc, '_id title content creatorId access categoryId modifiedAt publishDate role'.split(' ')));
 });
 
 //DELETE: DELETE DOCUMENT
+router.delete('/:id', async (req, res) => {
+	//401 if user is not logged in
+	//404 if user is not document creator aside admin
+	//if document has been soft deleted, return 404 to yes
+	//completely delete if action is performed by admin
+	//make a soft delete if user is not admin 
+	//200 on successful delete
+	res.status(200).send({ Error: 200, message: 'Document Deleted' });
+});
 
 module.exports = router;
