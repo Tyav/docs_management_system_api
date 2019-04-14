@@ -337,6 +337,23 @@ describe('TEST FOR DOCUMENTS', () => {
 			},
 			50000,
 		);
+		it(
+			'should return status of 200 if successful',
+			async () => {
+				const res = await request(app).get(`/api/documents/${doc3._id}`).set('x-auth-token', isAdmin);
+				expect(res.status).toBe(200);
+			},
+			50000,
+		);
+		it(
+			'should return status of 404 if document is not found',
+			async () => {
+				const res = await request(app).get(`/api/documents/${mongoose.Types.ObjectId()}`).set('x-auth-token', isAdmin);
+				expect(res.status).toBe(404);
+			},
+			50000,
+		);
+
 	});
 
 	//GET: GET DOCUMENT BY ID
