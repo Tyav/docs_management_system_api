@@ -552,18 +552,20 @@ describe('TEST FOR DOCUMENTS', () => {
 		);
 	});
 	describe('/DELETE: DELETE DOCUMENT', () => {
+		let publicDoc1;
+		let privateDoc1;
 		beforeAll(() => {
 			publicDoc1 = new Document({
-				title      : 'testDoc5',
-				content    : 'I am a basic test doc5',
+				title      : 'testDoc14',
+				content    : 'I am a basic test doc14',
 				creatorId  : regularUser._id,
 				access     : 'public',
 				categoryId : scifi._id,
 			});
 			publicDoc1.save();
 			privateDoc1 = new Document({
-				title      : 'testDoc10',
-				content    : 'I am a basic test doc10',
+				title      : 'testDoc13',
+				content    : 'I am a basic test doc13',
 				creatorId  : regularUser._id,
 				access     : 'private',
 				categoryId : scifi._id,
@@ -573,6 +575,20 @@ describe('TEST FOR DOCUMENTS', () => {
 		afterAll(() => {
 			Document.deleteMany({});
 		});
+		it('should return 200 on successful delete', async() => {
+			const res = await request(app).delete(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin)
+			expect(res.status).toBe(200);
+			expect(res.body.message).toBe('Document Deleted');
+	});
+		
+		//200 on successful delete
+		//401 if user is not logged in
+		//404 if user is not document creator aside admin
+		//if document has been soft deleted, return 404 to yes
+		//completely delete if action is performed by admin
+		//make a soft delete if user is not admin
+		//
+
 	});
 	//DELETE: DELETE DOCUMENT
 });
