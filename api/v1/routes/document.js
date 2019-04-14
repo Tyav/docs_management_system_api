@@ -107,7 +107,7 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 	const modifiedAt = Date.now();
 	const deleted = doc.deleted;
 	const publishDate = doc.publishDate;
-	const role =	req.body.access === 'role' ? req.user.role : doc.role;
+	const role =	req.body.access === 'role' ? req.user.role : null;
   //Edit document.
   const editDoc = await Document.findOneAndUpdate({_id: doc._id},{
     $set:{

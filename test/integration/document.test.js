@@ -22,71 +22,71 @@ describe('TEST FOR DOCUMENTS', () => {
 	let isLogin3;
 	let isAdmin;
 	scifi = new Category({
-		title: 'scifi',
+		title : 'scifi',
 	});
 	scifi.save();
 	action = new Category({
-		title: 'action',
+		title : 'action',
 	});
 	action.save();
 	regularRole = new Role({
-		title: 'regular',
+		title : 'regular',
 	});
 	regularRole.save();
 	veteranRole = new Role({
-		title: 'veteran',
+		title : 'veteran',
 	});
 	veteranRole.save();
 	adminRole = new Role({
-		title: 'admin',
+		title : 'admin',
 	});
 	adminRole.save();
 	adminUser = new User({
-		username: 'adminUserName',
-		name: {
-			firstName: 'testFirstName',
-			lastName: 'testLastName',
+		username : 'adminUserName',
+		name     : {
+			firstName : 'testFirstName',
+			lastName  : 'testLastName',
 		},
-		email: 'admin@test.com',
-		password: 'testPassword',
-		roleId: adminRole._id,
+		email    : 'admin@test.com',
+		password : 'testPassword',
+		roleId   : adminRole._id,
 	});
 	adminUser.save();
 	isAdmin = adminUser.generateAuthToken(true, true);
 	regularUser = new User({
-		username: 'reg1UserName',
-		name: {
-			firstName: 'testFirstName',
-			lastName: 'testLastName',
+		username : 'reg1UserName',
+		name     : {
+			firstName : 'testFirstName',
+			lastName  : 'testLastName',
 		},
-		email: 'test1@test.com',
-		password: 'reg1Password',
-		roleId: regularRole._id,
+		email    : 'test1@test.com',
+		password : 'reg1Password',
+		roleId   : regularRole._id,
 	});
 	regularUser.save();
 	isLogin = regularUser.generateAuthToken(true);
 	regularUser3 = new User({
-		username: 'reg3UserName',
-		name: {
-			firstName: 'testFirstName',
-			lastName: 'testLastName',
+		username : 'reg3UserName',
+		name     : {
+			firstName : 'testFirstName',
+			lastName  : 'testLastName',
 		},
-		email: 'test3@test.com',
-		password: 'reg1Password',
-		roleId: regularRole._id,
+		email    : 'test3@test.com',
+		password : 'reg1Password',
+		roleId   : regularRole._id,
 	});
 	regularUser3.save();
 	isLogin3 = regularUser3.generateAuthToken(true);
 
 	veteranUser = new User({
-		username: 'reg2UserName',
-		name: {
-			firstName: 'testFirstName',
-			lastName: 'testLastName',
+		username : 'reg2UserName',
+		name     : {
+			firstName : 'testFirstName',
+			lastName  : 'testLastName',
 		},
-		email: 'reg2@test.com',
-		password: 'testPassword',
-		roleId: veteranRole._id,
+		email    : 'reg2@test.com',
+		password : 'testPassword',
+		roleId   : veteranRole._id,
 	});
 	veteranUser.save();
 	isLogin2 = veteranUser.generateAuthToken(true);
@@ -115,10 +115,10 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should create a document: /api/documents',
 			async () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
-					title: 'testDoc1',
-					content: 'I am a basic test doc1',
-					access: 'public',
-					categoryId: scifi._id,
+					title      : 'testDoc1',
+					content    : 'I am a basic test doc1',
+					access     : 'public',
+					categoryId : scifi._id,
 				});
 				const docs = await Document.findOne({ title: 'testDoc1' });
 				expect(docs).toHaveProperty('title', 'testDoc1');
@@ -129,10 +129,10 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return document object and status code of 200',
 			async () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
-					title: 'testDoc2',
-					content: 'I am a basic test doc2',
-					access: 'public',
-					categoryId: scifi._id,
+					title      : 'testDoc2',
+					content    : 'I am a basic test doc2',
+					access     : 'public',
+					categoryId : scifi._id,
 				});
 				expect(res.body).toHaveProperty('title', 'testDoc2');
 				expect(res.status).toBe(200);
@@ -143,10 +143,10 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should assign a role property to the document if access is set to role',
 			async () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
-					title: 'testDoc3',
-					content: 'I am a basic test doc3',
-					access: 'role',
-					categoryId: scifi._id,
+					title      : 'testDoc3',
+					content    : 'I am a basic test doc3',
+					access     : 'role',
+					categoryId : scifi._id,
 				});
 				expect(res.body.role).toBe(regularUser.roleId.toHexString());
 				expect(res.status).toBe(200);
@@ -157,10 +157,10 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return 401 if user is not logged in',
 			async () => {
 				const res = await request(app).post('/api/documents/').send({
-					title: 'testDoc4',
-					content: 'I am a basic test doc4',
-					access: 'public',
-					categoryId: scifi._id,
+					title      : 'testDoc4',
+					content    : 'I am a basic test doc4',
+					access     : 'public',
+					categoryId : scifi._id,
 				});
 				expect(res.status).toBe(401);
 			},
@@ -170,10 +170,10 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return 400 if users inputs are wrong',
 			async () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
-					title: '',
-					content: 'I am a basic test doc5',
-					access: 'public',
-					categoryId: scifi._id,
+					title      : '',
+					content    : 'I am a basic test doc5',
+					access     : 'public',
+					categoryId : scifi._id,
 				});
 				expect(res.status).toBe(400);
 			},
@@ -183,10 +183,10 @@ describe('TEST FOR DOCUMENTS', () => {
 			'created document should have a created date',
 			async () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
-					title: 'test',
-					content: 'I am a basic test doc6',
-					access: 'public',
-					categoryId: scifi._id,
+					title      : 'test',
+					content    : 'I am a basic test doc6',
+					access     : 'public',
+					categoryId : scifi._id,
 				});
 				expect(res.body.createdAt).toBeDefined();
 			},
@@ -196,9 +196,9 @@ describe('TEST FOR DOCUMENTS', () => {
 			'created document should be set to public by default if not specified',
 			async () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
-					title: 'test7',
-					content: 'I am a basic test doc78',
-					categoryId: scifi._id,
+					title      : 'test7',
+					content    : 'I am a basic test doc78',
+					categoryId : scifi._id,
 				});
 				expect(res.body.access).toBe('public');
 			},
@@ -209,40 +209,40 @@ describe('TEST FOR DOCUMENTS', () => {
 		beforeAll(() => {
 			let docPayload = [
 				{
-					title: 'testDoc1',
-					content: 'I am a basic test doc',
-					creatorId: regularUser._id,
-					access: 'public',
-					categoryId: scifi._id,
-					publishDate: '4-4-2020',
+					title       : 'testDoc1',
+					content     : 'I am a basic test doc',
+					creatorId   : regularUser._id,
+					access      : 'public',
+					categoryId  : scifi._id,
+					publishDate : '4-4-2020',
 				},
 				{
-					title: 'testDoc2',
-					content: 'I am a basic test doc2',
-					creatorId: regularUser._id,
-					access: 'private',
-					categoryId: scifi._id,
+					title      : 'testDoc2',
+					content    : 'I am a basic test doc2',
+					creatorId  : regularUser._id,
+					access     : 'private',
+					categoryId : scifi._id,
 				},
 				{
-					title: 'testDoc3',
-					content: 'I am a basic test doc3',
-					creatorId: regularUser._id,
-					access: 'role',
-					categoryId: scifi._id,
-					role: regularUser.roleId,
-					publishDate: '4-4-1990',
+					title       : 'testDoc3',
+					content     : 'I am a basic test doc3',
+					creatorId   : regularUser._id,
+					access      : 'role',
+					categoryId  : scifi._id,
+					role        : regularUser.roleId,
+					publishDate : '4-4-1990',
 				},
 				{
-					title: 'testDoc4',
-					content: 'I am a basic test doc4',
-					creatorId: veteranUser._id,
-					access: 'role',
-					categoryId: scifi._id,
-					role: veteranUser.roleId,
-					publishDate: '7-7-2019',
+					title       : 'testDoc4',
+					content     : 'I am a basic test doc4',
+					creatorId   : veteranUser._id,
+					access      : 'role',
+					categoryId  : scifi._id,
+					role        : veteranUser.roleId,
+					publishDate : '7-7-2019',
 				},
 			];
-			Document.insertMany(docPayload, { ordered: false }).catch((err) => {});
+			Document.insertMany(docPayload, { ordered: false }).catch(err => {});
 		});
 		afterAll(() => {
 			Document.deleteMany({});
@@ -295,43 +295,43 @@ describe('TEST FOR DOCUMENTS', () => {
 		let roleDoc2;
 		beforeAll(() => {
 			publicDoc1 = new Document({
-				title: 'testDoc5',
-				content: 'I am a basic test doc5',
-				creatorId: regularUser._id,
-				access: 'public',
-				categoryId: scifi._id,
+				title      : 'testDoc5',
+				content    : 'I am a basic test doc5',
+				creatorId  : regularUser._id,
+				access     : 'public',
+				categoryId : scifi._id,
 			});
 			publicDoc1.save();
 			privateDoc1 = new Document({
-				title: 'testDoc10',
-				content: 'I am a basic test doc10',
-				creatorId: regularUser._id,
-				access: 'private',
-				categoryId: scifi._id,
+				title      : 'testDoc10',
+				content    : 'I am a basic test doc10',
+				creatorId  : regularUser._id,
+				access     : 'private',
+				categoryId : scifi._id,
 			});
 			privateDoc1.save();
 			roleDoc1 = new Document({
-				title: 'testDoc9',
-				content: 'I am a basic test doc9',
-				creatorId: regularUser._id,
-				access: 'role',
-				categoryId: scifi._id,
-				role: regularUser.roleId,
+				title      : 'testDoc9',
+				content    : 'I am a basic test doc9',
+				creatorId  : regularUser._id,
+				access     : 'role',
+				categoryId : scifi._id,
+				role       : regularUser.roleId,
 			});
 			roleDoc1.save();
 			roleDoc2 = new Document({
-				title: 'testDoc8',
-				content: 'I am a basic test doc8',
-				creatorId: veteranUser._id,
-				access: 'role',
-				categoryId: scifi._id,
-				role: veteranUser.roleId,
+				title      : 'testDoc8',
+				content    : 'I am a basic test doc8',
+				creatorId  : veteranUser._id,
+				access     : 'role',
+				categoryId : scifi._id,
+				role       : veteranUser.roleId,
 			});
 			roleDoc2.save();
 		});
-		afterAll(async ()=>{
-			await Document.deleteMany({})
-		})
+		afterAll(async () => {
+			await Document.deleteMany({});
+		});
 		it(
 			'should return the document with the given ID',
 			async () => {
@@ -377,7 +377,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			async () => {
 				const res = await request(app).get(`/api/documents/${privateDoc1._id}`).set('x-auth-token', isAdmin);
 				expect(res.status).toBe(200);
-				expect(res.body).toHaveProperty('title', privateDoc1.title)
+				expect(res.body).toHaveProperty('title', privateDoc1.title);
 			},
 			50000,
 		);
@@ -386,7 +386,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			async () => {
 				const res = await request(app).get(`/api/documents/${privateDoc1._id}`).set('x-auth-token', isLogin);
 				expect(res.status).toBe(200);
-				expect(res.body).toHaveProperty('title', privateDoc1.title)
+				expect(res.body).toHaveProperty('title', privateDoc1.title);
 			},
 			50000,
 		);
@@ -395,7 +395,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			async () => {
 				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isLogin2);
 				expect(res.status).toBe(404);
-				expect(res.body.message).toBe('Document not found')
+				expect(res.body.message).toBe('Document not found');
 			},
 			50000,
 		);
@@ -405,110 +405,174 @@ describe('TEST FOR DOCUMENTS', () => {
 		let privateDoc1;
 		beforeAll(() => {
 			publicDoc1 = new Document({
-				title: 'testDoc5',
-				content: 'I am a basic test doc5',
-				creatorId: regularUser._id,
-				access: 'public',
-				categoryId: scifi._id,
+				title      : 'testDoc5',
+				content    : 'I am a basic test doc5',
+				creatorId  : regularUser._id,
+				access     : 'public',
+				categoryId : scifi._id,
 			});
 			publicDoc1.save();
 			privateDoc1 = new Document({
-				title: 'testDoc10',
-				content: 'I am a basic test doc10',
-				creatorId: regularUser._id,
-				access: 'private',
-				categoryId: scifi._id,
+				title      : 'testDoc10',
+				content    : 'I am a basic test doc10',
+				creatorId  : regularUser._id,
+				access     : 'private',
+				categoryId : scifi._id,
 			});
 			privateDoc1.save();
-		})
-		it('should return 401 if user is not logged in', async() => {
-			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).send({
-				title: 'testDoc11',
-				content: 'I am a basic test doc11',
-				access: 'private',
-			});
-			expect(res.status).toBe(401);
-			expect(res.body.message).toBe('Access denied, Log in')
-		},50000);
-		it('should allow only its creator access to modify content', async() => {
-			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin2).send({
-				title: 'testDoc12',
-				content: 'I am a basic test doc12',
-				access: 'private',
-			});
-			expect(res.status).toBe(401);
-			expect(res.body.message).toBe('Access denied, Not an author')
-		},50000);
-		it('should return 404 if document to edited does not exist', async() => {
-			const res = await request(app).put(`/api/documents/${mongoose.Types.ObjectId()}`).set('x-auth-token', isLogin2).send({
-				title: 'testDoc12',
-				content: 'I am a basic test doc12',
-				access: 'private',
-			});
-			expect(res.status).toBe(404);
-			expect(res.body.message).toBe('Document not found')
-		},50000);
-		it('should return 400 if the payload to edit document is not of required standard', async() => {
-			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin2).send({
-				title: '',
-				content: 'I am a basic test doc12',
-				access: 'private',
-			});
-			expect(res.status).toBe(400);
-		},50000);
-		it('should return 200 if the document is edited', async() => {
-			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
-				title: 'newTitle',
-				content: 'I am a basic test doc12',
-				access: 'private',
-			});
-			expect(res.status).toBe(200);
-			expect(res.body).toHaveProperty('title', 'newTitle');
-		},50000);
-		it('should create a modifiedAt property that holds a date value.', async() => {
-			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
-				title: 'newTitle',
-				content: 'I am a basic test doc12',
-				access: 'private',
-			});
-			expect(res.status).toBe(200);
-			expect(new Date(res.body.modifiedAt).toDateString()).toMatch(new Date().toDateString());
-		},50000);
-		it('should set document role if user specifies to change the document access to role.', async() => {
-			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
-				title: 'newTitle',
-				content: 'I am a basic test doc12',
-				access: 'role',
-			});
-			expect(res.status).toBe(200);
-			expect(res.body.role).toBe(regularUser.roleId.toHexString());
-		},50000);
-		it('should create a modifiedAt property that holds a date value.', async() => {
-			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
-				title: 'newTitle',
-				content: 'I am a basic test doc12',
-				access: 'private',
-			});
-			expect(res.status).toBe(200);
-			expect(new Date(res.body.modifiedAt).toDateString()).toMatch(new Date().toDateString());
-		},50000);
-		it('should create a modifiedAt property that holds a date value.', async() => {
-			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
-				title: 'newTitle',
-				content: 'I am a basic test doc12',
-				access: 'private',
-			});
-			expect(res.status).toBe(200);
-			expect(new Date(res.body.modifiedAt).toDateString()).toMatch(new Date().toDateString());
-		},50000);
-
-
-		//users can only edit document created by them: success-200
-		//documents that are edited should have a modified date property: modifiedAt
-		
+		});
+		afterAll(() => {
+			Document.deleteMany({});
+		});
+		it(
+			'should return 401 if user is not logged in',
+			async () => {
+				const res = await request(app).put(`/api/documents/${publicDoc1._id}`).send({
+					title   : 'testDoc11',
+					content : 'I am a basic test doc11',
+					access  : 'private',
+				});
+				expect(res.status).toBe(401);
+				expect(res.body.message).toBe('Access denied, Log in');
+			},
+			50000,
+		);
+		it(
+			'should allow only its creator access to modify content',
+			async () => {
+				const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin2).send({
+					title   : 'testDoc12',
+					content : 'I am a basic test doc12',
+					access  : 'private',
+				});
+				expect(res.status).toBe(401);
+				expect(res.body.message).toBe('Access denied, Not an author');
+			},
+			50000,
+		);
+		it(
+			'should return 404 if document to edited does not exist',
+			async () => {
+				const res = await request(app).put(`/api/documents/${mongoose.Types.ObjectId()}`).set('x-auth-token', isLogin2).send({
+					title   : 'testDoc12',
+					content : 'I am a basic test doc12',
+					access  : 'private',
+				});
+				expect(res.status).toBe(404);
+				expect(res.body.message).toBe('Document not found');
+			},
+			50000,
+		);
+		it(
+			'should return 400 if the payload to edit document is not of required standard',
+			async () => {
+				const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin2).send({
+					title   : '',
+					content : 'I am a basic test doc12',
+					access  : 'private',
+				});
+				expect(res.status).toBe(400);
+			},
+			50000,
+		);
+		it(
+			'should return 200 if the document is edited',
+			async () => {
+				const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+					title   : 'newTitle',
+					content : 'I am a basic test doc12',
+					access  : 'private',
+				});
+				expect(res.status).toBe(200);
+				expect(res.body).toHaveProperty('title', 'newTitle');
+			},
+			50000,
+		);
+		it(
+			'should create a modifiedAt property that holds a date value.',
+			async () => {
+				const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+					title   : 'newTitle',
+					content : 'I am a basic test doc12',
+					access  : 'private',
+				});
+				expect(res.status).toBe(200);
+				expect(new Date(res.body.modifiedAt).toDateString()).toMatch(new Date().toDateString());
+			},
+			50000,
+		);
+		it(
+			'should set document role if user specifies to change the document access to role.',
+			async () => {
+				const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+					title   : 'newTitle',
+					content : 'I am a basic test doc12',
+					access  : 'role',
+				});
+				expect(res.status).toBe(200);
+				expect(res.body.role).toBe(regularUser.roleId.toHexString());
+			},
+			50000,
+		);
+		it(
+			'should retain the access type of the document if not given in the body.',
+			async () => {
+				const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+					title   : 'newTitle',
+					content : 'I am a basic test doc12',
+				});
+				expect(res.status).toBe(200);
+				expect(res.body.access).toBe('role');
+			},
+			50000,
+		);
+		it(
+			'should retain the title of the document if not given in the body.',
+			async () => {
+				const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+					content : 'I am a basic test doc12',
+					access  : 'private',
+				});
+				expect(res.status).toBe(200);
+				expect(res.body.title).toBe('newTitle');
+			},
+			50000,
+		);
+		it(
+			'should set document content to previous content if user does not provide one.',
+			async () => {
+				const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+					title  : 'newTitle',
+					access : 'role',
+				});
+				expect(res.status).toBe(200);
+				expect(res.body.content).toBe('I am a basic test doc12');
+			},
+			50000,
+		);
 	});
-
-	//PUT: EDIT A DOCUMENT
-
+	describe('/DELETE: DELETE DOCUMENT', () => {
+		beforeAll(() => {
+			publicDoc1 = new Document({
+				title      : 'testDoc5',
+				content    : 'I am a basic test doc5',
+				creatorId  : regularUser._id,
+				access     : 'public',
+				categoryId : scifi._id,
+			});
+			publicDoc1.save();
+			privateDoc1 = new Document({
+				title      : 'testDoc10',
+				content    : 'I am a basic test doc10',
+				creatorId  : regularUser._id,
+				access     : 'private',
+				categoryId : scifi._id,
+			});
+			privateDoc1.save();
+		});
+		afterAll(() => {
+			Document.deleteMany({});
+		});
+	});
 	//DELETE: DELETE DOCUMENT
 });
