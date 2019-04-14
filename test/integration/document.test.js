@@ -329,6 +329,9 @@ describe('TEST FOR DOCUMENTS', () => {
 			});
 			roleDoc2.save();
 		});
+		afterAll(async ()=>{
+			await Document.deleteMany({})
+		})
 		it(
 			'should return the document with the given ID',
 			async () => {
@@ -383,13 +386,42 @@ describe('TEST FOR DOCUMENTS', () => {
 			async () => {
 				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isLogin2);
 				expect(res.status).toBe(404);
-				expect(res.body).toBe(null)
+				expect(res.body.message).toBe('Document not found')
 			},
 			50000,
 		);
 	});
-
-	//GET: GET DOCUMENT BY ID
+	describe('/PUT: EDIT A DOCUMENT', () => {
+		let publicDoc1;
+		let privateDoc1;
+		beforeAll(() => {
+			publicDoc1 = new Document({
+				title: 'testDoc5',
+				content: 'I am a basic test doc5',
+				creatorId: regularUser._id,
+				access: 'public',
+				categoryId: scifi._id,
+			});
+			publicDoc1.save();
+			privateDoc1 = new Document({
+				title: 'testDoc10',
+				content: 'I am a basic test doc10',
+				creatorId: regularUser._id,
+				access: 'private',
+				categoryId: scifi._id,
+			});
+			privateDoc1.save();
+		})
+		it('should return 401 if user is not logged in', async() => {
+			const res = await request(app).put(`/api/documents/${publicDoc1._id}`);
+			expect(res.status).toBe(401);
+			expect(res.body.message).toBe('Access denied, Log in')
+		},50000);
+		//user should be logged in before editing: 401,
+		//users can only edit document created by them: fail-401 || success-200
+		//documents that are edited should have a modified date property: modifiedAt
+		
+	});
 
 	//PUT: EDIT A DOCUMENT
 
