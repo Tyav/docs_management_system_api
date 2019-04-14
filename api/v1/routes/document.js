@@ -89,7 +89,7 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 
   const doc = await Document.findById(req.params.id);
   //check if doc exist: 404
-  //if (!doc) return
+  if (!doc) return res.status(404).send({Error: 404, message: 'Document not found'})
 
   //check if user is creator
   if (doc.creatorId.toHexString() !== req.user._id) return res.status(401).send({Error: 401, message: 'Access denied, Not an author'})
