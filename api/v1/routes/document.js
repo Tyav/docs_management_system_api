@@ -131,8 +131,10 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 });
 
 //DELETE: DELETE DOCUMENT
-router.delete('/:id', async (req, res) => {
-	//401 if user is not logged in
+router.delete('/:id',[tokenAuth],async (req, res) => {
+  
+  //401 if user is not logged in
+  		//check validity of document Id 404
 	//404 if user is not document creator aside admin
 	//if document has been soft deleted, return 404 to yes
 	//completely delete if action is performed by admin
