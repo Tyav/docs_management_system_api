@@ -72,7 +72,9 @@ router.get('/:id', async (req, res)=>{
   const doc = await Document.findOne({_id:req.params.id})
     //select a set of informations to release
     .select('_id title content createdAt creatorId access categoryId');
-console.log(doc)
+  //check if doc exist
+  if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' })
+
   res.status(200).send(doc)
         
 
