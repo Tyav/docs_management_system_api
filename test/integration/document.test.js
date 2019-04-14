@@ -197,7 +197,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			async () => {
 				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
 					title: 'test7',
-					content: 'I am a basic test doc7',
+					content: 'I am a basic test doc78',
 					categoryId: scifi._id,
 				});
 				expect(res.body.access).toBe('public');
@@ -449,17 +449,34 @@ describe('TEST FOR DOCUMENTS', () => {
 			expect(res.body.message).toBe('Document not found')
 		},50000);
 		it('should return 400 if the payload to edit document is not of required standard', async() => {
-			const res = await request(app).put(`/api/documents/${mongoose.Types.ObjectId()}`).set('x-auth-token', isLogin2).send({
+			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin2).send({
 				title: '',
 				content: 'I am a basic test doc12',
 				access: 'private',
 			});
-			expect(res.status).toBe(404);
-			expect(res.body.message).toBe('Document not found')
+			expect(res.status).toBe(400);
 		},50000);
+		it('should return 200 if the document is edited', async() => {
+			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+				title: 'newTitle',
+				content: 'I am a basic test doc12',
+				access: 'private',
+			});
+			expect(res.status).toBe(200);
+			expect(res.body).toHaveProperty('title', 'newTitle');
+		},50000);
+		it('should create a modifiedAt property that holds a date value.', async() => {
+			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+				title: 'newTitle',
+				content: 'I am a basic test doc12',
+				access: 'private',
+			});
+			expect(res.status).toBe(200);
+			expect(new Date(res.body.modifiedAt).toDateString()).toMatch(new Date().toDateString());
+		},50000);
+
 		//users can only edit document created by them: success-200
 		//documents that are edited should have a modified date property: modifiedAt
-		//update contents should be validated.
 		
 	});
 

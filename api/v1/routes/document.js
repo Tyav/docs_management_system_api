@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import { Document } from '../../../server/model/document';
-import { validateDoc } from '../../../server/validations/document';
+import { validateDoc, validateDocEdit } from '../../../server/validations/document';
 import adminAuth from '../utils/admin';
 import tokenAuth from '../utils/auth';
 import loginAuth from '../utils/isLogin';
@@ -86,17 +86,35 @@ router.get('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 
 //PUT: EDIT A DOCUMENT
 router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
+	//valdate payload
+	const { error } = validateDocEdit(req.body);
+	//update contents should be validated.
+	if (error) return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
 	//find document
 	const doc = await Document.findById(req.params.id);
 	//check if doc exist: 404
 	if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' });
+	//users can only edit document created by them: fail-401 || success-200
 	//check if user is creator
 	if (doc.creatorId.toHexString() !== req.user._id) return res.status(401).send({ Error: 401, message: 'Access denied, Not an author' });
-	//users can only edit document created by them: fail-401 || success-200
 	//documents that are edited should have a modified date property: modifiedAt
-	//update contents should be validated.
-
-	res.status(200).send();
+	const title = req.body.title || doc.title;
+	const content = req.body.content || doc.content;
+	const creatorId = req.body.creatorId || doc.creatorId;
+	const access = req.body.access || doc.access;
+	const categoryId = req.body.categoryId || doc.categoryId;
+	const createdAt = doc.createdAt;
+	const modifiedAt = Date.now();
+	const deleted = doc.deleted;
+	const publishDate = doc.publishDate;
+	const role =	req.body.access === 'role' ? req.user.role : doc.role;
+  //Edit document.
+  const editDoc = await Document.findOneAndUpdate({_id: doc._id},{
+    $set:{
+      title, content, creatorId, access, categoryId, modifiedAt, publishDate, role
+    }
+  },{new:true})
+	res.status(200).send(_.pick(editDoc,'_id title content creatorId access categoryId modifiedAt publishDate role'.split(' ')));
 });
 
 //DELETE: DELETE DOCUMENT
