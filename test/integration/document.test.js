@@ -289,28 +289,28 @@ describe('TEST FOR DOCUMENTS', () => {
 		);
 	});
 	describe('GET: GET DOCUMENT BY ID', () => {
-		let doc1;
-		let doc2;
-		let doc3;
-		let doc4;
+		let publicDoc1;
+		let privateDoc1;
+		let roleDoc1;
+		let roleDoc2;
 		beforeAll(() => {
-			doc1 = new Document({
+			publicDoc1 = new Document({
 				title: 'testDoc5',
 				content: 'I am a basic test doc5',
 				creatorId: regularUser._id,
 				access: 'public',
 				categoryId: scifi._id,
 			});
-			doc1.save();
-			doc2 = new Document({
+			publicDoc1.save();
+			privateDoc1 = new Document({
 				title: 'testDoc10',
 				content: 'I am a basic test doc10',
 				creatorId: regularUser._id,
 				access: 'private',
 				categoryId: scifi._id,
 			});
-			doc2.save();
-			doc3 = new Document({
+			privateDoc1.save();
+			roleDoc1 = new Document({
 				title: 'testDoc9',
 				content: 'I am a basic test doc9',
 				creatorId: regularUser._id,
@@ -318,8 +318,8 @@ describe('TEST FOR DOCUMENTS', () => {
 				categoryId: scifi._id,
 				role: regularUser.roleId,
 			});
-			doc3.save();
-			doc4 = new Document({
+			roleDoc1.save();
+			roleDoc2 = new Document({
 				title: 'testDoc8',
 				content: 'I am a basic test doc8',
 				creatorId: veteranUser._id,
@@ -327,20 +327,20 @@ describe('TEST FOR DOCUMENTS', () => {
 				categoryId: scifi._id,
 				role: veteranUser.roleId,
 			});
-			doc4.save();
+			roleDoc2.save();
 		});
 		it(
 			'should return the document with the given ID',
 			async () => {
-				const res = await request(app).get(`/api/documents/${doc3._id}`).set('x-auth-token', isAdmin);
-				expect(res.body._id).toBe(doc3._id.toHexString());
+				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isAdmin);
+				expect(res.body._id).toBe(roleDoc1._id.toHexString());
 			},
 			50000,
 		);
 		it(
 			'should return status of 200 if successful',
 			async () => {
-				const res = await request(app).get(`/api/documents/${doc3._id}`).set('x-auth-token', isAdmin);
+				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isAdmin);
 				expect(res.status).toBe(200);
 			},
 			50000,
@@ -364,13 +364,20 @@ describe('TEST FOR DOCUMENTS', () => {
 		it(
 			'should return status of 404 if document does not belong to user and it is private',
 			async () => {
-				const res = await request(app).get(`/api/documents/${doc2._id}`).set('x-auth-token', isLogin3);
+				const res = await request(app).get(`/api/documents/${privateDoc1._id}`).set('x-auth-token', isLogin3);
 				expect(res.status).toBe(404);
 			},
 			50000,
 		);
-
-
+		it(
+			'should return any requested document if user is admin',
+			async () => {
+				const res = await request(app).get(`/api/documents/${privateDoc1._id}`).set('x-auth-token', isAdmin);
+				expect(res.status).toBe(200);
+				expect(res.body).toHaveProperty('title', privateDoc1.title)
+			},
+			50000,
+		);
 	});
 
 	//GET: GET DOCUMENT BY ID
