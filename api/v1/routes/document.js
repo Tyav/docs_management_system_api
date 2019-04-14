@@ -90,6 +90,10 @@ router.get('/:id',[tokenAuth,loginAuth], async (req, res)=>{
 })
 
 //PUT: EDIT A DOCUMENT
+router.put('/:id',[tokenAuth,loginAuth],async (req, res)=>{
+  
+  return
+})
 
 //DELETE: DELETE DOCUMENT
 
