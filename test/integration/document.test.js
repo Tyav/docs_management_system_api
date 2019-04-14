@@ -439,6 +439,16 @@ describe('TEST FOR DOCUMENTS', () => {
 			expect(res.status).toBe(401);
 			expect(res.body.message).toBe('Access denied, Not an author')
 		},50000);
+		it('should return 404 if document to editted does not exist', async() => {
+			const res = await request(app).put(`/api/documents/${mongoose.Types.ObjectId()}`).set('x-auth-token', isLogin2).send({
+				title: 'testDoc12',
+				content: 'I am a basic test doc12',
+				access: 'private',
+			});
+			expect(res.status).toBe(404);
+			expect(res.body.message).toBe('Document not found')
+		},50000);
+
 		  //check if doc exist: 404
 		//users can only edit document created by them: fail-401 || success-200
 		//documents that are edited should have a modified date property: modifiedAt
