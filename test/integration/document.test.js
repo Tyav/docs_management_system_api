@@ -353,6 +353,23 @@ describe('TEST FOR DOCUMENTS', () => {
 			},
 			50000,
 		);
+		it(
+			'should return status of 401 if user is not logged in',
+			async () => {
+				const res = await request(app).get(`/api/documents/${mongoose.Types.ObjectId()}`);
+				expect(res.status).toBe(404);
+			},
+			50000,
+		);
+		it(
+			'should return status of 404 if document does not belong to user and it is private',
+			async () => {
+				const res = await request(app).get(`/api/documents/${doc2._id}`).set('x-auth-token', isLogin3);
+				expect(res.status).toBe(404);
+			},
+			50000,
+		);
+
 
 	});
 
