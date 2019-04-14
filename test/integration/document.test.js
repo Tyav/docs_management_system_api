@@ -21,78 +21,75 @@ describe('TEST FOR DOCUMENTS', () => {
 	let isLogin2;
 	let isLogin3;
 	let isAdmin;
-	beforeAll(()=>{
-		scifi = new Category({
-			title: 'scifi',
-		});
-		scifi.save();
-		action = new Category({
-			title: 'action',
-		});
-		action.save();
-		regularRole = new Role({
-			title: 'regular',
-		});
-		regularRole.save();
-		veteranRole = new Role({
-			title: 'veteran',
-		});
-		veteranRole.save();
-		adminRole = new Role({
-			title: 'admin',
-		});
-		adminRole.save();
-		adminUser = new User({
-			username: 'adminUserName',
-			name: {
-				firstName: 'testFirstName',
-				lastName: 'testLastName',
-			},
-			email: 'admin@test.com',
-			password: 'testPassword',
-			roleId: adminRole._id,
-		});
-		adminUser.save();
-		isAdmin = adminUser.generateAuthToken(true, true);
-		regularUser = new User({
-			username: 'reg1UserName',
-			name: {
-				firstName: 'testFirstName',
-				lastName: 'testLastName',
-			},
-			email: 'test1@test.com',
-			password: 'reg1Password',
-			roleId: regularRole._id,
-		});
-		regularUser.save();
-		isLogin = regularUser.generateAuthToken(true);
-		regularUser3 = new User({
-			username: 'reg3UserName',
-			name: {
-				firstName: 'testFirstName',
-				lastName: 'testLastName',
-			},
-			email: 'test3@test.com',
-			password: 'reg1Password',
-			roleId: regularRole._id,
-		});
-		regularUser3.save();
-		isLogin3 = regularUser3.generateAuthToken(true);
-	
-		veteranUser = new User({
-			username: 'reg2UserName',
-			name: {
-				firstName: 'testFirstName',
-				lastName: 'testLastName',
-			},
-			email: 'reg2@test.com',
-			password: 'testPassword',
-			roleId: veteranRole._id,
-		});
-		veteranUser.save();
-		isLogin2 = veteranUser.generateAuthToken(true);
-	
-	})
+	scifi = new Category({
+		title: 'scifi',
+	});
+	scifi.save();
+	action = new Category({
+		title: 'action',
+	});
+	action.save();
+	regularRole = new Role({
+		title: 'regular',
+	});
+	regularRole.save();
+	veteranRole = new Role({
+		title: 'veteran',
+	});
+	veteranRole.save();
+	adminRole = new Role({
+		title: 'admin',
+	});
+	adminRole.save();
+	adminUser = new User({
+		username: 'adminUserName',
+		name: {
+			firstName: 'testFirstName',
+			lastName: 'testLastName',
+		},
+		email: 'admin@test.com',
+		password: 'testPassword',
+		roleId: adminRole._id,
+	});
+	adminUser.save();
+	isAdmin = adminUser.generateAuthToken(true, true);
+	regularUser = new User({
+		username: 'reg1UserName',
+		name: {
+			firstName: 'testFirstName',
+			lastName: 'testLastName',
+		},
+		email: 'test1@test.com',
+		password: 'reg1Password',
+		roleId: regularRole._id,
+	});
+	regularUser.save();
+	isLogin = regularUser.generateAuthToken(true);
+	regularUser3 = new User({
+		username: 'reg3UserName',
+		name: {
+			firstName: 'testFirstName',
+			lastName: 'testLastName',
+		},
+		email: 'test3@test.com',
+		password: 'reg1Password',
+		roleId: regularRole._id,
+	});
+	regularUser3.save();
+	isLogin3 = regularUser3.generateAuthToken(true);
+
+	veteranUser = new User({
+		username: 'reg2UserName',
+		name: {
+			firstName: 'testFirstName',
+			lastName: 'testLastName',
+		},
+		email: 'reg2@test.com',
+		password: 'testPassword',
+		roleId: veteranRole._id,
+	});
+	veteranUser.save();
+	isLogin2 = veteranUser.generateAuthToken(true);
 
 	// beforeEach(async () => {
 	// 	//app = server;
@@ -292,52 +289,48 @@ describe('TEST FOR DOCUMENTS', () => {
 		);
 	});
 	describe('GET: GET DOCUMENT BY ID', () => {
-		let obj;
-		beforeAll(async () => {
-			let docPayload = [
-				{
-					title: 'testDoc1',
-					content: 'I am a basic test doc',
-					creatorId: regularUser._id,
-					access: 'public',
-					categoryId: scifi._id,
-				},
-				{
-					title: 'testDoc2',
-					content: 'I am a basic test doc2',
-					creatorId: regularUser._id,
-					access: 'private',
-					categoryId: scifi._id,
-				},
-				{
-					title: 'testDoc3',
-					content: 'I am a basic test doc3',
-					creatorId: regularUser._id,
-					access: 'role',
-					categoryId: scifi._id,
-					role: regularUser.roleId,
-				},
-				{
-					title: 'testDoc4',
-					content: 'I am a basic test doc4',
-					creatorId: veteranUser._id,
-					access: 'role',
-					categoryId: scifi._id,
-					role: veteranUser.roleId,
-				},
-			];
-			obj = await Document.insertMany(docPayload, { ordered: false });
-			console.log(obj)
-
+		const doc1 = new Document({
+			title: 'testDoc5',
+			content: 'I am a basic test doc5',
+			creatorId: regularUser._id,
+			access: 'public',
+			categoryId: scifi._id,
 		});
-		// it(
-		// 	'should return documents sorted by published date',
-		// 	async () => {
-		// 		const res = await request(app).get('/api/documents/').set('x-auth-token', isAdmin);
-		// 		expect(res.body[0].title).toBe('testDoc3');
-		// 	},
-		// 	50000,
-		// );
+		doc1.save();
+		const doc2 = new Document({
+			title: 'testDoc10',
+			content: 'I am a basic test doc10',
+			creatorId: regularUser._id,
+			access: 'private',
+			categoryId: scifi._id,
+		});
+		doc2.save();
+		const doc3 = new Document({
+			title: 'testDoc9',
+			content: 'I am a basic test doc9',
+			creatorId: regularUser._id,
+			access: 'role',
+			categoryId: scifi._id,
+			role: regularUser.roleId,
+		});
+		doc3.save();
+		const doc4 = new Document({
+			title: 'testDoc8',
+			content: 'I am a basic test doc8',
+			creatorId: veteranUser._id,
+			access: 'role',
+			categoryId: scifi._id,
+			role: veteranUser.roleId,
+		});
+		doc4.save();
+		it(
+			'should return the document with the given ID',
+			async () => {
+				const res = await request(app).get(`/api/documents/${doc3._id}`).set('x-auth-token', isAdmin);
+				expect(res.body._id).toBe(doc3._id);
+			},
+			50000,
+		);
 	});
 
 	//GET: GET DOCUMENT BY ID
