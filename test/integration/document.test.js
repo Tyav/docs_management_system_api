@@ -378,6 +378,15 @@ describe('TEST FOR DOCUMENTS', () => {
 			},
 			50000,
 		);
+		it(
+			'should return a 404 if documents access is role and user does not belong to the set role',
+			async () => {
+				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isLogin2);
+				expect(res.status).toBe(404);
+				expect(res.body).toBe(null)
+			},
+			50000,
+		);
 	});
 
 	//GET: GET DOCUMENT BY ID
