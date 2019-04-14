@@ -11,7 +11,7 @@ let validateDoc = (docData) => {
 		access: Joi.string().valid('private', 'public','role'),
 		categoryId: Joi.objectId(),
 		createdAt: Joi.date(),
-		published: Joi.string()
+		publishDate: Joi.string()
 	});
 	return Joi.validate(docData, schema);
 };

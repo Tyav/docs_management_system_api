@@ -23,8 +23,8 @@ router.post('/',[tokenAuth, loginAuth], async (req, res) => {
   //set creatorId of document
   req.body.creatorId = req.user._id
 
-  const doc = new Document(req.body);
-  await doc.save();
+  const doc = await Document.create(req.body);
+  // doc.save();
   res.status(200).send(doc)
 });
 
@@ -45,7 +45,7 @@ router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
     //set number of values to skip
       .skip((pageNumber - 1) * pageSize)
     //number of values to display
-      .limit(pageSize).sort({ publishData: 1 })
+      .limit(pageSize).sort({ publishDate: 1 })
 ;
     return res.status(200).send(adminDocs)
   }
@@ -57,7 +57,7 @@ router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
     //set number of values to skip
     .skip((pageNumber - 1) * pageSize)
     //number of values to display
-    .limit(pageSize).sort({ publishData: -1 })
+    .limit(pageSize).sort({ publishDate: 1 })
 
   res.status(200).send(userDocs)
 })

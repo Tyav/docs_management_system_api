@@ -8,77 +8,57 @@ import { Category } from '../../server/model/category';
 import { Document } from '../../server/model/document';
 import bcrypt from 'bcrypt';
 
+Document.deleteMany({});
+Category.deleteMany({});
+User.deleteMany({});
+Role.deleteMany({});
+
 describe('Test for User', () => {
-	let role;
-	let payload;
-	beforeAll(async () => {
-		await Document.deleteMany({});
-		await Category.deleteMany({});
-		await User.deleteMany({});
-		await Role.deleteMany({});
-
-		role = await Role.create({
-			title: 'regular',
-		});
-		payload = {
-			username: 'testUserName',
-			name: {
-				firstName: 'testFirstName',
-				lastName: 'testLastName',
-			},
-			email: 'test@test.com',
-			password: 'testPassword',
-			roleId: role._id,
-		};
-		// 	{
-		// 		username: 'testUserName1',
-		// 		name: {
-		// 			firstName: 'testFirstName1',
-		// 			lastName: 'testLastName1',
-		// 		},
-		// 		email: 'test1@test.com',
-		// 		password: 'test1Password',
-		// 		roleId: role._id,
-		// 	},
-		// ];
-	}, 50000);
-
-	beforeEach(async () => {
-		//app = server;
+	let role1 = new Role({
+		title: 'regular1',
 	});
-	afterEach(async () => {
-		//await app.close();
-		await User.deleteMany({});
-	}, 50000);
-	afterAll(async () => {
-		await Role.deleteMany({});
+	role1.save();
+	const roleId = role1._id.toHexString()
+
+	let payload = {
+		username: 'testUserName',
+		name: {
+			firstName: 'testFirstName',
+			lastName: 'testLastName',
+		},
+		email: 'test@test.com',
+		password: 'testPassword',
+		roleId: roleId,
+	};
+	afterAll(() => {
+		Role.deleteMany({});
 	}, 50000);
 	describe('/GET all users only by admin', () => {
 		let adminToken;
 		let loginToken;
-		beforeEach(async () => {
-			//await User.create(payload);
-			let useradmin = new User({
-				username: 'testAdmin1',
-				name: {
-					firstName: 'testFirstName1',
-					lastName: 'testLastName1',
-				},
-				email: 'admin@test.com',
-				password: 'test1Password',
-				roleId: role._id,
-			});
-			// useradmin.isAdmin = true;
-			// useradmin.isLogged = true;
-			adminToken = useradmin.generateAuthToken(true, true);
-			let regular = new User();
-			//regular.isLogged = true;
-			loginToken = regular.generateAuthToken(true);
+		//await User.create(payload);
+		let useradmin = new User({
+			username: 'testAdmin1',
+			name: {
+				firstName: 'testFirstName1',
+				lastName: 'testLastName1',
+			},
+			email: 'admin@test.com',
+			password: 'test1Password',
+			roleId: roleId,
 		});
+		adminToken = useradmin.generateAuthToken(true, true);
+		let regular = new User();
+		loginToken = regular.generateAuthToken(true);
+		afterEach(async () => {
+			await User.deleteMany({});
+		}, 50000);
+
 		it(
 			'should return a 200 status and all users for admin',
 			async () => {
 				const res = await request(app).get('/api/users').set('x-auth-token', adminToken);
+				//console.log(res.body)
 				expect(res.statusCode).toBe(200);
 			},
 			50000,
@@ -109,16 +89,20 @@ describe('Test for User', () => {
 		);
 	});
 	describe('/GET single user by id', () => {
-		let user;
-		beforeEach(async () => {
-			user = await User.create(payload);
+		let user = new User(payload);
+
+		beforeAll(() => {
+			user.save();
+		});
+		afterAll(async () => {
+			await User.deleteMany({});
 		});
 		it(
-			'should return a user with a give id',
+			'should return a user with a given id',
 			async () => {
 				const res = await request(app).get(`/api/users/${user._id}`);
-				expect(res.body).toHaveProperty('email', payload.email);
-				expect(res.body).toHaveProperty('username', payload.username);
+				expect(res.body).toHaveProperty('email', user.email);
+				expect(res.body).toHaveProperty('username', user.username);
 			},
 			50000,
 		);
@@ -140,6 +124,9 @@ describe('Test for User', () => {
 		);
 	});
 	describe('/POST create user', () => {
+		afterEach(async() => {
+			await User.deleteMany({});
+		});
 		it(
 			'should create a user and return a status of 201 if created',
 			async () => {
@@ -175,7 +162,7 @@ describe('Test for User', () => {
 					},
 					email: 'test1@test.com',
 					password: 'test1Password',
-					roleId: role._id,
+					roleId: roleId,
 				};
 				const res = await request(app).post('/api/users/').send(failedPayload);
 				expect(res.status).toBe(400);
@@ -205,7 +192,7 @@ describe('Test for User', () => {
 		it(
 			'should check that username is unique or return 400',
 			async () => {
-				let payload = {
+				let payload2 = {
 					username: 'testUserName',
 					name: {
 						firstName: 'testFirstName1',
@@ -213,7 +200,7 @@ describe('Test for User', () => {
 					},
 					email: 'test1@test.com',
 					password: 'test1Password',
-					roleId: role._id,
+					roleId: roleId,
 				};
 				let payload1 = {
 					username: 'testUserName',
@@ -223,9 +210,9 @@ describe('Test for User', () => {
 					},
 					email: 'test12@test.com',
 					password: 'test1Password',
-					roleId: role._id,
+					roleId: roleId,
 				};
-				await request(app).post('/api/users/').send(payload);
+				await request(app).post('/api/users/').send(payload2);
 				const res = await request(app).post('/api/users/').send(payload1);
 				expect(res.status).toBe(400);
 				expect(res.body.message).toBe('Username is taken');
@@ -235,7 +222,7 @@ describe('Test for User', () => {
 		it(
 			'should check that username is unique or return 400',
 			async () => {
-				let payload = {
+				let payload3 = {
 					username: 'testUserName1',
 					name: {
 						firstName: 'testFirstName1',
@@ -243,7 +230,7 @@ describe('Test for User', () => {
 					},
 					email: 'test1@test.com',
 					password: 'test1Password',
-					roleId: role._id,
+					roleId: roleId,
 				};
 				let payload1 = {
 					username: 'testUserName2',
@@ -253,9 +240,9 @@ describe('Test for User', () => {
 					},
 					email: 'test1@test.com',
 					password: 'test1Password',
-					roleId: role._id,
+					roleId: roleId,
 				};
-				await request(app).post('/api/users/').send(payload);
+				await request(app).post('/api/users/').send(payload3);
 				const res = await request(app).post('/api/users/').send(payload1);
 				expect(res.status).toBe(400);
 				expect(res.body.message).toBe('Email is already in use');
@@ -265,6 +252,7 @@ describe('Test for User', () => {
 	});
 	describe('/PUT :Edit User information', () => {
 		let user, user2;
+		let editToken, editToken2;
 		beforeEach(async () => {
 			const salt = await bcrypt.genSalt(10);
 			const testPassword = await bcrypt.hash('test1Password', salt);
@@ -276,7 +264,7 @@ describe('Test for User', () => {
 				},
 				email: 'test1@test.com',
 				password: testPassword,
-				roleId: role._id,
+				roleId: roleId,
 			});
 			user2 = new User({
 				username: 'testUserName',
@@ -286,7 +274,7 @@ describe('Test for User', () => {
 				},
 				email: 'test@test.com',
 				password: testPassword,
-				roleId: role._id,
+				roleId: roleId,
 			});
 			editToken = user.generateAuthToken(true);
 			editToken2 = user2.generateAuthToken(true);
@@ -294,8 +282,9 @@ describe('Test for User', () => {
 			await user.save();
 			await user2.save();
 		});
-
-		let editToken, editToken2;
+		afterEach(async() => {
+			await User.deleteMany({})
+		});
 		it(
 			'should return an INVALID ID error message if invalid id is given',
 			async () => {
@@ -395,6 +384,7 @@ describe('Test for User', () => {
 	});
 	describe('/DELETE a user', () => {
 		let user, user2;
+		let editToken, editToken2;
 		beforeEach(async () => {
 			user = new User({
 				username: 'testUserName2',
@@ -404,7 +394,7 @@ describe('Test for User', () => {
 				},
 				email: 'test1@test.com',
 				password: 'test1Password',
-				roleId: role._id,
+				roleId: roleId,
 			});
 			user2 = new User({
 				username: 'testUserName',
@@ -414,7 +404,7 @@ describe('Test for User', () => {
 				},
 				email: 'test@test.com',
 				password: 'test1Password',
-				roleId: role._id,
+				roleId: roleId,
 			});
 			editToken = user.generateAuthToken(true);
 			editToken2 = user2.generateAuthToken(true);
@@ -422,8 +412,9 @@ describe('Test for User', () => {
 			await user.save();
 			await user2.save();
 		});
-
-		let editToken, editToken2;
+		afterEach(async () => {
+			await User.deleteMany({})
+		});
 
 		it(
 			'should return 401 status code if user is not logged in',
@@ -452,6 +443,7 @@ describe('Test for User', () => {
 	});
 	describe('/POST logout', () => {
 		let user, user2;
+		let editToken, editToken2;
 		beforeEach(async () => {
 			user = new User({
 				username: 'testUserName2',
@@ -461,7 +453,7 @@ describe('Test for User', () => {
 				},
 				email: 'test1@test.com',
 				password: 'test1Password',
-				roleId: role._id,
+				roleId: roleId,
 			});
 			user2 = new User({
 				username: 'testUserName',
@@ -471,7 +463,7 @@ describe('Test for User', () => {
 				},
 				email: 'test@test.com',
 				password: 'test1Password',
-				roleId: role._id,
+				roleId: roleId,
 			});
 			editToken = user.generateAuthToken();
 			editToken2 = user2.generateAuthToken(true);
@@ -479,8 +471,9 @@ describe('Test for User', () => {
 			await user.save();
 			await user2.save();
 		});
-		let editToken, editToken2;
-
+		afterEach(async() => {
+			await User.deleteMany({})
+		});
 		it(
 			'should return a 401 status if user is already logged out',
 			async () => {
@@ -508,6 +501,7 @@ describe('Test for User', () => {
 	});
 	describe('/POST login user', () => {
 		let user, user2;
+		let editToken, editToken2;
 		beforeEach(async () => {
 			const salt = await bcrypt.genSalt(10);
 			const testPassword = await bcrypt.hash('test1Password', salt);
@@ -519,7 +513,7 @@ describe('Test for User', () => {
 				},
 				email: 'test1@test.com',
 				password: testPassword,
-				roleId: role._id,
+				roleId: roleId,
 			});
 			user2 = new User({
 				username: 'testUserName',
@@ -529,7 +523,7 @@ describe('Test for User', () => {
 				},
 				email: 'test@test.com',
 				password: testPassword,
-				roleId: role._id,
+				roleId: roleId,
 			});
 			editToken = user.generateAuthToken();
 			editToken2 = user2.generateAuthToken(true);
@@ -537,8 +531,9 @@ describe('Test for User', () => {
 			await user.save();
 			await user2.save();
 		});
-		let editToken, editToken2;
-
+		afterEach(async() => {
+			await User.deleteMany({})
+		});
 		it(
 			'should return a 401 status if user is already logged in',
 			async () => {
