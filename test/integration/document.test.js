@@ -382,6 +382,15 @@ describe('TEST FOR DOCUMENTS', () => {
 			50000,
 		);
 		it(
+			'should return requested private document if user is creator',
+			async () => {
+				const res = await request(app).get(`/api/documents/${privateDoc1._id}`).set('x-auth-token', isLogin);
+				expect(res.status).toBe(200);
+				expect(res.body).toHaveProperty('title', privateDoc1.title)
+			},
+			50000,
+		);
+		it(
 			'should return a 404 if documents access is role and user does not belong to the set role',
 			async () => {
 				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isLogin2);
@@ -413,13 +422,27 @@ describe('TEST FOR DOCUMENTS', () => {
 			privateDoc1.save();
 		})
 		it('should return 401 if user is not logged in', async() => {
-			const res = await request(app).put(`/api/documents/${publicDoc1._id}`);
+			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).send({
+				title: 'testDoc11',
+				content: 'I am a basic test doc11',
+				access: 'private',
+			});
 			expect(res.status).toBe(401);
 			expect(res.body.message).toBe('Access denied, Log in')
 		},50000);
-		//user should be logged in before editing: 401,
+		it('should allow only its creator access to modify content', async() => {
+			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin2).send({
+				title: 'testDoc12',
+				content: 'I am a basic test doc12',
+				access: 'private',
+			});
+			expect(res.status).toBe(401);
+			expect(res.body.message).toBe('Access denied, Not an author')
+		},50000);
+		  //check if doc exist: 404
 		//users can only edit document created by them: fail-401 || success-200
 		//documents that are edited should have a modified date property: modifiedAt
+		//update contents should be validated.
 		
 	});
 
