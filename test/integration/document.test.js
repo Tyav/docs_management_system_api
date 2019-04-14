@@ -289,45 +289,51 @@ describe('TEST FOR DOCUMENTS', () => {
 		);
 	});
 	describe('GET: GET DOCUMENT BY ID', () => {
-		const doc1 = new Document({
-			title: 'testDoc5',
-			content: 'I am a basic test doc5',
-			creatorId: regularUser._id,
-			access: 'public',
-			categoryId: scifi._id,
+		let doc1;
+		let doc2;
+		let doc3;
+		let doc4;
+		beforeAll(() => {
+			doc1 = new Document({
+				title: 'testDoc5',
+				content: 'I am a basic test doc5',
+				creatorId: regularUser._id,
+				access: 'public',
+				categoryId: scifi._id,
+			});
+			doc1.save();
+			doc2 = new Document({
+				title: 'testDoc10',
+				content: 'I am a basic test doc10',
+				creatorId: regularUser._id,
+				access: 'private',
+				categoryId: scifi._id,
+			});
+			doc2.save();
+			doc3 = new Document({
+				title: 'testDoc9',
+				content: 'I am a basic test doc9',
+				creatorId: regularUser._id,
+				access: 'role',
+				categoryId: scifi._id,
+				role: regularUser.roleId,
+			});
+			doc3.save();
+			doc4 = new Document({
+				title: 'testDoc8',
+				content: 'I am a basic test doc8',
+				creatorId: veteranUser._id,
+				access: 'role',
+				categoryId: scifi._id,
+				role: veteranUser.roleId,
+			});
+			doc4.save();
 		});
-		doc1.save();
-		const doc2 = new Document({
-			title: 'testDoc10',
-			content: 'I am a basic test doc10',
-			creatorId: regularUser._id,
-			access: 'private',
-			categoryId: scifi._id,
-		});
-		doc2.save();
-		const doc3 = new Document({
-			title: 'testDoc9',
-			content: 'I am a basic test doc9',
-			creatorId: regularUser._id,
-			access: 'role',
-			categoryId: scifi._id,
-			role: regularUser.roleId,
-		});
-		doc3.save();
-		const doc4 = new Document({
-			title: 'testDoc8',
-			content: 'I am a basic test doc8',
-			creatorId: veteranUser._id,
-			access: 'role',
-			categoryId: scifi._id,
-			role: veteranUser.roleId,
-		});
-		doc4.save();
 		it(
 			'should return the document with the given ID',
 			async () => {
 				const res = await request(app).get(`/api/documents/${doc3._id}`).set('x-auth-token', isAdmin);
-				expect(res.body._id).toBe(doc3._id);
+				expect(res.body._id).toBe(doc3._id.toHexString());
 			},
 			50000,
 		);

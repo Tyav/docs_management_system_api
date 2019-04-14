@@ -58,11 +58,25 @@ router.get('/',[tokenAuth, loginAuth], async(req, res)=> {
     .skip((pageNumber - 1) * pageSize)
     //number of values to display
     .limit(pageSize).sort({ publishDate: 1 })
+    //select a set of informations to release
+    .select('_id title content createdAt creatorId access categoryId')
 
   res.status(200).send(userDocs)
 })
 
 //GET: GET DOCUMENT BY ID
+router.get('/:id', async (req, res)=>{
+
+
+  //query the db for the document
+  const doc = await Document.findOne({_id:req.params.id})
+    //select a set of informations to release
+    .select('_id title content createdAt creatorId access categoryId');
+console.log(doc)
+  res.status(200).send(doc)
+        
+
+})
 
 //PUT: EDIT A DOCUMENT
 
