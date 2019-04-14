@@ -474,6 +474,34 @@ describe('TEST FOR DOCUMENTS', () => {
 			expect(res.status).toBe(200);
 			expect(new Date(res.body.modifiedAt).toDateString()).toMatch(new Date().toDateString());
 		},50000);
+		it('should set document role if user specifies to change the document access to role.', async() => {
+			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+				title: 'newTitle',
+				content: 'I am a basic test doc12',
+				access: 'role',
+			});
+			expect(res.status).toBe(200);
+			expect(res.body.role).toBe(regularUser.roleId.toHexString());
+		},50000);
+		it('should create a modifiedAt property that holds a date value.', async() => {
+			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+				title: 'newTitle',
+				content: 'I am a basic test doc12',
+				access: 'private',
+			});
+			expect(res.status).toBe(200);
+			expect(new Date(res.body.modifiedAt).toDateString()).toMatch(new Date().toDateString());
+		},50000);
+		it('should create a modifiedAt property that holds a date value.', async() => {
+			const res = await request(app).put(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin).send({
+				title: 'newTitle',
+				content: 'I am a basic test doc12',
+				access: 'private',
+			});
+			expect(res.status).toBe(200);
+			expect(new Date(res.body.modifiedAt).toDateString()).toMatch(new Date().toDateString());
+		},50000);
+
 
 		//users can only edit document created by them: success-200
 		//documents that are edited should have a modified date property: modifiedAt
