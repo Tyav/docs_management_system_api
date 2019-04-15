@@ -555,7 +555,17 @@ describe('TEST FOR DOCUMENTS', () => {
 		let publicDoc1;
 		let privateDoc1;
 		let deleteDoc;
+		let publicDoc2;
 		beforeAll(() => {
+			publicDoc2 = new Document({
+				title      : 'testDoc16',
+				content    : 'I am a basic test doc16',
+				creatorId  : regularUser3._id,
+				access     : 'public',
+				categoryId : scifi._id,
+			});
+			publicDoc2.save();
+
 			publicDoc1 = new Document({
 				title      : 'testDoc14',
 				content    : 'I am a basic test doc14',
@@ -610,9 +620,16 @@ describe('TEST FOR DOCUMENTS', () => {
 			expect(res.status).toBe(404);
 			expect(res.body.message).toBe('Document not found');
 		});
-
-		//[404 if user is not document creator aside admin
-		//if document has been soft deleted, return 404 to yes]
+		it('should return 404 if document is not created by user', async () => {
+			const res = await request(app).delete(`/api/documents/${publicDoc2._id}`).set('x-auth-token', isLogin);
+			expect(res.status).toBe(404);
+			expect(res.body.message).toBe('Document not found');
+		});
+		it('should perform a soft delete on document if user is not an admin', async () => {
+			await request(app).delete(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin);
+			const delDoc = await Document.findOne({_id:publicDoc1._id})
+			expect(delDoc.deleted).toBe(true);
+		});
 		//completely delete if action is performed by admin
 		//make a soft delete if user is not admin
 		//
