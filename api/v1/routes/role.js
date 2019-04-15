@@ -39,6 +39,11 @@ router.get('/',[tokenAuth],async (req, res)=>{
 
 //VIEW A CREATED ROLE : ALL USER
 router.get('/:id', [tokenAuth],async(req, res)=>{
+  const userAdminResult = await Role.findOne({_id: req.params.id})
+
+  if (req.user.isAdmin){
+    return  userAdminResult ? res.status(200).send(userAdminResult): res.status(404).send({ Error: 404, message: 'Role not available' })
+  }
 
   const userResult = await Role.findOne({_id: req.params.id}).where('title').ne('admin')
 
