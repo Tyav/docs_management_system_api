@@ -585,8 +585,17 @@ describe('TEST FOR DOCUMENTS', () => {
 			expect(res.status).toBe(401);
 			expect(res.body.message).toBe('Access denied, Log in');
 		});
+		it('should return 404 if document id', async () => {
+			const res = await request(app).delete(`/api/documents/${3245}`).set('x-auth-token', isLogin);
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('Invalid Id');
+		});
+		it('should return 404 if document id', async () => {
+			const res = await request(app).delete(`/api/documents/${mongoose.Types.ObjectId()}`).set('x-auth-token', isLogin);
+			expect(res.status).toBe(404);
+			expect(res.body.message).toBe('Document not found');
+		});
 
-		//401 if user is not logged in
 		//404 if user is not document creator aside admin
 		//if document has been soft deleted, return 404 to yes
 		//completely delete if action is performed by admin
