@@ -121,9 +121,12 @@ describe('TEST FOR ROLE', () => {
   describe('/PUT: EDIT ROLE BY ADMIN', () => {
     let role;
     let role2
+    let rolevet;
 		beforeAll(async () => {
       role = await Role.findOne({ title: 'admin' });
       role2 = await Role.findOne({ title: 'regular' });
+      rolevet = await Role.findOne({ title: 'veteran' });
+
 		});
     it('should return 401 if user is not an admin', async() => {
       const res = await request(app).put(`/api/roles/${role2._id}`).set('x-auth-token', isLogin).send({
@@ -142,6 +145,18 @@ describe('TEST FOR ROLE', () => {
         title: 'testRole'
       });
       expect(res.status).toBe(404)
+    });
+    it('should return 200 if role is edited', async() => {
+      const res = await request(app).put(`/api/roles/${rolevet._id}`).set('x-auth-token', isAdmin).send({
+        title: 'testRole'
+      });
+      expect(res.status).toBe(200)
+    });
+    it('should edit role title if role is edited', async() => {
+      const res = await request(app).put(`/api/roles/${rolevet._id}`).set('x-auth-token', isAdmin).send({
+        title: 'testRole2'
+      });
+      expect(res.body.title).toBe('testRole2')
     });
 
     //check admin login
