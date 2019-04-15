@@ -630,6 +630,11 @@ describe('TEST FOR DOCUMENTS', () => {
 			const delDoc = await Document.findOne({_id:publicDoc1._id})
 			expect(delDoc.deleted).toBe(true);
 		});
+		it('should perform a hard delete on any document if user an admin', async () => {
+			await request(app).delete(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isAdmin);
+			const delDoc = await Document.findOne({_id:publicDoc1._id})
+			expect(delDoc).toBe(null);
+		});
 		//completely delete if action is performed by admin
 		//make a soft delete if user is not admin
 		//
