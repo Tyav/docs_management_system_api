@@ -23,7 +23,7 @@ router.post('/', [ tokenAuth, adminAuth ], async(req, res) => {
 
     res.status(200).send(role)
 	} catch (error) {
-		console.log(error);
+    res.status(400).send({Error: 400, message: `Cannot create duplicate role of ${req.body.title}`})
 	}
 });
 //VIEW A CREATED ROLE : ALL USER
