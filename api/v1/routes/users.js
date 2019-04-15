@@ -40,6 +40,7 @@ router.get('/', [ tokenAuth, loginAuth, adminAuth ], async (req, res) => {
 //SINGLE USER [GET /users/<id>]
 router.get('/:id', idAuth, async (req, res) => {
 	const user = await User.findById(req.params.id);
+	if(!user) return res.status(404).send({ Error: 404, message: 'User not found' })
 	res.status(200).send(user);
 });
 
@@ -48,7 +49,6 @@ router.post('/', async (req, res) => {
 	//validate body content valid for usser creation
 	const { error } = validateCreateUser(req.body);
 	if (error) return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
-
 	//validate roleId has already be created else reject user creation
 	const role = await Role.findById(req.body.roleId);
 	if (!role) return res.status(400).send({ Error: 'Bad Request', message: 'Invalid Role Id' });
@@ -56,7 +56,6 @@ router.post('/', async (req, res) => {
 	//check if email has been taken
 	let checkEmail = await User.findOne({ email: req.body.email });
 	if (checkEmail) return res.status(400).send({ Error: 'Bad Request', message: 'Email is already in use' });
-
 	//check if username has been taken
 	let checkUsername = await User.findOne({ username: req.body.username });
 	if (checkUsername) return res.status(400).send({ Error: 'Bad Request', message: 'Username is taken' });
@@ -153,7 +152,6 @@ router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
 		},
 		{ new: true },
 	);
-	if (!updatedUser) return res.status(400).send({ Error: 400, message: 'Invalid Id' });
 	res.status(200).send(_.pick(updatedUser, [ '_id', 'username', 'email', 'name' ]));
 });
 

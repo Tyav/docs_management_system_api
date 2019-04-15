@@ -29,6 +29,7 @@ const docSchema = new Schema({
 	categoryId: {
 		type: mongoose.Schema.Types.ObjectId,
 		required: true,
+		ref:'users'
 	},
 	createdAt: {
 		type: Date,

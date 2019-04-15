@@ -11,9 +11,22 @@ let validateDoc = (docData) => {
 		access: Joi.string().valid('private', 'public','role'),
 		categoryId: Joi.objectId(),
 		createdAt: Joi.date(),
-		published: Joi.string()
+		publishDate: Joi.string()
 	});
 	return Joi.validate(docData, schema);
 };
 
-export { validateDoc };
+
+let validateDocEdit = (docData) => {
+	let schema = Joi.object().keys({
+		title: Joi.string().min(1).max(255),
+		content: Joi.string().min(1).max(5000),
+		access: Joi.string().valid('private', 'public','role'),
+		categoryId: Joi.objectId(),
+		role: Joi.objectId()
+	});
+	return Joi.validate(docData, schema);
+};
+
+
+export { validateDoc, validateDocEdit };
