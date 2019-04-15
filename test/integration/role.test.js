@@ -168,8 +168,8 @@ describe('TEST FOR ROLE', () => {
       role2 = await Role.findOne({ title: 'regular' });
       rolevet = await Role.findOne({ title: 'veteran' });
 		});
-    it('should return 403 if user is not an admin', () => {
-      const res = await request(app).put(`/api/roles/${role2._id}`).set('x-auth-token', isLogin)
+    it('should return 403 if user is not an admin', async() => {
+      const res = await request(app).delete(`/api/roles/${role2._id}`).set('x-auth-token', isLogin)
       expect(res.status).toBe(403)
     });
     //check admin
