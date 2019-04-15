@@ -156,7 +156,7 @@ describe('TEST FOR ROLE', () => {
       const res = await request(app).put(`/api/roles/${rolevet._id}`).set('x-auth-token', isAdmin).send({
         title: 'testRole2'
       });
-      expect(res.body.title).toBe('testRole2')
+      expect(res.body.title).toMatch('testrole2')
     });
 
     //check admin login
