@@ -31,6 +31,7 @@ router.post('/', [ tokenAuth, adminAuth ], async(req, res) => {
 router.get('/',[tokenAuth],async (req, res)=>{
   if (req.user.isAdmin === true){
     const adminResult = await Role.find()
+    return res.status(200).send(adminResult);
   }
   res.send()
 })
