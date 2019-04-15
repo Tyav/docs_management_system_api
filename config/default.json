@@ -1,3 +1,4 @@
 {
-  "jwtPrivateKey": "1234"
+  "jwtPrivateKey": "1234",
+  "database":"mongodb://localhost/DMSapp"
 }
