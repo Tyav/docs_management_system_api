@@ -32,7 +32,7 @@ describe('TEST FOR DOCUMENTS', () => {
 	});
 	action.save();
 	regularRole = new Role({
-		title : 'regular',
+		title : 'regularTest',
 	});
 	regularRole.save();
 	veteranRole = new Role({
@@ -40,7 +40,7 @@ describe('TEST FOR DOCUMENTS', () => {
 	});
 	veteranRole.save();
 	adminRole = new Role({
-		title : 'admin',
+		title : 'adminTest',
 	});
 	adminRole.save();
 	adminUser = new User({

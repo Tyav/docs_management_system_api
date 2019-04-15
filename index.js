@@ -8,6 +8,7 @@ const app = express();
 //IMPORT ROUTES
 import users from './api/v1/routes/users';
 import documents from './api/v1/routes/document';
+import roles from './api/v1/routes/role';
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
@@ -25,6 +26,7 @@ swag(app);
 //USERS API ROUTES
 app.use('/api/users', users);
 app.use('/api/documents',documents)
+app.use('/api/roles',roles)
 
 //CREATE SERVER
 const port = process.env.PORT || 5050;
