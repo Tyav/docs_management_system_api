@@ -50,7 +50,11 @@ router.get('/:id', [tokenAuth],async(req, res)=>{
   if(!userResult) return res.status(404).send({ Error: 404, message: 'Role not available' })
   res.status(200).send(userResult)
 })
+
 //EDIT ROLE : ADMIN
+router.put('/:id',[tokenAuth, adminAuth], (req, res)=>{
+
+})
 //DELETE ROLE : ADMIN
 
 module.exports = router;

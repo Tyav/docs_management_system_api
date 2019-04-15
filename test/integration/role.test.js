@@ -127,7 +127,7 @@ describe('TEST FOR ROLE', () => {
 		});
     it('should return 401 if user is not an admin', async() => {
       const res = await request(app).put(`/api/roles/${role2._id}`).set('x-auth-token', isLogin);
-      expect(res.status).toBe(401)
+      expect(res.status).toBe(403)
     });
     //check admin login
     //check idvalidity
