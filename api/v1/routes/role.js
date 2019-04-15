@@ -29,17 +29,21 @@ router.post('/', [ tokenAuth, adminAuth ], async(req, res) => {
 
 //GET: VIEW ALL ROLE
 router.get('/',[tokenAuth],async (req, res)=>{
-  if (req.user.isAdmin === true){
+  if (req.user.isAdmin === true){//if user is an admin return all
     const adminResult = await Role.find()
     return res.status(200).send(adminResult);
   }
-  const userResult = await Role.find().where('title').ne('admin')
+  const userResult = await Role.find().where('title').ne('admin') //return all and exclude admin role
   res.status(200).send(userResult)
 })
 
 //VIEW A CREATED ROLE : ALL USER
-router.get('/:id', [tokenAuth],(req, res)=>{
+router.get('/:id', [tokenAuth],async(req, res)=>{
 
+  const userResult = await Role.findOne({_id: req.params.id}).where('title').ne('admin')
+
+  if(!userResult) return res.status(404).send({ Error: 404, message: 'Role not available' })
+  res.status(200).send(userResult)
 })
 //EDIT ROLE : ADMIN
 //DELETE ROLE : ADMIN

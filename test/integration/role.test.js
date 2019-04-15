@@ -86,7 +86,7 @@ describe('TEST FOR ROLE', () => {
       const res = await request(app).get('/api/roles/').set('x-auth-token', isAdmin)
       expect(res.body.length).toBe(3);
     });
-    it('should return roles including admin role if user is admin', async () => {
+    it('should return roles excluding admin role if user is not admin', async () => {
       const res = await request(app).get('/api/roles/').set('x-auth-token', isLogin)
       expect(res.body.length).toBe(2);
     });
