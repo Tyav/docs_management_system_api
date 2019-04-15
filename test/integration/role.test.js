@@ -21,6 +21,13 @@ describe('TEST FOR ROLE', () => {
       })
       expect(res.status).toBe(401)
     });
+    it('should return 403 if logged in user is not an admin', async () => {
+      const res = await request(app).post('/api/roles/').send({
+        title: 'veteran'
+      })
+      expect(res.status).toBe(403)
+    });
+
     //check for login 
     //check for ADMIN
     //create role admin, 
