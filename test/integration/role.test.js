@@ -126,9 +126,18 @@ describe('TEST FOR ROLE', () => {
       role2 = await Role.findOne({ title: 'regular' });
 		});
     it('should return 401 if user is not an admin', async() => {
-      const res = await request(app).put(`/api/roles/${role2._id}`).set('x-auth-token', isLogin);
+      const res = await request(app).put(`/api/roles/${role2._id}`).set('x-auth-token', isLogin).send({
+        title: 'testRole'
+      });
       expect(res.status).toBe(403)
     });
+    it('should return 400 if role id is not a valid format', async() => {
+      const res = await request(app).put(`/api/roles/${45393}`).set('x-auth-token', isAdmin).send({
+        title: 'testRole'
+      });
+      expect(res.status).toBe(400)
+    });
+
     //check admin login
     //check idvalidity
     //update or 404
