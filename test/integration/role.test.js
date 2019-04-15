@@ -53,9 +53,14 @@ describe('TEST FOR ROLE', () => {
       })
       expect(res.status).toBe(403)
     });
-
-    //check for login 401
-    //check for ADMIN 403
+    it('should return a 400 if role creation fail by data validation', async() => {
+      const res = await request(app).post('/api/roles/').set('x-auth-token', isAdmin).send({
+        title: 've'
+      })
+      const role = await Role.findOne({title: 'veteran'})
+      expect(res.status).toBe(400)
+      expect(role).toBeDefined()
+    });
     //create role admin, 200
     //role validation 400
   });
