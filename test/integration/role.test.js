@@ -59,6 +59,13 @@ describe('TEST FOR ROLE', () => {
       })
       const role = await Role.findOne({title: 'veteran'})
       expect(res.status).toBe(400)
+    });
+    it('logged in admin should be able to create a new role', async() => {
+      const res = await request(app).post('/api/roles/').set('x-auth-token', isAdmin).send({
+        title: 'veteran'
+      })
+      const role = await Role.findOne({title: 'veteran'})
+      expect(res.status).toBe(200)
       expect(role).toBeDefined()
     });
     //create role admin, 200
