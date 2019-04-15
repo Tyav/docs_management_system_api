@@ -91,9 +91,11 @@ describe('TEST FOR ROLE', () => {
 		});
 	});
 	describe('/GET:id GET CREATED ROLE BY ID', () => {
-		let role;
+    let role;
+    let role2
 		beforeAll(async () => {
-			role = await Role.findOne({ title: 'admin' });
+      role = await Role.findOne({ title: 'admin' });
+      role2 = await Role.findOne({ title: 'regular' });
 		});
 		it('should return a 401 if user is not logged in', async () => {
 			const res = await request(app).get(`/api/roles/${role._id}`);
@@ -107,13 +109,18 @@ describe('TEST FOR ROLE', () => {
 			const res = await request(app).get(`/api/roles/${mongoose.Types.ObjectId()}`).set('x-auth-token', isAdmin);
 			expect(res.status).toBe(404);
 		});
-
-		//role is retrieved 200
-		//admin can retrieve admin role and any role 200
-		//user cannot retrieve amin role 404
-	});
-
-	//VIEW A CREATED ROLE : ALL USER
+		it('should return 200 if user/admin requests for an existing role', async () => {
+			const res = await request(app).get(`/api/roles/${role2._id}`).set('x-auth-token', isLogin);
+			expect(res.status).toBe(200);
+    });
+    it('should return 200 if user/admin requests for an existing role', async () => {
+			const res = await request(app).get(`/api/roles/${role2._id}`).set('x-auth-token', isAdmin);
+			expect(res.status).toBe(200);
+		});
+  });
+  describe('/PUT: EDIT ROLE BY ADMIN', () => {
+    
+  });
 	//EDIT ROLE : ADMIN
 	//DELETE ROLE : ADMIN
 });
