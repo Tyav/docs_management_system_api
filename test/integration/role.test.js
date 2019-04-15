@@ -128,7 +128,7 @@ describe('TEST FOR ROLE', () => {
       rolevet = await Role.findOne({ title: 'veteran' });
 
 		});
-    it('should return 401 if user is not an admin', async() => {
+    it('should return 403 if user is not an admin', async() => {
       const res = await request(app).put(`/api/roles/${role2._id}`).set('x-auth-token', isLogin).send({
         title: 'testRole'
       });
@@ -154,16 +154,27 @@ describe('TEST FOR ROLE', () => {
     });
     it('should edit role title if role is edited', async() => {
       const res = await request(app).put(`/api/roles/${rolevet._id}`).set('x-auth-token', isAdmin).send({
-        title: 'testRole2'
+        title: 'veteran'
       });
-      expect(res.body.title).toMatch('testrole2')
+      expect(res.body.title).toMatch('veteran')
     });
-
-    //check admin login
-    //check idvalidity
-    //update or 404
-
   });
-	//EDIT ROLE : ADMIN
+  describe('/DELETE ROLE BY ADMIN', () => {
+    let role;
+    let role2
+    let rolevet;
+		beforeAll(async () => {
+      role = await Role.findOne({ title: 'admin' });
+      role2 = await Role.findOne({ title: 'regular' });
+      rolevet = await Role.findOne({ title: 'veteran' });
+		});
+    it('should return 403 if user is not an admin', () => {
+      const res = await request(app).put(`/api/roles/${role2._id}`).set('x-auth-token', isLogin)
+      expect(res.status).toBe(403)
+    });
+    //check admin
+    //validate id
+    //delete 200
+  });
 	//DELETE ROLE : ADMIN
 });
