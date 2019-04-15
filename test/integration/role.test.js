@@ -137,6 +137,12 @@ describe('TEST FOR ROLE', () => {
       });
       expect(res.status).toBe(400)
     });
+    it('should return 404 if role with id is not found', async() => {
+      const res = await request(app).put(`/api/roles/${mongoose.Types.ObjectId()}`).set('x-auth-token', isAdmin).send({
+        title: 'testRole'
+      });
+      expect(res.status).toBe(404)
+    });
 
     //check admin login
     //check idvalidity
