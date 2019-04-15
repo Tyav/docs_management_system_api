@@ -119,7 +119,20 @@ describe('TEST FOR ROLE', () => {
 		});
   });
   describe('/PUT: EDIT ROLE BY ADMIN', () => {
-    
+    let role;
+    let role2
+		beforeAll(async () => {
+      role = await Role.findOne({ title: 'admin' });
+      role2 = await Role.findOne({ title: 'regular' });
+		});
+    it('should return 401 if user is not an admin', async() => {
+      const res = await request(app).put(`/api/roles/${role2._id}`).set('x-auth-token', isLogin);
+      expect(res.status).toBe(401)
+    });
+    //check admin login
+    //check idvalidity
+    //update or 404
+
   });
 	//EDIT ROLE : ADMIN
 	//DELETE ROLE : ADMIN
