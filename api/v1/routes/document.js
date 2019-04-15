@@ -49,7 +49,7 @@ router.get('/', [ tokenAuth, loginAuth ], async (req, res) => {
 		return res.status(200).send(adminDocs);
 	}
 
-	const userDocs = await Document.find()
+	const userDocs = await Document.find({deleted:false})
 		//release only public and users private documents and documents set to same role as user
 		.or([ { access: 'public' }, { creatorId: req.user._id }, { role: req.user.role } ])
 		//set number of values to skip
@@ -103,9 +103,7 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 	const creatorId = req.body.creatorId || doc.creatorId;
 	const access = req.body.access || doc.access;
 	const categoryId = req.body.categoryId || doc.categoryId;
-	const createdAt = doc.createdAt;
 	const modifiedAt = Date.now();
-	const deleted = doc.deleted;
 	const publishDate = doc.publishDate;
 	const role =
 
@@ -135,17 +133,18 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 router.delete('/:id',[tokenAuth, authId],async (req, res) => {
   //401 if user is not logged in & check validity of document Id 404 :[tokenAuth, authId]
 
-  //get document by id if document creator Id is equal to users Id
-  const doc = await Document.findOne({_id:req.params.id,creatorId: req.user._id,deleted: false});
-  //return 400 if no document
-  if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' })
-  //check if user is the document creator else 401
-  
-  
-	//404 if user is not document creator aside admin
-	//if document has been soft deleted, return 404 to yes
+  //ADMIN 
 	//completely delete if action is performed by admin
-	//make a soft delete if user is not admin 
+
+  //USER
+  //get document by id if document creator Id is equal to users Id, and document is not delete
+  const doc = await Document.findOne({_id:req.params.id,creatorId: req.user._id,deleted: false});
+  //return 404 if no document
+
+  if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' })  
+  //make a soft delete if user is not admin 
+  doc.deleted = true;
+  doc.save()
 	//200 on successful delete
 	res.status(200).send({ Error: 200, message: 'Document Deleted' });
 });
