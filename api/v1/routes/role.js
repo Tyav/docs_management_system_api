@@ -10,18 +10,24 @@ import { authId } from '../utils/validateId';
 const router = express.Router();
 
 //CREATE: ROLE ONLY BY ADMIN
-router.post('/', [tokenAuth, adminAuth],(req, res)=>{
+router.post('/', [ tokenAuth, adminAuth ], async(req, res) => {
+	//check for login 401 check for ADMIN 403 : [tokenAuth, adminAuth]
+	//role validation 400
+	const { error } = validateRole(req.body);
+	if (error) return res.status(400).send({ Error: 400, message: error.details[0].message });
 
-    //check for login 401 check for ADMIN 403 : [tokenAuth, adminAuth]
-    //role validation 400 
-    const {error} = validateRole(req.body)
-    if (error) return res.status(400).send({ Error: 400, message: error.details[0].message })
+	//create role admin, 200
+	//using trycatch block to handle duplication error
+	try {
+    const role = await Role.create(req.body)
 
-    //create role admin, 200
-})
+    res.status(200).send(role)
+	} catch (error) {
+		console.log(error);
+	}
+});
 //VIEW A CREATED ROLE : ALL USER
 //EDIT ROLE : ADMIN
 //DELETE ROLE : ADMIN
 
-
-module.exports = router
+module.exports = router;
