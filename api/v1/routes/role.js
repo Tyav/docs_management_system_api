@@ -10,8 +10,12 @@ import { authId } from '../utils/validateId';
 const router = express.Router();
 
 //CREATE: ROLE ONLY BY ADMIN
-router.post('/', [tokenAuth],(req, res)=>{
+router.post('/', [tokenAuth, adminAuth],(req, res)=>{
 
+    //check for login 401
+    //check for ADMIN 403
+    //create role admin, 200
+    //role validation 400
 })
 //VIEW A CREATED ROLE : ALL USER
 //EDIT ROLE : ADMIN
