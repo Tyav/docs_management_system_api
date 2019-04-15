@@ -90,12 +90,18 @@ describe('TEST FOR ROLE', () => {
       const res = await request(app).get('/api/roles/').set('x-auth-token', isLogin)
       expect(res.body.length).toBe(2);
     });
-
-
-    //users must be logged in : 401
-    //admin can view all : 200
-    //users can view all without admin : 200
   });
+  describe('/GET:id GET CREATED ROLE BY ID', () => {
+    it('should return a 401 if user is not logged in', async () => {
+      const role = await Role.findOne({title: 'veteran'})
+      const res = await request(app).get(`/api/roles/${role._id}`)
+      expect(res.status).toBe(401);
+    });
+    //role is retrieved 200
+    //admin can retrieve admin role and any role 200
+    //user cannot retrieve amin role 404
+  });
+
 
   //VIEW A CREATED ROLE : ALL USER
   //EDIT ROLE : ADMIN
