@@ -52,8 +52,19 @@ router.get('/:id', [tokenAuth],async(req, res)=>{
 })
 
 //EDIT ROLE : ADMIN
-router.put('/:id',[authId, tokenAuth, adminAuth], (req, res)=>{
-  
+router.put('/:id',[authId, tokenAuth, adminAuth], async(req, res)=>{
+      //check admin login* & check idvalidity [authId, tokenAuth, adminAuth]
+    //update or 404
+    //check for role
+  const roleCheck = await Role.findOne({_id: req.params.id});
+  if (!roleCheck) return res.status(404).send({ Error: 404, message: 'Role Does not exist' })
+  // const updatedRole = await Role.findOneAndUpdate({_id:req.params.id},{
+  //   $set:{
+  //     title: req.body.title
+  //   }
+  // })
+
+
 })
 //DELETE ROLE : ADMIN
 
