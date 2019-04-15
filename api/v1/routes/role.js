@@ -52,8 +52,8 @@ router.get('/:id', [tokenAuth],async(req, res)=>{
 })
 
 //EDIT ROLE : ADMIN
-router.put('/:id',[tokenAuth, adminAuth], (req, res)=>{
-
+router.put('/:id',[authId, tokenAuth, adminAuth], (req, res)=>{
+  
 })
 //DELETE ROLE : ADMIN
 
