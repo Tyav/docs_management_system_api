@@ -554,6 +554,7 @@ describe('TEST FOR DOCUMENTS', () => {
 	describe('/DELETE: DELETE DOCUMENT', () => {
 		let publicDoc1;
 		let privateDoc1;
+		let deleteDoc;
 		beforeAll(() => {
 			publicDoc1 = new Document({
 				title      : 'testDoc14',
@@ -571,6 +572,15 @@ describe('TEST FOR DOCUMENTS', () => {
 				categoryId : scifi._id,
 			});
 			privateDoc1.save();
+			deleteDoc = new Document({
+				title      : 'testDoc15',
+				content    : 'I am a basic test doc15',
+				creatorId  : regularUser._id,
+				access     : 'private',
+				categoryId : scifi._id,
+				deleted    : true,
+			});
+			deleteDoc.save();
 		});
 		afterAll(() => {
 			Document.deleteMany({});
@@ -585,19 +595,24 @@ describe('TEST FOR DOCUMENTS', () => {
 			expect(res.status).toBe(401);
 			expect(res.body.message).toBe('Access denied, Log in');
 		});
-		it('should return 404 if document id', async () => {
+		it('should return 404 if document id is invalid', async () => {
 			const res = await request(app).delete(`/api/documents/${3245}`).set('x-auth-token', isLogin);
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Invalid Id');
 		});
-		it('should return 404 if document id', async () => {
+		it('should return 404 if id is valid but not a document id', async () => {
 			const res = await request(app).delete(`/api/documents/${mongoose.Types.ObjectId()}`).set('x-auth-token', isLogin);
 			expect(res.status).toBe(404);
 			expect(res.body.message).toBe('Document not found');
 		});
+		it('should return 404 if document has been previously deleted by user', async () => {
+			const res = await request(app).delete(`/api/documents/${deleteDoc._id}`).set('x-auth-token', isLogin);
+			expect(res.status).toBe(404);
+			expect(res.body.message).toBe('Document not found');
+		});
 
-		//404 if user is not document creator aside admin
-		//if document has been soft deleted, return 404 to yes
+		//[404 if user is not document creator aside admin
+		//if document has been soft deleted, return 404 to yes]
 		//completely delete if action is performed by admin
 		//make a soft delete if user is not admin
 		//
