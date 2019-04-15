@@ -84,9 +84,13 @@ describe('TEST FOR ROLE', () => {
     });
     it('should return roles including admin role if user is admin', async () => {
       const res = await request(app).get('/api/roles/').set('x-auth-token', isAdmin)
-      const adminRole = await Role.findOne({title:'admin'})
-      expect(res.body).toContain(adminRole);
+      expect(res.body.length).toBe(3);
     });
+    it('should return roles including admin role if user is admin', async () => {
+      const res = await request(app).get('/api/roles/').set('x-auth-token', isLogin)
+      expect(res.body.length).toBe(2);
+    });
+
 
     //users must be logged in : 401
     //admin can view all : 200
