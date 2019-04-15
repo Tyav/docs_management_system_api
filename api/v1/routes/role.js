@@ -33,9 +33,14 @@ router.get('/',[tokenAuth],async (req, res)=>{
     const adminResult = await Role.find()
     return res.status(200).send(adminResult);
   }
-  res.send()
+  const userResult = await Role.find().where('title').ne('admin')
+  res.status(200).send(userResult)
 })
+
 //VIEW A CREATED ROLE : ALL USER
+router.get('/:id', (req, res)=>{
+  
+})
 //EDIT ROLE : ADMIN
 //DELETE ROLE : ADMIN
 
