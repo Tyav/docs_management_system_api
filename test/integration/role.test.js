@@ -75,11 +75,18 @@ describe('TEST FOR ROLE', () => {
       expect(res.status).toBe(400)
       expect(res.body.message).toBe('Cannot create duplicate role of veteran')
     });
-
-    //create role admin, 200
-    //role validation 400
   });
   
+  describe('/GET: VIEW ALL CREATED ROLE', () => {
+    it('should return a 401 if user is not logged in', async () => {
+      const res = await request(app).get('/api/roles/')
+      expect(res.status).toBe(401);
+    });
+    //users must be logged in : 401
+    //admin can view all : 200
+    //users can view all without admin : 200
+  });
+
   //VIEW A CREATED ROLE : ALL USER
   //EDIT ROLE : ADMIN
   //DELETE ROLE : ADMIN
