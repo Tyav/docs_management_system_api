@@ -97,6 +97,12 @@ describe('TEST FOR ROLE', () => {
       const res = await request(app).get(`/api/roles/${role._id}`)
       expect(res.status).toBe(401);
     });
+    it('should return 404 if user requests for admin role', async () => {
+      const role = await Role.findOne({title: 'admin'})
+      const res = await request(app).get(`/api/roles/${role._id}`).set('x-auth-token', isLogin)
+      expect(res.status).toBe(404);
+    });
+
     //role is retrieved 200
     //admin can retrieve admin role and any role 200
     //user cannot retrieve amin role 404
