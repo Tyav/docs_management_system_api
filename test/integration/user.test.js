@@ -122,6 +122,16 @@ describe('Test for User', () => {
 			},
 			50000,
 		);
+		it(
+			'should return a 404 status amd User not found error message if id has not been assigned to user',
+			async () => {
+				const res = await request(app).get(`/api/users/${mongoose.Types.ObjectId()}`);
+				expect(res.body.message).toBe('User not found');
+				expect(res.status).toBe(404);
+			},
+			50000,
+		);
+
 	});
 	describe('/POST create user', () => {
 		afterEach(async() => {
@@ -360,6 +370,22 @@ describe('Test for User', () => {
 					.set('Accept', 'application/json');
 				expect(res.body).toHaveProperty('username', user.username);
 				expect(res.body).toHaveProperty('email', user.email);
+			},
+			50000,
+		);
+		it(
+			'should return 400 error status if wrong password is supplyed for change of password',
+			async () => {
+				const res = await request(app)
+					.put(`/api/users/${user._id}`)
+					.set('x-auth-token', editToken)
+					.send({
+						password: 'test1Passwor',
+						newPassword: 'newTestPassword',
+					})
+					.set('Accept', 'application/json');
+
+				expect(res.status).toBe(400);
 			},
 			50000,
 		);

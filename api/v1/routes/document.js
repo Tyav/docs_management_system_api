@@ -49,7 +49,7 @@ router.get('/', [ tokenAuth, loginAuth ], async (req, res) => {
 		return res.status(200).send(adminDocs);
 	}
 
-	const userDocs = await Document.find({deleted:false})
+	const userDocs = await Document.find({ deleted: false })
 		//release only public and users private documents and documents set to same role as user
 		.or([ { access: 'public' }, { creatorId: req.user._id }, { role: req.user.role } ])
 		//set number of values to skip
@@ -130,21 +130,24 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 });
 
 //DELETE: DELETE DOCUMENT
-router.delete('/:id',[tokenAuth, authId],async (req, res) => {
-  //401 if user is not logged in & check validity of document Id 404 :[tokenAuth, authId]
+router.delete('/:id', [ tokenAuth, authId ], async (req, res) => {
+	//401 if user is not logged in & check validity of document Id 404 :[tokenAuth, authId]
 
-  //ADMIN 
+	//ADMIN
 	//completely delete if action is performed by admin
+	if (req.user.isAdmin) {
+		await Document.findOneAndDelete({ _id: req.params.id });
+		return res.status(200).send({ Error: 200, message: 'Document Deleted' });
+	}
+	//USER
+	//get document by id if document creator Id is equal to users Id, and document is not delete
+	const doc = await Document.findOne({ _id: req.params.id, creatorId: req.user._id, deleted: false });
+	//return 404 if no document
 
-  //USER
-  //get document by id if document creator Id is equal to users Id, and document is not delete
-  const doc = await Document.findOne({_id:req.params.id,creatorId: req.user._id,deleted: false});
-  //return 404 if no document
-
-  if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' })  
-  //make a soft delete if user is not admin 
-  doc.deleted = true;
-  doc.save()
+	if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' });
+	//make a soft delete if user is not admin
+	doc.deleted = true;
+	doc.save();
 	//200 on successful delete
 	res.status(200).send({ Error: 200, message: 'Document Deleted' });
 });

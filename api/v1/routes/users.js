@@ -152,7 +152,6 @@ router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
 		},
 		{ new: true },
 	);
-	if (!updatedUser) return res.status(400).send({ Error: 400, message: 'Invalid Id' });
 	res.status(200).send(_.pick(updatedUser, [ '_id', 'username', 'email', 'name' ]));
 });
 

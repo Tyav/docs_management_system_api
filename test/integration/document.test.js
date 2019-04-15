@@ -21,6 +21,8 @@ describe('TEST FOR DOCUMENTS', () => {
 	let isLogin2;
 	let isLogin3;
 	let isAdmin;
+	let isNotLogin;
+	let unLoggedUser;
 	scifi = new Category({
 		title : 'scifi',
 	});
@@ -90,6 +92,19 @@ describe('TEST FOR DOCUMENTS', () => {
 	});
 	veteranUser.save();
 	isLogin2 = veteranUser.generateAuthToken(true);
+	unLoggedUser = new User({
+		username : 'unreg1UserName',
+		name     : {
+			firstName : 'testFirstName',
+			lastName  : 'testLastName',
+		},
+		email    : 'test1unreg@test.com',
+		password : 'reg1Password',
+		roleId   : regularRole._id,
+	});
+	unLoggedUser.save();
+	isNotLogin = regularUser.generateAuthToken(false);
+
 
 	// beforeEach(async () => {
 	// 	//app = server;
@@ -111,6 +126,19 @@ describe('TEST FOR DOCUMENTS', () => {
 		afterAll(async () => {
 			await Document.deleteMany({});
 		});
+		it(
+			'simple case where user takes or sends a bad token',
+			async () => {
+				const res = await request(app).post('/api/documents/').set('x-auth-token', isNotLogin).send({
+					title      : 'testDoc11',
+					content    : 'I am a basic test doc11',
+					access     : 'public',
+					categoryId : scifi._id,
+				});
+				expect(res.status).toBe(401);
+			},
+			50000,
+		);
 		it(
 			'should create a document: /api/documents',
 			async () => {
@@ -635,9 +663,5 @@ describe('TEST FOR DOCUMENTS', () => {
 			const delDoc = await Document.findOne({_id:publicDoc1._id})
 			expect(delDoc).toBe(null);
 		});
-		//completely delete if action is performed by admin
-		//make a soft delete if user is not admin
-		//
 	});
-	//DELETE: DELETE DOCUMENT
 });
