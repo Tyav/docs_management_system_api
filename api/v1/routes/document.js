@@ -8,6 +8,7 @@ import adminAuth from '../utils/admin';
 import tokenAuth from '../utils/auth';
 import loginAuth from '../utils/isLogin';
 import ifLogin from '../utils/ifLogin';
+import { authId } from '../utils/validateId';
 
 const router = express.Router();
 
@@ -131,10 +132,16 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 });
 
 //DELETE: DELETE DOCUMENT
-router.delete('/:id',[tokenAuth],async (req, res) => {
+router.delete('/:id',[tokenAuth, authId],async (req, res) => {
+  //401 if user is not logged in & check validity of document Id 404 :[tokenAuth, authId]
+
+  //get document by id if document creator Id is equal to users Id
+  const doc = await Document.findOne({_id:req.params.id,creatorId: req.user._id});
+  //return 400 if no document
+  if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' })
+  //check if user is the document creator else 401
   
-  //401 if user is not logged in
-  		//check validity of document Id 404
+  
 	//404 if user is not document creator aside admin
 	//if document has been soft deleted, return 404 to yes
 	//completely delete if action is performed by admin
