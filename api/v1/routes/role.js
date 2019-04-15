@@ -9,7 +9,7 @@ import { authId } from '../utils/validateId';
 
 const router = express.Router();
 
-//CREATE: ROLE ONLY BY ADMIN
+//POST: CREATE ROLE ONLY BY ADMIN
 router.post('/', [ tokenAuth, adminAuth ], async(req, res) => {
 	//check for login 401 check for ADMIN 403 : [tokenAuth, adminAuth]
 	//role validation 400
@@ -26,6 +26,14 @@ router.post('/', [ tokenAuth, adminAuth ], async(req, res) => {
     res.status(400).send({Error: 400, message: `Cannot create duplicate role of ${req.body.title}`})
 	}
 });
+
+//GET: VIEW ALL ROLE
+router.get('/',[tokenAuth],async (req, res)=>{
+  if (req.user.isAdmin === true){
+    const adminResult = await Role.find()
+  }
+  res.send()
+})
 //VIEW A CREATED ROLE : ALL USER
 //EDIT ROLE : ADMIN
 //DELETE ROLE : ADMIN
