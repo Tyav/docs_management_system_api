@@ -136,7 +136,7 @@ router.delete('/:id',[tokenAuth, authId],async (req, res) => {
   //401 if user is not logged in & check validity of document Id 404 :[tokenAuth, authId]
 
   //get document by id if document creator Id is equal to users Id
-  const doc = await Document.findOne({_id:req.params.id,creatorId: req.user._id});
+  const doc = await Document.findOne({_id:req.params.id,creatorId: req.user._id,deleted: false});
   //return 400 if no document
   if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' })
   //check if user is the document creator else 401
