@@ -4,40 +4,58 @@ const Schema = mongoose.Schema;
 
 //Create Role schema to build role model
 const roleSchema = new Schema({
-	title: {
+	title       : {
 		//role title
-		type: String,
-		required: true,
-		minlength: 3,
-		unique: true,
-		lowercase: true,
+		type      : String,
+		required  : true,
+		minlength : 3,
+		unique    : true,
+		lowercase : true,
 	},
-	publicWrite: {
+	publicWrite : {
 		//right to edit or delete any document
-		type: Boolean,
-		default: function() {
+		type     : Boolean,
+		default  : function() {
 			if (this.title === 'admin') {
 				return true;
 			}
 			return false;
 		},
-		required: true,
+		required : true,
 	},
-	readAll: {
+	readAll     : {
 		//right to read all documents including deleted files
-		type: Boolean,
-		default: function() {
+		type     : Boolean,
+		default  : function() {
 			if (this.publicWrite) {
 				return true;
 			}
 			return false;
 		},
-		required: true,
+		required : true,
 	},
 });
 
 //using schema to generate Role model
 const Role = mongoose.model('Role', roleSchema);
+
+//CREATE DEFAULT ROLES REGULAR & ADMIN ROLES
+Role.create({
+	title : 'admin',
+})
+	.then(() => {})
+	.catch(err => {
+		//Do something with error
+	});
+Role.create({
+	title : 'regular',
+})
+	.then(() => {})
+	.catch(err => {
+		//Do something with error
+	});
+
+//console.log(error)
 
 // Role.create({
 // 	title: 'regular',
