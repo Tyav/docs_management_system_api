@@ -172,9 +172,9 @@ describe('TEST FOR ROLE', () => {
       const res = await request(app).delete(`/api/roles/${role2._id}`).set('x-auth-token', isLogin)
       expect(res.status).toBe(403)
     });
-    //check admin
-    //validate id
-    //delete 200
+    it('should delete role if user is admin', async() => {
+      const res = await request(app).delete(`/api/roles/${role2._id}`).set('x-auth-token', isAdmin)
+      expect(res.status).toBe(200)
+    });
   });
-	//DELETE ROLE : ADMIN
 });
