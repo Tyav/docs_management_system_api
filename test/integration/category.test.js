@@ -53,13 +53,13 @@ describe('TEST FOR CATEGORY', () => {
 			});
 			expect(res.status).toBe(403);
 		});
-		// it('should return a 400 if role creation fail by data validation', async () => {
-		// 	const res = await request(app).post('/api/roles/').set('x-auth-token', isAdmin).send({
-		// 		title : 've',
-		// 	});
-		// 	const role = await Role.findOne({ title: 'veteran' });
-		// 	expect(res.status).toBe(400);
-		// });
+		it('should return a 400 if role creation fail by data validation', async () => {
+			const res = await request(app).post('/api/categories/').set('x-auth-token', isAdmin).send({
+				title : 've',
+			});
+			const role = await Role.findOne({ title: 'veteran' });
+			expect(res.status).toBe(400);
+		});
 		// it('logged in admin should create a new role', async () => {
 		// 	const res = await request(app).post('/api/roles/').set('x-auth-token', isAdmin).send({
 		// 		title : 'veteran',
