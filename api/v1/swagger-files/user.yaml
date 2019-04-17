@@ -112,6 +112,56 @@ path:
       parameters:
         - name: login payload
           in: body
+          description: details required for login
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                required: true
+                example: johndoe
+              password:
+                type: string
+                required: true
+                example: "1234567890"
+          required: true
+      responses:
+        200:
+          description: logs in user and return a token for use
+          schema:
+            $ref: "#/definitions/success-message"
+          headers:
+            x-auth-token:
+              type: string
+              description: token sent to user to validate login
+        
+        400:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+
+  /api/users/logout:
+    post:
+      tags:
+        - User
+      description: Logs User out
+      produces:
+        - application/json
+      responses:
+        200:
+          description: logs users out of the system
+          schema:
+            $ref: "#/definitions/success-message"
+        401:
+          description: returns this if a user is already logged out
+          schema: 
+            $ref: "#/definitions/error-message"
+  
+
+
+        
+
+          
 
 
 
