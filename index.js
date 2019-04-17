@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+// import swaggerJsdoc from 'swagger-jsdoc';
+// import swaggerUi from 'swagger-ui-express';
 
 import express from 'express';
 const app = express();

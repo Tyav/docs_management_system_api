@@ -20,19 +20,140 @@ import ifLogin from '../utils/ifLogin';
  * @swagger
  * /api/users:
  *    get:
+ *      tags:
+ *        - Users
  *      description: This should return all users
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - name: x-auth-token
+ *          in: header
+ *          schema:
+ *            type: string
+ *          required: true
  *      responses:
  *        200:
- *          description: A list of users
+ *          description: all users are retrieved.
  *          schema:
- *            type: string
+ *            type: array
+ *            items: 
+ *             $ref: "#/definitions/users"
+ *        404:
+ *         description: user not found
+ *         schema:
+ *           $ref: "#/definitions/error-message"
  *        400:
- *          description: Failed Request
+ *         description: Bad Request
+ *         schema:
+ *           $ref: "#/definitions/error-message"
+ *        401:
+ *          description: Bad Request
+ *          schema:
+ *            $ref: "#/definitions/error-message"
+ * 
+ * /api/users/{id}:
+ *    get:
+ *      tags:
+ *        - Users
+ *      description: This should return all users
+ *      produces:
+ *        - application/json
+ *      parameters:
+ *        - in: path
+ *          name: User Id
+ *          description: Id for user
  *          schema:
  *            type: string
+ *          required: true
+ * 
+ *      responses:
+ *        200:
+ *          description: single user is retrieved.
+ *          schema:
+ *            $ref: "#/definitions/users"
+ *        404:
+ *         description: user not found
+ *         schema:
+ *           $ref: "#/definitions/error-message"
+ *        400:
+ *         description: Bad Request
+ *         schema:
+ *           $ref: "#/definitions/error-message"
+ *        401:
+ *         description: Bad Request
+ *         schema:
+ *           $ref: "#/definitions/error-message"
+ * 
+ * definitions:
+ *  users:
+ *    type: object
+ *    properties:
+ *      id:
+ *        type: string
+ *      name:
+ *        type: object
+ *        properties:
+ *          firstName:
+ *            type: string
+ *            minLength: 3
+ *            maxLength: 255
+ *          lastName:
+ *            type: string
+ *            minLength: 3
+ *            maxLength: 255
+ *        required:
+ *          - firstName
+ *          - lastName
+ *      username:
+ *        type: string
+ *      email:
+ *        type: string
+ *        format: email
+ *      password:
+ *        type: string
+ *        writeOnly: true
+ *      roleId:
+ *        type: string
+ *        pattern: '^[a-fA-F0-9]{24}$'
+ *      createdAt:
+ *        type: string
+ *        format: date-time
+ *      modifiedAt: 
+ *        type: string
+ *        format: date-time
+ *    required:
+ *      - username
+ *      - email
+ *      - name
+ *      - roleId
+ *      - password
+ *      - createdAt
+ * 
+ *  error-message:
+ *    type: object
+ *    properties:
+ *      Error:
+ *        type: integer
+ *        example: 404
+ *      message:
+ *        type: string
+ *        example: Error message
+ * 
+ *  success-message:
+ *    type: object
+ *    properties:
+ *      Success:
+ *        type: integer
+ *        example: 404
+ *      message:
+ *        type: string
+ *        example: Error message
+
+ * 
  */
 
-router.get('/', [ tokenAuth, loginAuth, adminAuth ], async (req, res) => {
+
+router.get('/', [tokenAuth], async (req, res) => {
 	const users = await User.find({});
 	res.status(200).send(users);
 });
@@ -48,17 +169,17 @@ router.get('/:id', idAuth, async (req, res) => {
 router.post('/', async (req, res) => {
 	//validate body content valid for usser creation
 	const { error } = validateCreateUser(req.body);
-	if (error) return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
+	if (error) return res.status(400).send({ Error: 400, message: error.details[0].message });
 	//validate roleId has already be created else reject user creation
 	const role = await Role.findById(req.body.roleId);
-	if (!role) return res.status(400).send({ Error: 'Bad Request', message: 'Invalid Role Id' });
+	if (!role) return res.status(400).send({ Error: 400, message: 'Invalid Role Id' });
 
 	//check if email has been taken
 	let checkEmail = await User.findOne({ email: req.body.email });
-	if (checkEmail) return res.status(400).send({ Error: 'Bad Request', message: 'Email is already in use' });
+	if (checkEmail) return res.status(400).send({ Error: 400, message: 'Email is already in use' });
 	//check if username has been taken
 	let checkUsername = await User.findOne({ username: req.body.username });
-	if (checkUsername) return res.status(400).send({ Error: 'Bad Request', message: 'Username is taken' });
+	if (checkUsername) return res.status(400).send({ Error: 400, message: 'Username is taken' });
 
 	//CREATE USER
 	const user = new User(req.body);
@@ -118,7 +239,7 @@ router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
 	//compared id in token with id from parameter. if not same return 403
 	if (req.params.id !== req.user._id) return res.status(403).send({ Error: 403, message: 'Forbidden' });
 	const { error } = validateEditUser(req.body);
-	if (error) return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
+	if (error) return res.status(400).send({ Error: 400, message: error.details[0].message });
 	const user = await User.findById(req.params.id);
 
 	//perform salt and bcrypt

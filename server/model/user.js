@@ -47,7 +47,7 @@ const userSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		required: [ true, 'roleId is required' ],
 	},
-	createAt: {
+	createdAt: {
 		type: Date,
 		default: Date.now,
 		required: true,

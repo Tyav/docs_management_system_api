@@ -1,0 +1,226 @@
+
+path:
+  /api/users:
+    get:
+      tags:
+        - User
+      description: This should return all users
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: all users are retrieved.
+          schema:
+            type: array
+            items: 
+             $ref: "#/definitions/User"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+          description: Unauthorized User
+          schema:
+            $ref: "#/definitions/error-message"
+
+    post:
+      tags:
+        - User
+      description: Creates a new user
+      produces:
+        - application/json
+      parameters:
+        - name: payload
+          in: body
+          description: Information required to create new user
+          schema: 
+            $ref: "#/definitions/newUserPayload"
+          required: true
+      responses:
+        200:
+          description: returns seleted Users' Information
+          schema:
+            type: object
+            properties:
+              _id:
+                type: string
+                example: 43edc49a9D8BEfac83ca0cAb
+              username:
+                type: string
+                example: johndoe
+              email:
+                type: string
+                example: johnd@example.com
+          headers:
+            x-auth-token:
+              type: string
+              description: jwt contain users id and other referrential informations
+        400:
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/error-message"
+
+  /api/users/{id}:
+    get:
+      tags:
+        - User
+      description: This should return all users
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: User Id
+          description: Id for user
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: single user is retrieved.
+          schema:
+            $ref: "#/definitions/newUserPayload"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+         description: Unauthorized User
+         schema:
+           $ref: "#/definitions/error-message"
+
+  /api/users/login:
+    post:
+      tags:
+        - User
+      description: User login route in the system
+      produces:
+        - application/json
+      parameters:
+        - name: login payload
+          in: body
+
+
+
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: object
+        properties:
+          firstName:
+            type: string
+            minLength: 3
+            maxLength: 255
+          lastName:
+            type: string
+            minLength: 3
+            maxLength: 255
+        required:
+          - firstName
+          - lastName
+      username:
+        type: string
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        writeOnly: true
+      roleId:
+        type: string
+        pattern: '^[a-fA-F0-9]{24}$'
+      createdAt:
+        type: string
+        format: date-time
+        writeOnly: true
+      modifiedAt: 
+        type: string
+        format: date-time
+        writeOnly: true
+    required:
+      - username
+      - email
+      - name
+      - roleId
+      - password
+      - createdAt
+
+  newUserPayload:
+    type: object
+    properties:
+      name:
+        type: object
+        properties:
+          firstName:
+            type: string
+            minLength: 3
+            maxLength: 255
+            example: John
+          lastName:
+            type: string
+            minLength: 3
+            maxLength: 255
+            example: Doe
+        required:
+          - firstName
+          - lastName
+      username:
+        type: string
+        example: johndoe
+      email:
+        type: string
+        format: email
+        example: johnd@example.com
+      password:
+        type: string
+        writeOnly: true
+        example: "1234567890"
+      roleId:
+        type: string
+        pattern: '^[a-fA-F0-9]{24}$'
+        example: 43edc49a9D8BEfac83ca0cAb
+        description: role have to be created for this to work
+    required:
+      - username
+      - email
+      - name
+      - roleId
+      - password
+
+
+  error-message:
+    type: object
+    properties:
+      Error:
+        type: integer
+        example: 4..
+      message:
+        type: string
+        example: Error message
+ 
+  success-message:
+    type: object
+    properties:
+      Success:
+        type: integer
+        example: 2..
+      message:
+        type: string
+        example: Error message
