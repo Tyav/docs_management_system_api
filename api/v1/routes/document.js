@@ -31,7 +31,6 @@ router.post('/', [ tokenAuth, loginAuth ], async (req, res) => {
 //GET: GET ALL DOCUMENT and with parameters [pageNumber, pagesize]
 router.get('/', [ tokenAuth, loginAuth ], async (req, res) => {
 	//verify that user is geniue and logged in with [tokenAuth, loginAuth]
-
 	//get pagination values
 	//set pageNumber
 	let pageNumber = Number(req.query.pageNumber);

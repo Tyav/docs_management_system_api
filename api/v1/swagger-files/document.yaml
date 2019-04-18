@@ -1,0 +1,42 @@
+path:
+  /api/documents:
+    get:
+      tags:
+        - Document
+      description: This return all document if user is an admin, but selects certain document for non-administrative users based on user role and document settings
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: pageNumber
+        - name: pageSize
+      responses:
+        200:
+          description: all users are retrieved.
+          schema:
+            type: array
+            items: 
+             $ref: "#/definitions/Document"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+          description: Unauthorized User
+          schema:
+            $ref: "#/definitions/error-message"
+
+
+definitions:
+  Document:
+
+
+  

@@ -235,7 +235,7 @@ router.post('/logout', [tokenAuth], (req, res) => {
 
 // EDIT USER [PUT /users/<id>]
 //[idAuth,tokenAuth, loginAuth],
-router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
+router.put('/:id', [ idAuth, tokenAuth], async (req, res) => {
 	//compared id in token with id from parameter. if not same return 403
 	if (req.params.id !== req.user._id) return res.status(403).send({ Error: 403, message: 'Forbidden' });
 	const { error } = validateEditUser(req.body);

@@ -298,7 +298,7 @@ describe('Test for User', () => {
 		it(
 			'should return an INVALID ID error message if invalid id is given',
 			async () => {
-				const res = await request(app).put(`/api/users/${342}`);
+				const res = await request(app).put(`/api/users/${5456}`);
 				expect(res.body.message).toBe('Invalid Id');
 			},
 			50000,
@@ -306,7 +306,7 @@ describe('Test for User', () => {
 		it(
 			'should return a 401 status code if edit is performed by User not logged in',
 			async () => {
-				const res = await request(app).put(`/api/users/${user._id}`);
+				const res = await request(app).put(`/api/users/${user._id.toHexString()}`);
 				expect(res.status).toBe(401);
 			},
 			50000,

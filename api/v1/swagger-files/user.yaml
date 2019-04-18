@@ -70,7 +70,7 @@ path:
           schema:
             $ref: "#/definitions/error-message"
 
-  /api/users/{id}:
+  /api/users/{User Id}:
     get:
       tags:
         - User
@@ -101,6 +101,103 @@ path:
          description: Unauthorized User
          schema:
            $ref: "#/definitions/error-message"
+
+    put:
+      tags:
+        - User
+      description: Edit user information, User must be logged in
+      produces: 
+        - application/json
+      parameters:
+        - in: body
+          name: User Edit payload
+          description: use the "newPassword" to provide user option key to change user password. else do not use it.
+          schema:
+            type: object
+            properties: 
+              name:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                    example: Johnny
+                  lastName:
+                    type: string
+                    example: Snow
+              password:
+                type: string
+                required: true
+                example: "1234567890"
+              newPassword:
+                type: string
+                description: used to change user password
+                example: new1234567890
+        - in: path
+          name: User Id
+          description: user Id for edit target purposes
+          schema:
+            type: string
+          required: true
+
+        - in: header
+          name: x-auth-token
+          description: token is needed for user to be confirmed logged in
+          schema:
+            type: string
+        
+      responses:
+        200:
+          description: users details have been successfully updated
+          schema:
+            $ref: "#/definitions/success-message"
+        400:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+        401:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+        403:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+
+    delete:
+      tags:
+        - User
+      description: Deletes Users from the system
+      produces:
+        - application/json
+      parameters:
+        - name: User Id
+          in: path
+          description: Id required for target of user object
+          schema:
+            type: string
+        - name: x-auth-token
+          in: header
+          description: Token must be admin token
+          schema:
+            type: string
+      responses:
+        200:
+          description: users details have been successfully updated
+          schema:
+            $ref: "#/definitions/success-message"
+        400:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+        401:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+        403:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+
 
   /api/users/login:
     post:
@@ -156,6 +253,7 @@ path:
           description: returns this if a user is already logged out
           schema: 
             $ref: "#/definitions/error-message"
+  
   
 
 
