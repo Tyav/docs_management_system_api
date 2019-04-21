@@ -323,6 +323,14 @@ describe('TEST FOR DOCUMENTS', () => {
 			},
 			50000,
 		);
+		it(
+			'should return status of 400 if token is invalid',
+			async () => {
+				const res = await request(app).get('/api/documents/').set('x-auth-token', 'gderdfg');
+				expect(res.status).toBe(400);
+			},
+			50000,
+		);
 
 	});
 	describe('GET: GET DOCUMENT BY ID', () => {
