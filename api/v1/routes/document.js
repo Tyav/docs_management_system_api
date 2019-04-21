@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import { Document } from '../../../server/model/document';
 import { validateDoc, validateDocEdit } from '../../../server/validations/document';
 import adminAuth from '../utils/admin';
+import tokenCheck from '../utils/docLog';
 import tokenAuth from '../utils/auth';
 import loginAuth from '../utils/isLogin';
 import ifLogin from '../utils/ifLogin';
@@ -12,6 +13,7 @@ import { authId } from '../utils/validateId';
 
 const router = express.Router();
 
+//api/docs?pageNumber=3&pageSize=7
 //POST: CREATE DOCUMENT
 router.post('/', [ tokenAuth, loginAuth ], async (req, res) => {
 	//CREATE DOCUMENT
@@ -29,7 +31,7 @@ router.post('/', [ tokenAuth, loginAuth ], async (req, res) => {
 });
 
 //GET: GET ALL DOCUMENT and with parameters [pageNumber, pagesize]
-router.get('/', [ tokenAuth, loginAuth ], async (req, res) => {
+router.get('/', [ tokenCheck ], async (req, res) => {
 	//verify that user is geniue and logged in with [tokenAuth, loginAuth]
 	//get pagination values
 	//set pageNumber
@@ -38,16 +40,27 @@ router.get('/', [ tokenAuth, loginAuth ], async (req, res) => {
 	let pageSize = Number(req.query.pageSize);
 
 	if (req.user.isAdmin === true) {
+		//set a delete object to fetch all document if delete query is not set
+		let deleted = {};
+		//if query deleted is set to true, set delete object to fetch only deleted documents
+		if (req.query.deleted && req.query.deleted === 'true'){
+			deleted = {deleted: true}
+		}
+		//if query deleted is set to false, set delete object to fetch only non-deleted documents
+		if (req.query.deleted && req.query.deleted === 'false'){
+			deleted = {deleted: false}
+		}
+
 		//check if user is an admin, release all documents
-		const adminDocs = await Document.find()
+		const adminDocs = await Document.find(deleted)
 			//set number of values to skip
 			.skip((pageNumber - 1) * pageSize)
 			//number of values to display
 			.limit(pageSize)
 			.sort({ publishDate: 1 });
-		return res.status(200).send(adminDocs);
-	}
 
+			return res.send(adminDocs);
+	}
 	const userDocs = await Document.find({ deleted: false })
 		//release only public and users private documents and documents set to same role as user
 		.or([ { access: 'public' }, { creatorId: req.user._id }, { role: req.user.role } ])
@@ -59,7 +72,7 @@ router.get('/', [ tokenAuth, loginAuth ], async (req, res) => {
 		//select a set of informations to release
 		.select('_id title content createdAt creatorId access categoryId');
 
-	res.status(200).send(userDocs);
+	res.send(userDocs);
 });
 
 //GET: GET DOCUMENT BY ID

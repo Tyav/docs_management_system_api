@@ -26,9 +26,8 @@ const options = {
 				description : 'Everything about the Roles API',
 			},
 		],
-		schemes  : [ 'https', 'http' ],
-		host     : 'localhost:4040/',
-		basePath : 'index',
+		// schemes  : [ 'https', 'http' ],
+		// host     : 'localhost:4040/',
 	},
 	// List of files to be processes. You can also set globs './routes/*.js'
 	apis              : [ './api/v1/swagger-files/*.yaml' ],

@@ -315,6 +315,15 @@ describe('TEST FOR DOCUMENTS', () => {
 			},
 			50000,
 		);
+		it(
+			'should return documents with only access public if user is not logged in',
+			async () => {
+				const res = await request(app).get('/api/documents/');
+				expect(res.body[0].title).toBe('testDoc1');
+			},
+			50000,
+		);
+
 	});
 	describe('GET: GET DOCUMENT BY ID', () => {
 		let publicDoc1;
@@ -364,6 +373,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return the document with the given ID',
 			async () => {
 				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isAdmin);
+				console.log(res.body._id)
 				expect(res.body._id).toBe(roleDoc1._id.toHexString());
 			},
 			50000,

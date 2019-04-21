@@ -3,54 +3,54 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 //Schema for documents
 const docSchema = new Schema({
-	title: {
-		type: String,
-		unique: true,
-		required: true,
-		minlength: 1,
-		maxlength: 255,
+	title       : {
+		type      : String,
+		unique    : true,
+		required  : true,
+		minlength : 1,
+		maxlength : 255,
 	},
-	content: {
-		type: String,
-		unique: true,
-		required: true,
-		minlength: 1,
-		maxlength: 5000,
+	content     : {
+		type      : String,
+		unique    : true,
+		required  : true,
+		minlength : 1,
+		maxlength : 5000,
 	},
-	creatorId: {
-		type: mongoose.Schema.Types.ObjectId,
-		required: true,
+	creatorId   : {
+		type     : mongoose.Schema.Types.ObjectId,
+		required : true,
 	},
-	access: {
-		type: String,
-		enum: [ 'public', 'private','role' ],
-		default: 'public'
+	access      : {
+		type    : String,
+		enum    : [ 'public', 'private', 'role' ],
+		default : 'public',
 	},
-	categoryId: {
-		type: mongoose.Schema.Types.ObjectId,
-		required: true,
-		ref:'users'
+	categoryId  : {
+		type     : mongoose.Schema.Types.ObjectId,
+		required : true,
+		ref      : 'users',
 	},
-	createdAt: {
-		type: Date,
-		required: true,
-		default: Date.now(),
+	createdAt   : {
+		type     : Date,
+		required : true,
+		default  : Date.now(),
 	},
-	modifiedAt: {
-		type: Date,
+	modifiedAt  : {
+		type : Date,
 	},
-	deleted: {
-		type: Boolean,
-		default: false,
+	deleted     : {
+		type    : Boolean,
+		default : false,
 	},
-	publishDate:{
-		type: Date,
-		set: v => new Date(v),
-		default: Date.now()
+	publishDate : {
+		type    : Date,
+		set     : v => new Date(v),
+		default : Date.now(),
 	},
-	role:{
-		type:mongoose.Schema.Types.ObjectId,
-	}
+	role        : {
+		type : mongoose.Schema.Types.ObjectId,
+	},
 });
 
 //model for documents
