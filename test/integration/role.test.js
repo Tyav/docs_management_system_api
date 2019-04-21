@@ -8,6 +8,12 @@ import { User } from '../../server/model/user';
 import { Role } from '../../server/model/role';
 
 describe('TEST FOR ROLE', () => {
+	beforeAll(async () => {
+		await Document.deleteMany({});
+		await Category.deleteMany({});
+		await User.deleteMany({});
+		await Role.deleteMany({});
+	});
 	const adminUser = new User({
 		username : 'adminUserName',
 		name     : {
@@ -179,5 +185,5 @@ describe('TEST FOR ROLE', () => {
       const res = await request(app).delete(`/api/roles/${role2._id}`).set('x-auth-token', isAdmin)
       expect(res.status).toBe(200)
     });
-  });
+	});
 });

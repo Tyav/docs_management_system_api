@@ -373,7 +373,6 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return the document with the given ID',
 			async () => {
 				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isAdmin);
-				console.log(res.body._id)
 				expect(res.body._id).toBe(roleDoc1._id.toHexString());
 			},
 			50000,

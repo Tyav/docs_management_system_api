@@ -40,7 +40,6 @@ const roleSchema = new Schema({
 const Role = mongoose.model('Role', roleSchema);
 
 //CREATE DEFAULT ROLES REGULAR & ADMIN ROLES
-if (process.env.NODE_ENV !== 'test') {
 	Role.create({
 		title : 'admin',
 	})
@@ -55,9 +54,6 @@ if (process.env.NODE_ENV !== 'test') {
 		.catch(err => {
 			//Do something with error
 		});
-		console.log('testing 2')
-}
-
 //console.log(error)
 
 // Role.create({
