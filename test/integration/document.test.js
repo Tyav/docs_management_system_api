@@ -341,7 +341,17 @@ describe('TEST FOR DOCUMENTS', () => {
 				expect(res.body[0].title).toBe('testDoc4');
 			},
 			50000,
-		);	});
+		);
+		it(
+			'should return all non-deleted documents if defined by admin in query',
+			async () => {
+				let testDoc = await Document.findOne({title: 'testDoc4'});
+				const res = await request(app).get('/api/documents?deleted=false').set('x-auth-token', isAdmin);
+				expect(res.body).not.toContain(testDoc);
+			},
+			50000,
+		);
+	});
 	describe('GET: GET DOCUMENT BY ID', () => {
 		let publicDoc1;
 		let privateDoc1;
