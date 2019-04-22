@@ -59,14 +59,14 @@ describe('TEST FOR CATEGORY', () => {
 			});
 			expect(res.status).toBe(404);
 		});
-		// it('logged in admin should create a new role', async () => {
-		// 	const res = await request(app).post('/api/roles/').set('x-auth-token', isAdmin).send({
-		// 		title : 'veteran',
-		// 	});
-		// 	const role = await Role.findOne({ title: 'veteran' });
-		// 	expect(res.status).toBe(200);
-		// 	expect(role).toBeDefined();
-		// });
+		it('logged in admin should create a new role', async () => {
+			const res = await request(app).post('/api/categories/').set('x-auth-token', isAdmin).send({
+				title : 'detective',
+			});
+			const category = await Category.findOne({ title: 'detective' });
+			expect(res.status).toBe(201);
+			expect(category.title).toBe('detective');
+		});
 		// it('should return a 400 error on duplicate roles', async () => {
 		// 	const res = await request(app).post('/api/roles/').set('x-auth-token', isAdmin).send({
 		// 		title : 'veteran',
