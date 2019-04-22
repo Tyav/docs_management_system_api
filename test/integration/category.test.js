@@ -68,13 +68,13 @@ describe('TEST FOR CATEGORY', () => {
 			expect(res.status).toBe(201);
 			expect(category.title).toBe('detective');
 		});
-		// it('should return a 400 error on duplicate roles', async () => {
-		// 	const res = await request(app).post('/api/roles/').set('x-auth-token', isAdmin).send({
-		// 		title : 'veteran',
-		// 	});
-		// 	expect(res.status).toBe(400);
-		// 	expect(res.body.message).toBe('Cannot create duplicate role of veteran');
-		// });
+		it('should return a 400 error on duplicate categories', async () => {
+			const res = await request(app).post('/api/categories/').set('x-auth-token', isAdmin).send({
+				title : 'detective',
+			});
+			expect(res.status).toBe(400);
+			expect(res.body.message).toBe('Cannot create duplicate category of detective');
+		});
 
 		//user should be logged in
 		//user must be an admin,
