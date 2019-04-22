@@ -64,6 +64,7 @@ describe('TEST FOR CATEGORY', () => {
 				title : 'detective',
 			});
 			const category = await Category.findOne({ title: 'detective' });
+
 			expect(res.status).toBe(201);
 			expect(category.title).toBe('detective');
 		});
