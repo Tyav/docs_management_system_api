@@ -16,7 +16,9 @@ router.post('/', [ tokenAuth, adminAuth ], async (req, res) => {
 	const { error } = validateCate(req.body);
 	if (error) return res.status(404).send({ Error: 404, message: 'Invalid title format' });
 
-	//if duplication error return 400(dulicate error)
+  //if duplication error return 400(dulicate error)
+  let duplicate = await Category.findOne({title: req.body.title})
+  if (duplicate) return res.status(400).send({Error: 400, message: `Cannot create duplicate category of ${req.body.title}`})
   //create category 201
   let category = new Category({
     title: req.body.title

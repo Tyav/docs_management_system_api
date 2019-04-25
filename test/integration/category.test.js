@@ -33,6 +33,7 @@ describe('TEST FOR CATEGORY', () => {
 	});
 	regularUser.save();
 	const isLogin = regularUser.generateAuthToken(true);
+	
 	afterAll(async () => {
 		await Document.deleteMany({});
 		await Category.deleteMany({});
