@@ -39,5 +39,4 @@ if (process.env.NODE_ENV !== 'test') {
 	console.log(`listening to ${port}...`);
 });
 }
-
 export { app };

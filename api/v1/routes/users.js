@@ -212,7 +212,7 @@ router.post('/login', [ ifLogin ], async (req, res) => {
 	//please do so too in the signup of users
 
 	const password = await bcrypt.compare(req.body.password, user.password);
-	if (!password) return res.status(400).send({ Error: 400, message: 'Wrong Username or Password' });
+	if (!password) return res.status(400).send({ Error: 400, message: 'Wrong Username or Password', pass: req.body.password });
 
 	//get role of user
 	const role = await Role.findOne({ _id: user.roleId });
