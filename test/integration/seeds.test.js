@@ -60,9 +60,18 @@ describe('Test for Data Seeding Routes', () => {
 		});
   });
   describe('POST: /documents to seed public, private and role based documents', () => {
+    let publicDocs;
+    let privateDocs;
+    let roleDocs;
+    it('should return a 201 status on successful Seeding', async() => {
+      let res = await request(app).post('/api/seed/documents');
+      expect(res.status).toBe(201)
+    });
     //should return a 201 status on successful Seeding
     //should create a default collection of documents (public: 20, private: 12, role: 8)
-    
+    //should recieve specifications by query 
+
+
   });
 	//POST for documents
 });
