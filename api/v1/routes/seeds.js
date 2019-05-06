@@ -42,11 +42,12 @@ router.post('/users', async (req, res) => {
 			password : regularPassword,
 			roleId   : regularRole._id,
 		});
-		// console.log(admin)
 	}
-	//res.redirect(307,'documents')
 	res.status(201).send('done');
 });
+
+
+//SEEDS DOCUMENTS' DATA TO DATABASE
 
 router.post('/documents', async (req, res) => {
 	await Document.deleteMany({});
@@ -77,6 +78,7 @@ router.post('/documents', async (req, res) => {
     })
     i++
   }
+  //creating private
   i = 0
   while(i < privateAccess){
     let userIndex = Math.floor(Math.random() * users.length)
@@ -97,6 +99,7 @@ router.post('/documents', async (req, res) => {
     })
     i++
   }
+  //creating role based documents
   i = 0
   while(i < role){
     let userIndex = Math.floor(Math.random() * users.length)

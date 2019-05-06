@@ -80,14 +80,8 @@ describe('Test for Data Seeding Routes', () => {
     it('should create a collection of private documents', async() => {
       await request(app).post('/api/seed/documents?private=8');
       let documents = await Document.find({access:'private'})
-      expect(documents.length).toBe(40)
+      expect(documents.length).toBe(8)
     });
 
-    //should return a 201 status on successful Seeding
-    //should create a default collection of documents (public: 20, private: 12, role: 8)
-    //should recieve specifications by query 
-
-
   });
-	//POST for documents
 });
