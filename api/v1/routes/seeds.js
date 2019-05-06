@@ -43,13 +43,13 @@ router.post('/users', async(req, res)=>{
     })
     // console.log(admin)
   }
+  //res.redirect(307,'documents')
   res.status(201).send('done')
 })
 
-router.post('/documents',async(req,res)=>{
-  console.log('happy')
-  res.send('dome')
-})
+// router.post('/documents',async(req,res)=>{
+//   res.status(201).send('done')
+// })
 
 
 

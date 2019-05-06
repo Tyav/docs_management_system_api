@@ -34,7 +34,7 @@ describe('Test for Data Seeding Routes', () => {
 		Role.deleteMany({});
 	}, 50000);
 
-	describe('POST ROUTE: /users to create users and admins', () => {
+	describe('POST ROUTE: /users to seed users and admins data', () => {
     let adminRole
     let userRole
 		it('should return a created status 201 if successful', async () => {
@@ -58,6 +58,11 @@ describe('Test for Data Seeding Routes', () => {
       let users = await User.find({roleId: adminRole._id})
 			expect(users.length).toBe(4);
 		});
-	});
+  });
+  describe('POST: /documents to seed public, private and role based documents', () => {
+    //should return a 201 status on successful Seeding
+    //should create a default collection of documents (public: 20, private: 12, role: 8)
+    
+  });
 	//POST for documents
 });
