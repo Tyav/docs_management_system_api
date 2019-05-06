@@ -14,7 +14,7 @@ User.deleteMany({});
 Role.deleteMany({});
 
 describe('Test for Data Seeding Routes', () => {
-  // let role1 = new Role({
+	// let role1 = new Role({
 	// 	title: 'regular1',
 	// });
 	// role1.save();
@@ -34,19 +34,23 @@ describe('Test for Data Seeding Routes', () => {
 		Role.deleteMany({});
 	}, 50000);
 
-  
-  describe('POST ROUTE: /users to create users and admins', () => {
-    it('should return a created status 201 if successful', async() => {
-      let res = await request(app).post('/api/seed/users')
-      expect(res.status).toBe(201);
-    });
-    //return a success message on creation
-    //should create a collection of users and admins
-    //should use a default creation amount for users if not provided
-    //should use a default creation amount for admins if not provided
-    //should use a default password for users if not provided
-    //should use a default password for admins if not provided
-    //should clear the seeding users database and recreate a new database
-  });
-  //POST for documents
+	describe('POST ROUTE: /users to create users and admins', () => {
+		it('should return a created status 201 if successful', async () => {
+			let res = await request(app).post('/api/seed/users');
+			expect(res.status).toBe(201);
+		});
+		it('should create a collection of users and admins', async () => {
+      let res = await request(app).post('/api/seed/users');
+      let users = await User.find({})
+			expect(users.length).toBe(20);
+		});
+
+		//should create a collection of users and admins
+		//should use a default creation amount for users if not provided
+		//should use a default creation amount for admins if not provided
+		//should use a default password for users if not provided
+		//should use a default password for admins if not provided
+		//should clear the seeding users database and recreate a new database
+	});
+	//POST for documents
 });
