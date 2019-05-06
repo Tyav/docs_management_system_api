@@ -42,18 +42,18 @@ describe('Test for Data Seeding Routes', () => {
 			expect(res.status).toBe(201);
 		});
 		it('should create a default collection of users and admins', async () => {
-      let res = await request(app).post('/api/seed/users');
+      await request(app).post('/api/seed/users');
       let users = await User.find({})
 			expect(users.length).toBe(20);
 		});
 		it('should use a default creation amount for users if not provided', async () => {
-      let res = await request(app).post('/api/seed/users?adminSeed=2');
+      await request(app).post('/api/seed/users?adminSeed=2');
       userRole = await Role.findOne({title: 'regular'})
       let users = await User.find({roleId: userRole._id})
 			expect(users.length).toBe(16);
     });
     it('should use a default creation amount for admins if not provided', async () => {
-      let res = await request(app).post('/api/seed/users');
+      await request(app).post('/api/seed/users');
       adminRole = await Role.findOne({title: 'admin'});
       let users = await User.find({roleId: adminRole._id})
 			expect(users.length).toBe(4);
@@ -67,6 +67,13 @@ describe('Test for Data Seeding Routes', () => {
       let res = await request(app).post('/api/seed/documents');
       expect(res.status).toBe(201)
     });
+    it('should create a default collection of documents (public: 20, private: 12, role: 8)', async() => {
+      await request(app).post('/api/seed/documents');
+      let documents = await Document.find({})
+
+      expect(documents.length).toBe(40)
+    });
+
     //should return a 201 status on successful Seeding
     //should create a default collection of documents (public: 20, private: 12, role: 8)
     //should recieve specifications by query 
