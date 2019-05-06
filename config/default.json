@@ -1,4 +1,4 @@
 {
   "jwtPrivateKey": "1234",
-  "database":"mongodb://localhost/DMSapp"
+  "database":"mongodb+srv://greenlad:greenlad@documents-sgk3a.mongodb.net/test?retryWrites=true"
 }

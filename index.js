@@ -12,6 +12,7 @@ import users from './api/v1/routes/users';
 import documents from './api/v1/routes/document';
 import roles from './api/v1/routes/role';
 import categories from './api/v1/routes/category';
+import seed from './api/v1/routes/seeds';
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
@@ -31,6 +32,9 @@ app.use('/api/users', users);
 app.use('/api/documents',documents)
 app.use('/api/roles',roles)
 app.use('/api/categories',categories)
+if (process.env.NODE_ENV === 'staging' || 'test'){
+	app.use('/api/seed', seed)
+}
 
 //CREATE SERVER
 const port = process.env.PORT || 5050;
@@ -39,5 +43,4 @@ if (process.env.NODE_ENV !== 'test') {
 	console.log(`listening to ${port}...`);
 });
 }
-
 export { app };

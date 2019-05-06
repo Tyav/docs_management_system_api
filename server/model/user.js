@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import config from 'config';
+import {Role} from './role'
 
 const Schema = mongoose.Schema;
 
@@ -62,5 +63,4 @@ userSchema.methods.generateAuthToken = function(log = false, adm = false) {
 };
 
 const User = mongoose.model('users', userSchema);
-
 export { User };
