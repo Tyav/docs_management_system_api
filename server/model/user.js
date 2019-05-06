@@ -63,22 +63,4 @@ userSchema.methods.generateAuthToken = function(log = false, adm = false) {
 };
 
 const User = mongoose.model('users', userSchema);
-// async function createAdmin() {
-// 	let adminRole = await Role.find({title: 'admin'});
-// 	return adminRole[0]
-// }
-// createAdmin().then((adminRole)=>{
-// 	if (adminRole) {
-// 		User.create({
-// 			username: 'mainAdmin',
-// 			name: {
-// 				firstName: 'admin',
-// 				lastName: 'admin'
-// 			},
-// 			email: 'tyav2greenz@gmail.com',
-// 			password: '8564@admin',
-// 			roleId: adminRole._id,
-// 		}).catch((err)=>{})
-// 	}
-// }).catch((err)=>{})
 export { User };
