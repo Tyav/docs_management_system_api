@@ -77,9 +77,9 @@ describe('Test for Data Seeding Routes', () => {
       let documents = await Document.find({access: 'public'})
       expect(documents.length).toBe(9)
     });
-    it('should create a default collection of documents (public: 20, private: 12, role: 8)', async() => {
-      await request(app).post('/api/seed/documents');
-      let documents = await Document.find({})
+    it('should create a collection of private documents', async() => {
+      await request(app).post('/api/seed/documents?private=8');
+      let documents = await Document.find({access:'private'})
       expect(documents.length).toBe(40)
     });
 
