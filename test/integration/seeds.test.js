@@ -37,10 +37,6 @@ describe('Test for Data Seeding Routes', () => {
 	describe('POST ROUTE: /users to create users and admins', () => {
     let adminRole
     let userRole
-    beforeAll(async()=>{
-      adminRole = await Role.findOne({title: 'admin'});
-      userRole = await Role.findOne({title: 'regular'})
-    })
 		it('should return a created status 201 if successful', async () => {
 			let res = await request(app).post('/api/seed/users');
 			expect(res.status).toBe(201);
@@ -52,14 +48,16 @@ describe('Test for Data Seeding Routes', () => {
 		});
 		it('should use a default creation amount for users if not provided', async () => {
       let res = await request(app).post('/api/seed/users?adminSeed=2');
+      userRole = await Role.findOne({title: 'regular'})
       let users = await User.find({roleId: userRole._id})
 			expect(users.length).toBe(16);
+    });
+    it('should use a default creation amount for admins if not provided', async () => {
+      let res = await request(app).post('/api/seed/users');
+      adminRole = await Role.findOne({title: 'admin'});
+      let users = await User.find({roleId: adminRole._id})
+			expect(users.length).toBe(4);
 		});
-		//should use a default creation amount for users if not provided
-		//should use a default creation amount for admins if not provided
-		//should use a default password for users if not provided
-		//should use a default password for admins if not provided
-		//should clear the seeding users database and recreate a new database
 	});
 	//POST for documents
 });
