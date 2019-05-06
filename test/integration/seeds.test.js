@@ -14,22 +14,22 @@ User.deleteMany({});
 Role.deleteMany({});
 
 describe('Test for Data Seeding Routes', () => {
-  let role1 = new Role({
-		title: 'regular1',
-	});
-	role1.save();
-	const roleId = role1._id.toHexString()
+  // let role1 = new Role({
+	// 	title: 'regular1',
+	// });
+	// role1.save();
+	// const roleId = role1._id.toHexString()
 
-	let payload = {
-		username: 'testUserName',
-		name: {
-			firstName: 'testFirstName',
-			lastName: 'testLastName',
-		},
-		email: 'test@test.com',
-		password: 'testPassword',
-		roleId: roleId,
-	};
+	// let payload = {
+	// 	username: 'testUserName',
+	// 	name: {
+	// 		firstName: 'testFirstName',
+	// 		lastName: 'testLastName',
+	// 	},
+	// 	email: 'test@test.com',
+	// 	password: 'testPassword',
+	// 	roleId: roleId,
+	// };
 	afterAll(() => {
 		Role.deleteMany({});
 	}, 50000);

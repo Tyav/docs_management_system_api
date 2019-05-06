@@ -43,7 +43,7 @@ router.post('/users', async(req, res)=>{
     })
     // console.log(admin)
   }
-  res.send('done')
+  res.status(201).send('done')
 })
 
 router.post('/documents',async(req,res)=>{
