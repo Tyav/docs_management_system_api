@@ -10,7 +10,7 @@ import { Document } from '../server/model/document';
 //CREATE SEEDER CLASS
 class Seeder {
 	//SEEDS USERS' DATA TO DATABASE
-	static async userSeeder() {
+	static async users() {
 		await User.deleteMany({});
 		let adminRole = await Role.findOne({ title: 'admin' });
 		let regularRole = await Role.findOne({ title: 'regular' });
@@ -50,7 +50,7 @@ class Seeder {
 
 	//SEEDS DOCUMENTS' DATA TO DATABASE
 
-	static async document() {
+	static async documents() {
 		await Document.deleteMany({});
 		let users = await User.find({});
 		let publicAccess = 20;
@@ -121,10 +121,12 @@ class Seeder {
 			i++;
 		}
 		console.log('done');
-	}
+  }
+  static async clear(){
+    await User.deleteMany({});
+    await Document.deleteMany({})
+  }
 }
 
-Seeder.userSeeder();
-Seeder.document();
-
+module.exports = Seeder;
 //should recieve specifications by query
