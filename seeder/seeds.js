@@ -5,9 +5,9 @@ import faker from 'faker';
 import mongoose from 'mongoose'
 
 const router = express.Router();
-import { User } from '../../../server/model/user';
-import { Role } from '../../../server/model/role';
-import { Document } from '../../../server/model/document';
+import { User } from '../server/model/user';
+import { Role } from '../server/model/role';
+import { Document } from '../server/model/document';
 //SEEDS USERS' DATA TO DATABASE
 router.post('/users', async (req, res) => {
 	await User.deleteMany({});
