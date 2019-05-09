@@ -12,7 +12,7 @@ import users from './api/v1/routes/users';
 import documents from './api/v1/routes/document';
 import roles from './api/v1/routes/role';
 import categories from './api/v1/routes/category';
-import seed from './api/v1/routes/seeds';
+import seed from './seeder/seeds';
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
