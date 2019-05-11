@@ -1,5 +1,7 @@
 import Seeder from './cli';
 
-Seeder.users();
+Seeder.users().then(()=>{
+  Seeder.documents();
+});
 
-Seeder.documents();
+

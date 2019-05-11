@@ -7,6 +7,9 @@ import { User } from '../server/model/user';
 import { Role } from '../server/model/role';
 import { Document } from '../server/model/document';
 
+import db from '../startup/db';
+db(mongoose)
+
 //CREATE SEEDER CLASS
 class Seeder {
 	//SEEDS USERS' DATA TO DATABASE
@@ -57,7 +60,6 @@ class Seeder {
 		let privateAccess = 12;
 		let role = 8;
 		let docAccess = [ 'private', 'public', 'role' ];
-
 		//creating public
 		let i = 0;
 		while (i < publicAccess) {
@@ -125,6 +127,7 @@ class Seeder {
   static async clear(){
     await User.deleteMany({});
     await Document.deleteMany({})
+    console.log('done')
   }
 }
 
