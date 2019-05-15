@@ -261,6 +261,26 @@ describe('Test for User', () => {
 			},
 			50000,
 		);
+		it(
+			'should assign default roleof regular if role is not specified',
+			async () => {
+				let missingRolePayload = {
+					username: 'testUserName2',
+					name: {
+						firstName: 'testFirstName1',
+						lastName: 'testLastName1',
+					},
+					email: 'test1@test.com',
+					password: 'test1Password',
+					//role is omitted
+				};
+				const res = await request(app).post('/api/users/').send(missingRolePayload);
+				expect(res.status).toBe(201);
+				expect(res.body.roleId).toHaveProperty('title', 'regular');
+			},
+			50000,
+		);
+
 	});
 	describe('/PUT :Edit User information', () => {
 		let user, user2;

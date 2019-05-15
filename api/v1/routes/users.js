@@ -25,7 +25,7 @@ router.get('/:id', [tokenAuth, idAuth], async (req, res) => {
 	const user = await User.findById(req.params.id);
 	if (!user) return res.status(404).send({ Error: 404, message: 'User not found' });
 	const token = req.header('x-auth-token')
-	res.status(200).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email', 'name', 'createdAt', 'roleId', 'modifiedAt' ]));
+	res.status(200).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email', 'name', 'createdAt', 'roleId._id','roleId.title', 'modifiedAt' ]));
 });
 
 //CREATE USER [POST /users/]
@@ -36,12 +36,12 @@ router.post('/', async (req, res) => {
 	//validate roleId has already be created else reject user creation
 	let role = null
 	if (req.body.roleId) {
-		role = await Role.findById(req.body.roleId);
+		role = await Role.findById(req.body.roleId).select('_id title');
 		if (!role) return res.status(400).send({ Error: 400, message: 'Invalid Role Id' });
 	} else {
-		role = await Role.findOne({title: 'regular'});
-		req.body.roleId = role
+		role = await Role.findOne({title: 'regular'}).select('_id title');;
 	}
+	let roleId = {_id:role._id,title:role.title}
 
 	//check if email has been taken
 	let checkEmail = await User.findOne({ email: req.body.email });
@@ -49,11 +49,11 @@ router.post('/', async (req, res) => {
 	//check if username has been taken
 	let checkUsername = await User.findOne({ username: req.body.username });
 	if (checkUsername) return res.status(400).send({ Error: 400, message: 'Username is taken' });
-	console.log(req.body)
+	let {username, name, email, password} = req.body
 	//CREATE USER
-	const user = new User(req.body);
-
+	const user = new User({username,name,email,password,roleId});
 	// user = new User(_.pick(req.body, ['name', 'email', 'password']));
+	//encrypt password
 	const salt = await bcrypt.genSalt(10);
 	user.password = await bcrypt.hash(user.password, salt);
 	await user.save();
