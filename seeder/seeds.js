@@ -5,9 +5,9 @@ import faker from 'faker';
 import mongoose from 'mongoose'
 
 const router = express.Router();
-import { User } from '../../../server/model/user';
-import { Role } from '../../../server/model/role';
-import { Document } from '../../../server/model/document';
+import { User } from '../server/model/user';
+import { Role } from '../server/model/role';
+import { Document } from '../server/model/document';
 //SEEDS USERS' DATA TO DATABASE
 router.post('/users', async (req, res) => {
 	await User.deleteMany({});
@@ -20,7 +20,7 @@ router.post('/users', async (req, res) => {
 	let regularPassword = await bcrypt.hash('regularPassword', salt);
 	// console.log('start')
 	for (let i = 0; i < adminSeed; i++) {
-		User.create({
+		await User.create({
 			username : faker.internet.userName(),
 			name     : {
 				firstName : faker.name.firstName(),
@@ -42,8 +42,9 @@ router.post('/users', async (req, res) => {
 			password : regularPassword,
 			roleId   : regularRole._id,
 		});
-	}
-	res.status(201).send('done');
+  }
+  let admin = await User.find({roleId: adminRole._id})
+	res.status(201).send(_.pick(admin[0], [ '_id', 'username', 'email' ]));
 });
 
 
@@ -121,7 +122,7 @@ router.post('/documents', async (req, res) => {
   }
 
 
-	res.status(201).send('done');
+	res.status(201).send({Error: null, message: 'Documents Created'});
 });
 //should recieve specifications by query
 

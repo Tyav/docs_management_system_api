@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test jest --runInBand --verbose --coverage --detectOpenHandles --watchAll",
-    "start": "nodemon --exec babel-node index.js"
+    "start": "nodemon --exec babel-node index.js",
+    "seed": "nodemon --exec babel-node ./seeder/create.js",
+    "clear-seed": "nodemon --exec babel-node ./seeder/clear.js"
   },
   "repository": {
     "type": "git",

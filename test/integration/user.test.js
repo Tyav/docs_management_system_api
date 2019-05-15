@@ -90,6 +90,8 @@ describe('Test for User', () => {
 	});
 	describe('/GET single user by id', () => {
 		let user = new User(payload);
+		const token = user.generateAuthToken(true, role1.publicWrite);
+		//console.log(token)
 
 		beforeAll(() => {
 			user.save();
@@ -100,7 +102,7 @@ describe('Test for User', () => {
 		it(
 			'should return a user with a given id',
 			async () => {
-				const res = await request(app).get(`/api/users/${user._id}`);
+				const res = await request(app).get(`/api/users/${user._id}`).set('x-auth-token', token);
 				expect(res.body).toHaveProperty('email', user.email);
 				expect(res.body).toHaveProperty('username', user.username);
 			},
@@ -109,7 +111,7 @@ describe('Test for User', () => {
 		it(
 			'should return a 400 status if invalid id is given',
 			async () => {
-				const res = await request(app).get(`/api/users/${342}`);
+				const res = await request(app).get(`/api/users/${342}`).set('x-auth-token', token);
 				expect(res.status).toBe(400);
 			},
 			50000,
@@ -117,7 +119,7 @@ describe('Test for User', () => {
 		it(
 			'should return an INVALID ID error message if invalid id is given',
 			async () => {
-				const res = await request(app).get(`/api/users/${342}`);
+				const res = await request(app).get(`/api/users/${342}`).set('x-auth-token', token);
 				expect(res.body.message).toBe('Invalid Id');
 			},
 			50000,
@@ -125,7 +127,7 @@ describe('Test for User', () => {
 		it(
 			'should return a 404 status amd User not found error message if id has not been assigned to user',
 			async () => {
-				const res = await request(app).get(`/api/users/${mongoose.Types.ObjectId()}`);
+				const res = await request(app).get(`/api/users/${mongoose.Types.ObjectId()}`).set('x-auth-token', token);
 				expect(res.body.message).toBe('User not found');
 				expect(res.status).toBe(404);
 			},
@@ -259,6 +261,26 @@ describe('Test for User', () => {
 			},
 			50000,
 		);
+		it(
+			'should assign default roleof regular if role is not specified',
+			async () => {
+				let missingRolePayload = {
+					username: 'testUserName2',
+					name: {
+						firstName: 'testFirstName1',
+						lastName: 'testLastName1',
+					},
+					email: 'test1@test.com',
+					password: 'test1Password',
+					//role is omitted
+				};
+				const res = await request(app).post('/api/users/').send(missingRolePayload);
+				expect(res.status).toBe(201);
+				expect(res.body.roleId).toHaveProperty('title', 'regular');
+			},
+			50000,
+		);
+
 	});
 	describe('/PUT :Edit User information', () => {
 		let user, user2;
