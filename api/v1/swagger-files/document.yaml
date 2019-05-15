@@ -2,7 +2,7 @@ path:
   /api/documents:
     get:
       tags:
-        - Document
+        - Documents
       description: This return all document if user is an admin, but selects certain document for non-administrative users based on user role and document settings
       produces:
         - application/json
@@ -45,7 +45,7 @@ path:
 
     post:
       tags:
-        - Document
+        - Documents
       description: Creates a new document
       produces:
         - application/json
@@ -55,7 +55,7 @@ path:
           schema:
             type: string
           required: true
-        - name: namePayload
+        - name: Document Payload
           description: Payload used for creating document
           in: body
           schema:
@@ -78,9 +78,51 @@ path:
           description: document object is returned after creation
           schema:
             $ref: "#/definitions/Document"
-              
-              
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+  /api/documents/{id}:
+    put:
+      tags:
+        - Documents
+      description: Edit an existing Document
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: Edit Payload
+          description: Payload used for creating document
+          in: body
+          schema:
+            type: object
+            properties:
+              title: 
+                type: string
+                example: Document Title
+              content:
+                type: string
+                example: Document Content
+              access:
+                type: string
+                enum: [public, private, role]
+              categoryId:
+                type: string
+                example: 239ca98e7f7d09b9a9ee97d6
 
+      responses:
+        200:
+          description: document object is returned after creation
+          schema:
+            $ref: "#/definitions/Document"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
 
 
 definitions:

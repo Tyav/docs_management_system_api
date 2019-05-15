@@ -47,7 +47,7 @@ path:
             $ref: "#/definitions/newUserPayload"
           required: true
       responses:
-        200:
+        201:
           description: returns seleted Users' Information
           schema:
             type: object
@@ -349,9 +349,7 @@ definitions:
       - username
       - email
       - name
-      - roleId
       - password
-
 
   error-message:
     type: object
