@@ -142,7 +142,7 @@ describe('Validation of new user creation details', () => {
 		});
 	});
 	describe('test case for roleId', () => {
-		it('should return error if roleId not provided', () => {
+		it('should allow if roleId not provided', () => {
 			let testData = {
 				username: 'TestData',
 				name: {
@@ -153,7 +153,7 @@ describe('Validation of new user creation details', () => {
 				password: '12345678',
 			};
 			let { error } = validateCreateUser(testData);
-			expect(error).not.toBeNull();
+			expect(error).toBeNull();
 		});
 	});
 	describe('test to pass validation', () => {

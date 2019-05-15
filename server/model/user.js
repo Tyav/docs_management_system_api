@@ -9,13 +9,13 @@ const Schema = mongoose.Schema;
 const nameSchema = new Schema({
 	firstName: {
 		type: String,
-		minlength: 3,
+		minlength: 2,
 		maxlength: 255,
 		required: [ true, 'firstName is required' ],
 	},
 	lastName: {
 		type: String,
-		minlength: 3,
+		minlength: 2,
 		maxlength: 255,
 		required: [ true, 'lastName is required' ],
 	},
@@ -26,7 +26,7 @@ const userSchema = new Schema({
 	username: {
 		type: String,
 		required: [ true, 'Username is required' ],
-		minlength: 3,
+		minlength: 2,
 		maxlength: 255,
 		unique: true,
 	},
