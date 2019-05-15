@@ -60,6 +60,14 @@ const userSchema = new Schema({
 	modifiedAt: {
 		type: Date,
 	},
+	deleted: {
+		type: Boolean,
+		default: false
+	},
+	verified:{
+		type: Boolean,
+		default: false
+	}
 });
 userSchema.methods.generateAuthToken = function(log = false, adm = false) {
 	const token = jwt.sign({ _id: this._id, isAdmin: adm, isLogged: log, role: this.roleId }, config.get('jwtPrivateKey'));

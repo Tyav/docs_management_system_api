@@ -42,7 +42,7 @@ path:
       parameters:
         - name: payload
           in: body
-          description: Information required to create new user
+          description: "Information required to create new user \n Note: roleId is not required to perform a creation"
           schema: 
             $ref: "#/definitions/newUserPayload"
           required: true
@@ -50,18 +50,8 @@ path:
         201:
           description: returns seleted Users' Information
           schema:
-            type: object
-            properties:
-              _id:
-                type: string
-                example: 43edc49a9D8BEfac83ca0cAb
-              username:
-                type: string
-                example: johndoe
-              email:
-                type: string
-                example: johnd@example.com
-          headers:
+            $ref: "#/definitions/User"
+            headers:
             x-auth-token:
               type: string
               description: jwt contain users id and other referrential informations
@@ -88,7 +78,7 @@ path:
         200:
           description: single user is retrieved.
           schema:
-            $ref: "#/definitions/newUserPayload"
+            $ref: "#/definitions/User"
         404:
          description: user not found
          schema:
@@ -197,6 +187,11 @@ path:
           description: user error is defined for user to identify error
           schema:
             $ref: "#/definitions/error-message"
+        404:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+
 
 
   /api/users/login:
@@ -224,9 +219,9 @@ path:
           required: true
       responses:
         200:
-          description: logs in user and return a token for use
+          description: logs in a user and returns a user object in the response body and a token in the response header
           schema:
-            $ref: "#/definitions/success-message"
+            $ref: "#/definitions/User"
           headers:
             x-auth-token:
               type: string
@@ -292,8 +287,14 @@ definitions:
         type: string
         writeOnly: true
       roleId:
-        type: string
-        pattern: '^[a-fA-F0-9]{24}$'
+        type: object
+        properties:
+          _id:
+            type: string
+            pattern: '^[a-fA-F0-9]{24}$'
+          title:
+            type: string
+            example: regular
       createdAt:
         type: string
         format: date-time
@@ -302,6 +303,9 @@ definitions:
         type: string
         format: date-time
         writeOnly: true
+      verified:
+        type: boolean
+
     required:
       - username
       - email
@@ -344,7 +348,7 @@ definitions:
         type: string
         pattern: '^[a-fA-F0-9]{24}$'
         example: 43edc49a9D8BEfac83ca0cAb
-        description: role have to be created for this to work
+        description: role don't have to be created for this to work
     required:
       - username
       - email
