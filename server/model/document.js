@@ -18,8 +18,11 @@ const docSchema = new Schema({
 		maxlength : 5000,
 	},
 	creatorId   : {
-		type     : mongoose.Schema.Types.ObjectId,
-		required : true,
+		type : {
+			_id      : mongoose.Schema.Types.ObjectId,
+			username : String,
+			avatar   : String,
+		},
 	},
 	access      : {
 		type    : String,
@@ -27,9 +30,10 @@ const docSchema = new Schema({
 		default : 'public',
 	},
 	categoryId  : {
-		type     : mongoose.Schema.Types.ObjectId,
-		required : true,
-		ref      : 'users',
+		type     : {
+			_id: mongoose.Schema.Types.ObjectId,
+			title: String
+		}
 	},
 	createdAt   : {
 		type     : Date,
@@ -49,7 +53,10 @@ const docSchema = new Schema({
 		default : Date.now(),
 	},
 	role        : {
-		type : mongoose.Schema.Types.ObjectId,
+		type : {
+			_id: mongoose.Schema.Types.ObjectId,
+			title: String
+		}
 	},
 });
 
