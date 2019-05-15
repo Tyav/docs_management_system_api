@@ -45,8 +45,12 @@ const userSchema = new Schema({
 		required: [ true, 'password is required' ],
 	},
 	roleId: {
-		type: Schema.Types.ObjectId,
-		required: [ true, 'roleId is required' ],
+		type: {
+			id: Schema.Types.ObjectId,
+			title: {
+				type: String
+			}
+		} 
 	},
 	createdAt: {
 		type: Date,

@@ -16,7 +16,7 @@ let validateCreateUser = (objectValue) => {
 			password: Joi.string().min(8),
 			roleId: Joi.objectId(),
 		})
-		.and('username', 'name', 'email', 'password', 'roleId');
+		.and('username', 'name', 'email', 'password');
 
 	return Joi.validate(objectValue, schema);
 };
