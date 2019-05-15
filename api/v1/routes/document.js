@@ -138,16 +138,18 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 		},
 		{ new: true },
 	);
-	res.status(200).send(_.pick(editDoc, '_id title content creatorId access categoryId modifiedAt publishDate role'.split(' ')));
+	res.status(200).send(_.pick(editDoc, '_id title content creatorId access categoryId publishDate modifiedAt role'.split(' ')));
 });
 
 //DELETE: DELETE DOCUMENT
 router.delete('/:id', [ tokenAuth, authId ], async (req, res) => {
 	//401 if user is not logged in & check validity of document Id 404 :[tokenAuth, authId]
+	const doc1 = await Document.findOne({ _id: req.params.id, deleted: true });
 
 	//ADMIN
 	//completely delete if action is performed by admin
-	if (req.user.isAdmin) {
+	if (req.user.isAdmin && doc1) {
+
 		await Document.findOneAndDelete({ _id: req.params.id });
 		return res.status(200).send({ Error: 200, message: 'Document Deleted' });
 	}
