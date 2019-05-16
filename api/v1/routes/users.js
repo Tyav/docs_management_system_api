@@ -18,7 +18,7 @@ router.get('/', [ tokenAuth, adminAuth ], async (req, res) => {
 	//do some authorization if user is admin
 	let deleted = req.query.deleteduser || false;
 	const token = req.header('x-auth-token');
-	const users = await User.find({ deleted: deleted }).select('_id username email name createdAt roleId modifiedAt verified avatar');
+	const users = await User.find({ deleted: deleted }).select('_id username email name createdAt roleId modifiedAt verified avatar').populate({path: 'roleId', select:'_id title'});
 	res.status(200).header('x-auth-token', token).send(users);
 });
 
@@ -79,7 +79,9 @@ router.post('/login', [ ifLogin ], async (req, res) => {
 	const { error } = validateLogin(req.body);
 	if (error) return res.status(400).send({ Error: 400, message: 'Bad Request (Invalid Input)' });
 	//check if user exist by email :400
-	const user = await User.findOne({ username: req.body.username, deleted: false });
+	const user = await User.findOne({ username: req.body.username, deleted: false })
+		.select('_id username email name createdAt roleId modifiedAt verified avatar password')
+		.populate({path: 'roleId', select:'_id title publicWrite'});
 	if (!user) return res.status(400).send({ Error: 400, message: 'Wrong Username or Password' });
 	//check for password :400
 	//perform bcrypt check and if you need to change the salt,
@@ -87,16 +89,15 @@ router.post('/login', [ ifLogin ], async (req, res) => {
 
 	const password = await bcrypt.compare(req.body.password, user.password);
 	if (!password) return res.status(400).send({ Error: 400, message: 'Wrong Username or Password' });
-
 	//get role of user
 	const role = await Role.findOne({ _id: user.roleId._id });
 	//create a token for user
 	//user true as first parameter to make login valid, and
 	//role.publicWrite as second parameter which decides if user is admin
-	const token = user.generateAuthToken(true, role.publicWrite);
-
+	const token = user.generateAuthToken(true, user.roleId.publicWrite);
+	
 	//keep the user logged in = 200
-	res.status(200).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email', 'roleId', 'name', 'createdAt', 'modifiedAt', 'verified', 'avatar' ]));
+	res.status(200).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email', 'roleId._id','roleId.title', 'name', 'createdAt', 'modifiedAt', 'verified', 'avatar' ]));
 });
 
 //LOGOUT USER [POST /users/logout]
@@ -148,7 +149,9 @@ router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
 			avatar,
 		},
 		{ new: true },
-	);
+	)
+	.select('_id username email name createdAt roleId modifiedAt verified avatar')
+	.populate({path: 'roleId', select:'_id title'});
 	const token = req.header('x-auth-token');
 	res.status(200).header('x-auth-token', token).send(_.pick(updatedUser, [ '_id', 'username', 'email', 'roleId', 'name', 'createdAt', 'modifiedAt', 'verified', 'avatar']));
 });
