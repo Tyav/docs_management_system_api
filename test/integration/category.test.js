@@ -75,7 +75,7 @@ describe('TEST FOR CATEGORY', () => {
 			});
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Cannot create duplicate category of detective');
-		});
+		}); 
 
 		//user should be logged in
 		//user must be an admin,

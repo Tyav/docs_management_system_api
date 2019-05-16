@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import { Document } from '../../../server/model/document';
+import { Category } from '../../../server/model/category';
 import { validateDoc, validateDocEdit } from '../../../server/validations/document';
 import adminAuth from '../utils/admin';
 import tokenCheck from '../utils/docLog';
@@ -16,18 +17,29 @@ const router = express.Router();
 //api/docs?pageNumber=3&pageSize=7
 //POST: CREATE DOCUMENT
 router.post('/', [ tokenAuth, loginAuth ], async (req, res) => {
+
 	//CREATE DOCUMENT
 	const { error } = validateDoc(req.body);
 	if (error) return res.status(400).send({ Error: 'Bad Request', message: error.details[0].message });
-
+	//give a default category of general if not stated
+	
+	if (!req.body.categoryId){
+		 let general = await Category.findOne({title: 'general'});
+		 req.body.categoryId = general._id
+	}
 	//check if access is set to role then create a role property
 	if (req.body.access === 'role') req.body.role = req.user.role;
 	//set creatorId of document
 	req.body.creatorId = req.user._id;
 
 	const doc = await Document.create(req.body);
+	let doc1 = await Document.findOne({_id: doc._id})
+		.select('_id title content creatorId access categoryId publishDate modifiedAt role likes dislikes createdAt')
+		.populate({path:'creatorId', select: '_id username avatar'})
+		.populate({path:'categoryId',select: '_id title'})
+		.populate({path:'role', select:'_id title'})
 	// doc.save();
-	res.status(200).send(doc);
+	res.status(200).send(doc1);
 });
 
 //GET: GET ALL DOCUMENT and with parameters [pageNumber, pagesize]
@@ -53,26 +65,34 @@ router.get('/', [ tokenCheck ], async (req, res) => {
 
 		//check if user is an admin, release all documents
 		const adminDocs = await Document.find(deleted)
+			.select('_id title content creatorId access categoryId publishDate modifiedAt role likes dislikes createdAt')
+			.populate({path:'creatorId', select: '_id username avatar'})
+			.populate({path:'categoryId',select: '_id title'})
+			.populate({path:'role', select:'_id title'})
+
 			//set number of values to skip
 			.skip((pageNumber - 1) * pageSize)
 			//number of values to display
 			.limit(pageSize)
 			.sort({ publishDate: 1 });
 
-			return res.send(adminDocs);
+			return res.status(200).send(adminDocs);
 	}
 	const userDocs = await Document.find({ deleted: false })
 		//release only public and users private documents and documents set to same role as user
 		.or([ { access: 'public' }, { creatorId: req.user._id }, { role: req.user.role } ])
+		//creatorId, categoryId, role
+		.select('_id title content creatorId access categoryId publishDate modifiedAt role likes dislikes createdAt')
+		.populate({path:'creatorId', select: '_id username avatar'})
+		.populate({path:'categoryId',select: '_id title'})
+		.populate({path:'role', select:'_id title'})
 		//set number of values to skip
 		.skip((pageNumber - 1) * pageSize)
 		//number of values to display
 		.limit(pageSize)
 		.sort({ publishDate: 1 })
 		//select a set of informations to release
-		.select('_id title content createdAt creatorId access categoryId');
-
-	res.send(userDocs);
+	res.status(200).send(userDocs);
 });
 
 //GET: GET DOCUMENT BY ID
@@ -88,7 +108,10 @@ router.get('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 		//release only public and users private documents and documents set to same role as user
 		.or([ { access: 'public' }, { creatorId: req.user._id }, { role: req.user.role } ])
 		//select a set of informations to release
-		.select('_id title content createdAt creatorId access categoryId');
+		.select('_id title content creatorId access categoryId publishDate modifiedAt role likes dislikes createdAt')
+		.populate({path:'creatorId', select: '_id username avatar'})
+		.populate({path:'categoryId',select: '_id title'})
+		.populate({path:'role', select:'_id title'})
 	//check if doc exist
 	if (!doc) return res.status(404).send({ Error: 404, message: 'Document not found' });
 	//check if doc access is private
@@ -137,8 +160,13 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 			},
 		},
 		{ new: true },
-	);
-	res.status(200).send(_.pick(editDoc, '_id title content creatorId access categoryId publishDate modifiedAt role'.split(' ')));
+	)
+	.select('_id title content creatorId access categoryId publishDate modifiedAt role likes dislikes createdAt')
+	.populate({path:'creatorId', select: '_id username avatar'})
+	.populate({path:'categoryId',select: '_id title'})
+	.populate({path:'role', select:'_id title'})
+;
+	res.status(200).send(editDoc);
 });
 
 //DELETE: DELETE DOCUMENT
