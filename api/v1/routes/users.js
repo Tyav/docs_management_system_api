@@ -161,9 +161,9 @@ router.delete('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 	//401 if not logged in [done in token and login auth]
 	if (req.user.isAdmin) {
 		//delete user if user has performed a soft delete
-		await User.findOneAndDelete({ _id: req.params.id, deleted: true });
+		await User.findOneAndRemove({ _id: req.params.id, deleted: true });
 		const token = req.header('x-auth-token');
-		return res.status(200).header('x-auth-token', token).send({ Success: 200, message: 'User deleted' });
+		return res.status(200).header('x-auth-token', token).send({ Success: 200, message: '4User deleted' });
 	}
 	//403 if logged but not the owner
 	if (req.params.id !== req.user._id) return res.status(403).send({ Error: 403, message: 'Forbidden' });
