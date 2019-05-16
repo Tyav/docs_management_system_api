@@ -45,12 +45,8 @@ const userSchema = new Schema({
 		required: [ true, 'password is required' ],
 	},
 	roleId: {
-		type: {
-			id: Schema.Types.ObjectId,
-			title: {
-				type: String
-			}
-		} 
+		type: Schema.Types.ObjectId,
+		ref : 'Role'
 	},
 	createdAt: {
 		type: Date,
@@ -67,12 +63,13 @@ const userSchema = new Schema({
 	verified:{
 		type: Boolean,
 		default: false
-	}
+	},
+	avatar: String
 });
 userSchema.methods.generateAuthToken = function(log = false, adm = false) {
 	const token = jwt.sign({ _id: this._id, isAdmin: adm, isLogged: log, role: this.roleId }, config.get('jwtPrivateKey'));
 	return token;
 };
 
-const User = mongoose.model('users', userSchema);
+const User = mongoose.model('User', userSchema);
 export { User };
