@@ -11,7 +11,8 @@ let validateDoc = (docData) => {
 		access: Joi.string().valid('private', 'public','role'),
 		categoryId: Joi.objectId(),
 		createdAt: Joi.date(),
-		publishDate: Joi.string()
+		publishDate: Joi.string(),
+		role: Joi.objectId(),
 	});
 	return Joi.validate(docData, schema);
 };
@@ -23,7 +24,7 @@ let validateDocEdit = (docData) => {
 		content: Joi.string().min(1).max(5000),
 		access: Joi.string().valid('private', 'public','role'),
 		categoryId: Joi.objectId(),
-		role: Joi.objectId()
+		role: Joi.objectId(),
 	});
 	return Joi.validate(docData, schema);
 };
