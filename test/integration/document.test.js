@@ -23,6 +23,7 @@ describe('TEST FOR DOCUMENTS', () => {
 	let isAdmin;
 	let isNotLogin;
 	let unLoggedUser;
+	Category.create({title: 'general'})
 	scifi = new Category({
 		title : 'scifi',
 	});
@@ -176,7 +177,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access     : 'role',
 					categoryId : scifi._id,
 				});
-				expect(res.body.role).toBe(regularUser.roleId.toHexString());
+				expect(res.body.role._id).toBe(regularUser.roleId.toHexString());
 				expect(res.status).toBe(200);
 			},
 			50000,
@@ -232,6 +233,18 @@ describe('TEST FOR DOCUMENTS', () => {
 			},
 			50000,
 		);
+		it(
+			'should set to general category by default if category is not specified',
+			async () => {
+				const res = await request(app).post('/api/documents/').set('x-auth-token', isLogin).send({
+					title      : 'test8',
+					content    : 'I am a basic test doc7',
+				});
+				expect(res.body.categoryId.title).toBe('general');
+			},
+			50000,
+		);
+
 	});
 	describe('/GET: GET ALL DOCUMENTS', () => {
 		beforeAll(() => {
@@ -574,7 +587,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access  : 'role',
 				});
 				expect(res.status).toBe(200);
-				expect(res.body.role).toBe(regularUser.roleId.toHexString());
+				expect(res.body.role._id).toBe(regularUser.roleId.toHexString());
 			},
 			50000,
 		);
