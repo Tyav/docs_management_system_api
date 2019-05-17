@@ -42,6 +42,9 @@ describe('TEST FOR CATEGORY', () => {
 	});
 
 	describe('/POST: create category', () => {
+		afterAll(async ()=>{
+			await Category.deleteMany({});
+		})
 		it('should check if user is logged in and return 401 if not', async () => {
 			const res = await request(app).post('/api/categories/').send({
 				title : 'Scifi',
@@ -77,17 +80,15 @@ describe('TEST FOR CATEGORY', () => {
 			expect(res.body.message).toBe('Cannot create duplicate category of detective');
 		});
 
-		//user should be logged in
-		//user must be an admin,
-		//valdation of category, return 400 if error
-		//create category 200
-		//if duplication error return 400(dulicate error)
 	});
 	//CREATE CATEGORY
 	
 	describe('/GET: Test to get all categories', () => {
 		beforeAll(async()=>{
 			await Category.insertMany([{title: 'games'}, {title: 'tech'}]);
+		})
+		afterAll(async ()=>{
+			await Category.deleteMany({});
 		})
 
 		it('should return a 200 status code on success', async () => {
@@ -96,12 +97,19 @@ describe('TEST FOR CATEGORY', () => {
 		});
 		it('should get all categories', async () => {
 			const res = await request(app).get('/api/categories/')
-			expect(res.body.length).toEqual(4);
+			expect(res.body.length).toEqual(2);
 		});
 	})
 	describe('/GET BY ID: Test to get category by id', () => {
-		let category = new Category({title: 'music'});
-		category.save()
+		let category;
+		beforeAll(async()=>{
+			category = new Category({title: 'music'});
+			category.save()
+		})
+		afterAll(async ()=>{
+			await Category.deleteMany({});
+		})
+
 		it('should return a 200 status code on success', async () => {
 			const res = await request(app).get(`/api/categories/${category._id}`)
 			expect(res.status).toBe(200);
@@ -120,17 +128,23 @@ describe('TEST FOR CATEGORY', () => {
 		});
 	})
 	describe('/PUT: Test to edit Category by id', () => {
-		let category = new Category({title: 'movics'});
-		category.save()
+		afterAll(async ()=>{
+			await Category.deleteMany({});
+		})
+		let category;
+		beforeAll(async()=>{
+			category = new Category({title: 'movics'});
+			category.save()
+		})
 		it('should return a 401 if user is not logged in', async () => {
 			const res = await request(app).put(`/api/categories/${category._id}`)
-			expect(res.status).toBe(401);
+			expect(res.body.Error).toBe(401);
 		});
 		it('should return a 403 status code if logged in user is not an admin', async () => {
 			const res = await request(app).put(`/api/categories/${category._id}`).set('x-auth-token', isLogin).send({
 				title : 'moive',
 			});
-			expect(res.status).toBe(403);
+			expect(res.body.Error).toBe(403);
 		});
 		it('should return a 200 status code on success', async () => {
 			const res = await request(app).put(`/api/categories/${category._id}`).set('x-auth-token', isAdmin).send({
