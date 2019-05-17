@@ -96,10 +96,25 @@ describe('TEST FOR CATEGORY', () => {
 		});
 		it('should get all categories', async () => {
 			const res = await request(app).get('/api/categories/')
-			expect(res.body.length).toEqual(3);
+			expect(res.body.length).toEqual(4);
 		});
 	})
-	
+	describe('/GET BY ID: Test to get categories by id', () => {
+		let category = new Category({title: 'music'});
+
+		category.save()
+
+
+		it('should return a 200 status code on success', async () => {
+			const res = await request(app).get(`/api/categories/${category._id}`)
+			expect(res.status).toBe(200);
+		});
+		it('should get all categories', async () => {
+			const res = await request(app).get(`/api/categories/${category._id}`)
+			expect(res.body).toHaveProperty('title', 'music');
+		});
+	})
+
 	//GET CATEGORY BY ID
 	//DELETE CATEGORY
 });
