@@ -42,7 +42,8 @@ router.get('/:id', [ authId ], async (req, res) => {
 	res.status(200).send(category);
 });
 //PUT CATEGORY
-router.put('/:id', [ tokenAuth, adminAuth ], async (req, res) => {
+router.put('/:id', [ tokenAuth, adminAuth, authId ], async (req, res) => {
+
 	let newCategory = await Category.findByIdAndUpdate(
 		req.params.id,
 		{
