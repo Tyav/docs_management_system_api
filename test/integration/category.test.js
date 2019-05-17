@@ -112,9 +112,13 @@ describe('TEST FOR CATEGORY', () => {
 		});
 		it('should return 404 status if category is not available', async () => {
 			const res = await request(app).get(`/api/categories/${mongoose.Types.ObjectId()}`)
-			expect(res.status).toBe(404);
+			expect(res.body.Error).toBe(404);
 		});
-		//bad request of id
+		it('should return 400 status if category id is not valid', async () => {
+			const res = await request(app).get(`/api/categories/${'sdfesdfdsfd'}`)
+			expect(res.body.Error).toBe(400);
+		});
+	//bad request of id
 	})
 
 	//GET CATEGORY BY ID
