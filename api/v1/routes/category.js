@@ -33,7 +33,12 @@ router.get('/', async (req, res) => {
 	let data = await Category.find({});//get all the available categories
 	res.status(200).send(data);
 });
+
 //GET CATEGORY BY ID
+router.get('/:id', async (req,res)=>{
+  let category = await Category.findOne({_id:req.params.id})
+  res.status(200).send(category);
+});
 //DELETE CATEGORY
 
 module.exports = router;
