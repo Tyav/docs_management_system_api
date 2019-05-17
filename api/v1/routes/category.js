@@ -42,9 +42,17 @@ router.get('/:id', [ authId ], async (req, res) => {
 	res.status(200).send(category);
 });
 //PUT CATEGORY
-router.put('/:id',[ tokenAuth, adminAuth ],async (req,res)=>{
-  res.status(200).send()
-})
+router.put('/:id', [ tokenAuth, adminAuth ], async (req, res) => {
+	let newCategory = await Category.findByIdAndUpdate(
+		req.params.id,
+		{
+			title : req.body.title,
+		},
+		{ new: true },
+  );
+  
+	res.status(200).send(newCategory);
+});
 //DELETE CATEGORY
 
 module.exports = router;
