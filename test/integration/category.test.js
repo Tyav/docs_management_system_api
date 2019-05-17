@@ -101,18 +101,20 @@ describe('TEST FOR CATEGORY', () => {
 	})
 	describe('/GET BY ID: Test to get categories by id', () => {
 		let category = new Category({title: 'music'});
-
 		category.save()
-
-
 		it('should return a 200 status code on success', async () => {
 			const res = await request(app).get(`/api/categories/${category._id}`)
 			expect(res.status).toBe(200);
 		});
-		it('should get all categories', async () => {
+		it('should get category by id', async () => {
 			const res = await request(app).get(`/api/categories/${category._id}`)
 			expect(res.body).toHaveProperty('title', 'music');
 		});
+		it('should return 404 status if category is not available', async () => {
+			const res = await request(app).get(`/api/categories/${mongoose.Types.ObjectId()}`)
+			expect(res.status).toBe(404);
+		});
+		//bad request of id
 	})
 
 	//GET CATEGORY BY ID
