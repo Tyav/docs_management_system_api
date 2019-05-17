@@ -41,6 +41,10 @@ router.get('/:id', [ authId ], async (req, res) => {
 	if (!category) return res.status(404).send({ Error: 404, message: 'Not found' }); //return 404 if not found
 	res.status(200).send(category);
 });
+//PUT CATEGORY
+router.put('/:id',[ tokenAuth, adminAuth ],async (req,res)=>{
+  res.status(200).send()
+})
 //DELETE CATEGORY
 
 module.exports = router;

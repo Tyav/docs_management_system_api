@@ -156,7 +156,7 @@ describe('TEST FOR CATEGORY', () => {
 			const res = await request(app).put(`/api/categories/${category._id}`).set('x-auth-token', isAdmin).send({
 				title : 'movies',
 			});
-			expect(res.status).toBe(200);
+			expect(res.body).toHaveProperty('title','movies');
 		});
 		it('should return 404 status if category is not available', async () => {
 			const res = await request(app).put(`/api/categories/${mongoose.Types.ObjectId()}`).set('x-auth-token', isAdmin).send({
