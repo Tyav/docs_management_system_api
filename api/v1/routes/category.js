@@ -54,6 +54,16 @@ router.put('/:id', [ tokenAuth, adminAuth, authId ], async (req, res) => {
   if (!newCategory) return res.status(404).send({ Error: 404, message: 'Not found' })
 	res.status(200).send(newCategory);
 });
+
 //DELETE CATEGORY
+router.delete('/:id', [ tokenAuth, adminAuth, authId ], async (req, res) => {
+
+	let deletedCategory = await Category.findOneAndRemove(
+    {_id: req.params.id}
+  );
+	res.status(200).send({success: 200, message: 'Category deleted successfully'});
+});
+
+
 
 module.exports = router;

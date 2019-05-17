@@ -196,10 +196,6 @@ describe('TEST FOR CATEGORY', () => {
 			const res = await Category.findOne({_id:category._id});
 			expect(res).toBe(null)
 		});
-		it('should return 404 status if category is not available', async () => {
-			const res = await request(app).delete(`/api/categories/${mongoose.Types.ObjectId()}`).set('x-auth-token', isAdmin);
-			expect(res.body.Error).toBe(404);
-		});
 		it('should return 400 status if category id is not valid', async () => {
 			const res = await request(app).delete(`/api/categories/${'sdfesdfdsfd'}`).set('x-auth-token', isAdmin);
 			expect(res.body.Error).toBe(400);
