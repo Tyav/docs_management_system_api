@@ -50,7 +50,7 @@ router.put('/:id', [ tokenAuth, adminAuth ], async (req, res) => {
 		},
 		{ new: true },
   );
-  
+  if (!newCategory) return res.status(404).send({ Error: 404, message: 'Not found' })
 	res.status(200).send(newCategory);
 });
 //DELETE CATEGORY
