@@ -30,14 +30,16 @@ router.post('/', [ tokenAuth, adminAuth ], async (req, res) => {
 
 //GET ALL CATEGORIES
 router.get('/', async (req, res) => {
-	let data = await Category.find({});//get all the available categories
+	let data = await Category.find({}); //get all the available categories
 	res.status(200).send(data);
 });
 
 //GET CATEGORY BY ID
-router.get('/:id', async (req,res)=>{
-  let category = await Category.findOne({_id:req.params.id})
-  res.status(200).send(category);
+router.get('/:id', [ authId ], async (req, res) => {
+	//authId validates Id...
+	let category = await Category.findOne({ _id: req.params.id }); //get category from db
+	if (!category) return res.status(404).send({ Error: 404, message: 'Not found' }); //return 404 if not found
+	res.status(200).send(category);
 });
 //DELETE CATEGORY
 
