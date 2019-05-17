@@ -119,20 +119,42 @@ describe('TEST FOR CATEGORY', () => {
 			expect(res.body.Error).toBe(400);
 		});
 	})
-	describe('/POST: Test to edit Category by id', () => {
-		let category = new Category({title: 'music'});
+	describe('/PUT: Test to edit Category by id', () => {
+		let category = new Category({title: 'movics'});
 		category.save()
+		it('should return a 401 if user is not logged in', async () => {
+			const res = await request(app).put(`/api/categories/${category._id}`)
+			expect(res.status).toBe(401);
+		});
+		it('should return a 403 status code if logged in user is not an admin', async () => {
+			const res = await request(app).put(`/api/categories/${category._id}`).set('x-auth-token', isLogin).send({
+				title : 'moive',
+			});
+			expect(res.status).toBe(403);
+		});
 		it('should return a 200 status code on success', async () => {
-			const res = await request(app).get(`/api/categories/${category._id}`)
+			const res = await request(app).put(`/api/categories/${category._id}`).set('x-auth-token', isAdmin).send({
+				title : 'muvies',
+			});
 			expect(res.status).toBe(200);
 		});
 		it('should return the editted category on success', async () => {
-			const res = await request(app).get(`/api/categories/${category._id}`)
+			const res = await request(app).put(`/api/categories/${category._id}`).set('x-auth-token', isAdmin).send({
+				title : 'movies',
+			});
 			expect(res.status).toBe(200);
 		});
 		it('should return 404 status if category is not available', async () => {
-			const res = await request(app).get(`/api/categories/${mongoose.Types.ObjectId()}`)
+			const res = await request(app).put(`/api/categories/${mongoose.Types.ObjectId()}`).set('x-auth-token', isAdmin).send({
+				title : 'header',
+			});
 			expect(res.body.Error).toBe(404);
+		});
+		it('should return 400 status if category id is not valid', async () => {
+			const res = await request(app).put(`/api/categories/${'sdfesdfdsfd'}`).set('x-auth-token', isAdmin).send({
+				title : 'header',
+			});
+			expect(res.body.Error).toBe(400);
 		});
 	});
 
