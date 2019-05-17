@@ -9,6 +9,7 @@ import { authId } from '../utils/validateId';
 
 const router = express.Router();
 
+//CREATE CATEGORY
 router.post('/', [ tokenAuth, adminAuth ], async (req, res) => {
 	//user should be logged in
 	//user must be an admin,
@@ -16,19 +17,22 @@ router.post('/', [ tokenAuth, adminAuth ], async (req, res) => {
 	const { error } = validateCate(req.body);
 	if (error) return res.status(404).send({ Error: 404, message: 'Invalid title format' });
 
-  //if duplication error return 400(dulicate error)
-  let duplicate = await Category.findOne({title: req.body.title})
-  if (duplicate) return res.status(400).send({Error: 400, message: `Cannot create duplicate category of ${req.body.title}`})
-  //create category 201
-  let category = new Category({
-    title: req.body.title
-  })
-  await category.save()
+	//if duplication error return 400(dulicate error)
+	let duplicate = await Category.findOne({ title: req.body.title });
+	if (duplicate) return res.status(400).send({ Error: 400, message: `Cannot create duplicate category of ${req.body.title}` });
+	//create category 201
+	let category = new Category({
+		title : req.body.title,
+	});
+	await category.save();
 	res.status(201).send(category);
 });
 
-//CREATE CATEGORY
 //GET ALL CATEGORIES
+router.get('/', async (req, res) => {
+	let data = await Category.find({});//get all the available categories
+	res.status(200).send(data);
+});
 //GET CATEGORY BY ID
 //DELETE CATEGORY
 
