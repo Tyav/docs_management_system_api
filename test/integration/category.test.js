@@ -75,7 +75,7 @@ describe('TEST FOR CATEGORY', () => {
 			});
 			expect(res.status).toBe(400);
 			expect(res.body.message).toBe('Cannot create duplicate category of detective');
-		}); 
+		});
 
 		//user should be logged in
 		//user must be an admin,
@@ -84,7 +84,15 @@ describe('TEST FOR CATEGORY', () => {
 		//if duplication error return 400(dulicate error)
 	});
 	//CREATE CATEGORY
-	//GET ALL CATEGORIES
+	
+	describe('/GET: Test to get all categories', () => {
+
+		it('should return a 200 status code on success', async () => {
+			const res = await request(app).get('/api/categories/')
+			expect(res.status).toBe(200);
+		});
+
+	})
 	//GET CATEGORY BY ID
 	//DELETE CATEGORY
 });
