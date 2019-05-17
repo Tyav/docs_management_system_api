@@ -99,7 +99,7 @@ describe('TEST FOR CATEGORY', () => {
 			expect(res.body.length).toEqual(4);
 		});
 	})
-	describe('/GET BY ID: Test to get categories by id', () => {
+	describe('/GET BY ID: Test to get category by id', () => {
 		let category = new Category({title: 'music'});
 		category.save()
 		it('should return a 200 status code on success', async () => {
@@ -118,8 +118,19 @@ describe('TEST FOR CATEGORY', () => {
 			const res = await request(app).get(`/api/categories/${'sdfesdfdsfd'}`)
 			expect(res.body.Error).toBe(400);
 		});
-	//bad request of id
 	})
+	describe('/POST: Test to edit Category by id', () => {
+		let category = new Category({title: 'music'});
+		category.save()
+		it('should return a 200 status code on success', async () => {
+			const res = await request(app).get(`/api/categories/${category._id}`)
+			expect(res.status).toBe(200);
+		});
+		it('should return the editted category on success', async () => {
+			const res = await request(app).get(`/api/categories/${category._id}`)
+			expect(res.status).toBe(200);
+		});
+	});
 
 	//GET CATEGORY BY ID
 	//DELETE CATEGORY
