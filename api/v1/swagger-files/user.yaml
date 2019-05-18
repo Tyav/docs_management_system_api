@@ -1,0 +1,379 @@
+
+path:
+  /api/users:
+    get:
+      tags:
+        - User
+      description: This should return all users
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: all users are retrieved.
+          schema:
+            type: array
+            items: 
+             $ref: "#/definitions/User"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+          description: Unauthorized User
+          schema:
+            $ref: "#/definitions/error-message"
+
+    post:
+      tags:
+        - User
+      description: Creates a new user
+      produces:
+        - application/json
+      parameters:
+        - name: payload
+          in: body
+          description: "Information required to create new user \n Note: roleId is not required to perform a creation"
+          schema: 
+            $ref: "#/definitions/newUserPayload"
+          required: true
+      responses:
+        201:
+          description: returns seleted Users' Information
+          schema:
+            $ref: "#/definitions/User"
+            headers:
+            x-auth-token:
+              type: string
+              description: jwt contain users id and other referrential informations
+        400:
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/error-message"
+
+  /api/users/{User Id}:
+    get:
+      tags:
+        - User
+      description: This should return all users
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: User Id
+          description: Id for user
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: single user is retrieved.
+          schema:
+            $ref: "#/definitions/User"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+         description: Unauthorized User
+         schema:
+           $ref: "#/definitions/error-message"
+
+    put:
+      tags:
+        - User
+      description: Edit user information, User must be logged in
+      produces: 
+        - application/json
+      parameters:
+        - in: body
+          name: User Edit payload
+          description: use the "newPassword" to provide user option key to change user password. else do not use it.
+          schema:
+            type: object
+            properties: 
+              name:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                    example: Johnny
+                  lastName:
+                    type: string
+                    example: Snow
+              password:
+                type: string
+                required: true
+                example: "1234567890"
+              newPassword:
+                type: string
+                description: used to change user password
+                example: new1234567890
+        - in: path
+          name: User Id
+          description: user Id for edit target purposes
+          schema:
+            type: string
+          required: true
+
+        - in: header
+          name: x-auth-token
+          description: token is needed for user to be confirmed logged in
+          schema:
+            type: string
+        
+      responses:
+        200:
+          description: users details have been successfully updated
+          schema:
+            $ref: "#/definitions/success-message"
+        400:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+        401:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+        403:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+
+    delete:
+      tags:
+        - User
+      description: Deletes Users from the system
+      produces:
+        - application/json
+      parameters:
+        - name: User Id
+          in: path
+          description: Id required for target of user object
+          schema:
+            type: string
+        - name: x-auth-token
+          in: header
+          description: Token must be admin token
+          schema:
+            type: string
+      responses:
+        200:
+          description: users details have been successfully updated
+          schema:
+            $ref: "#/definitions/success-message"
+        400:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+        401:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+        403:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+        404:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+
+  /api/users/login:
+    post:
+      tags:
+        - User
+      description: User login route in the system
+      produces:
+        - application/json
+      parameters:
+        - name: login payload
+          in: body
+          description: details required for login
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                required: true
+                example: johndoe
+              password:
+                type: string
+                required: true
+                example: "1234567890"
+          required: true
+      responses:
+        200:
+          description: logs in a user and returns a user object in the response body and a token in the response header
+          schema:
+            $ref: "#/definitions/User"
+          headers:
+            x-auth-token:
+              type: string
+              description: token sent to user to validate login 
+        400:
+          description: user error is defined for user to identify error
+          schema:
+            $ref: "#/definitions/error-message"
+
+  /api/users/logout:
+    post:
+      tags:
+        - User
+      description: Logs User out
+      produces:
+        - application/json
+      responses:
+        200:
+          description: logs users out of the system
+          schema:
+            $ref: "#/definitions/success-message"
+        401:
+          description: returns this if a user is already logged out
+          schema: 
+            $ref: "#/definitions/error-message"
+  
+  
+
+
+        
+
+          
+
+
+
+definitions:
+  User:
+    type: object
+    properties:
+      _id:
+        type: string
+      name:
+        type: object
+        properties:
+          firstName:
+            type: string
+            minLength: 3
+            maxLength: 255
+          lastName:
+            type: string
+            minLength: 3
+            maxLength: 255
+        required:
+          - firstName
+          - lastName
+      username:
+        type: string
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        writeOnly: true
+      roleId:
+        type: object
+        properties:
+          _id:
+            type: string
+            pattern: '^[a-fA-F0-9]{24}$'
+          title:
+            type: string
+            example: regular
+      createdAt:
+        type: string
+        format: date-time
+        writeOnly: true
+      modifiedAt: 
+        type: string
+        format: date-time
+        writeOnly: true
+      verified:
+        type: boolean
+      avatar:
+        type: string
+        example: "http://avatar-url"
+    required:
+      - username
+      - email
+      - name
+      - roleId
+      - password
+      - createdAt
+
+  newUserPayload:
+    type: object
+    properties:
+      name:
+        type: object
+        properties:
+          firstName:
+            type: string
+            minLength: 3
+            maxLength: 255
+            example: John
+          lastName:
+            type: string
+            minLength: 3
+            maxLength: 255
+            example: Doe
+        required:
+          - firstName
+          - lastName
+      username:
+        type: string
+        example: johndoe
+      email:
+        type: string
+        format: email
+        example: johnd@example.com
+      password:
+        type: string
+        writeOnly: true
+        example: "1234567890"
+      avatar:
+        type: string
+        example: "http://avatar-url"
+        description: this is the users profile avatar link
+      roleId:
+        type: string
+        pattern: '^[a-fA-F0-9]{24}$'
+        example: 43edc49a9D8BEfac83ca0cAb
+        description: role don't have to be created for this to work
+    required:
+      - username
+      - email
+      - name
+      - password
+
+  error-message:
+    type: object
+    properties:
+      Error:
+        type: integer
+        example: 4..
+      message:
+        type: string
+        example: Error message
+ 
+  success-message:
+    type: object
+    properties:
+      Success:
+        type: integer
+        example: 2..
+      message:
+        type: string
+        example: Error message

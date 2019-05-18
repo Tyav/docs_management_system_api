@@ -1,0 +1,249 @@
+path:
+  /api/documents:
+    get:
+      tags:
+        - Documents
+      description: This return all document if user is an admin, but selects certain document for non-administrative users based on user role and document settings
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+        - name: pageNumber
+          description: page number requested by user
+          in: query
+          schema:
+            type: string
+            example: 1
+        - name: pageSize
+          description: amount of documents needed per page
+          in: query
+          schema:
+            type: string
+            example: 10
+      responses:
+        200:
+          description: all users are retrieved.
+          schema:
+            type: array
+            items: 
+             $ref: "#/definitions/Document"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+          description: Unauthorized User
+          schema:
+            $ref: "#/definitions/error-message"
+
+    post:
+      tags:
+        - Documents
+      description: Creates a new document
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: Document Payload
+          description: Payload used for creating document
+          in: body
+          schema:
+            type: object
+            properties:
+              title: 
+                type: string
+                example: DocTitle
+              content:
+                type: string
+                example: Document Content
+              access:
+                type: string
+                enum: [public, private, role]
+              publishDate:
+                type: string
+                example: mm-dd-yyyy
+      responses:
+        200:
+          description: document object is returned after creation
+          schema:
+            $ref: "#/definitions/Document"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+  /api/documents/{id}:
+    put:
+      tags:
+        - Documents
+      description: Edit an existing Document
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: Edit Payload
+          description: Payload used for creating document
+          in: body
+          schema:
+            type: object
+            properties:
+              title: 
+                type: string
+                example: Document Title
+              content:
+                type: string
+                example: Document Content
+              access:
+                type: string
+                enum: [public, private, role]
+              categoryId:
+                type: string
+                example: 239ca98e7f7d09b9a9ee97d6
+
+      responses:
+        200:
+          description: document object is returned after creation
+          schema:
+            $ref: "#/definitions/Document"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+
+
+definitions:
+  Document:
+    type: object
+    properties:
+      _id:
+        type: string
+        description: document _id
+        example: 43edc49a9D8BEfac83ca0cAb
+      title:
+        type: string
+        minLength: 1
+        maxLength: 255
+        description: title of document from the user/creator
+        example: API Documentation
+      content:
+        type: string
+        minLength: 1
+        maxLength: 5000
+        description: Content of the Document
+        example: This is the content of API Documents
+      creatorId:
+        type: object
+        properties:
+          _id:
+            type: string
+          
+        description: id of user/document-creator
+        example: 5cb5c223edf5bf89d02378b4
+      access:
+        type: string
+        enum: [private, private, role]
+        default: public
+      categoryId:
+        type: string
+        description: category that document belongs to
+        example: 43edc49a9D8BEfac83ca0cAb
+      createdAt:
+        type: string
+        format: date-time
+        readOnly: true
+      modifiedAt:
+        type: string
+        format: date-time
+        readOnly: true
+      publishDate:
+        type: string
+        format: date-time
+        description: date format can be submitted in any valid date format e.g dd-mm-yyyy, mm-dd-yyyy, yyyy/mm/dd
+      role: 
+        type: string
+
+  returnedDocument:
+    type: object
+    properties:
+      _id:
+        type: string
+        description: document _id
+        example: 43edc49a9D8BEfac83ca0cAb
+      title:
+        type: string
+        minLength: 1
+        maxLength: 255
+        description: title of document from the user/creator
+        example: API Documentation
+      content:
+        type: string
+        minLength: 1
+        maxLength: 5000
+        description: Content of the Document
+        example: This is the content of API Documents
+      creatorId:
+        type: string
+        description: id of user/document-creator
+        example: 5cb5c223edf5bf89d02378b4
+      access:
+        type: string
+        enum: [private, private, role]
+        default: public
+      categoryId:
+        type: string
+        description: category that document belongs to
+        example: 43edc49a9D8BEfac83ca0cAb
+      createdAt:
+        type: string
+        format: date-time
+        readOnly: true
+      modifiedAt:
+        type: string
+        format: date-time
+        readOnly: true
+      publishDate:
+        type: string
+        format: date-time
+        description: date format can be submitted in any valid date format e.g dd-mm-yyyy, mm-dd-yyyy, yyyy/mm/dd
+      role: 
+        type: string
+        description: Role id of creator.
+        example: 5cb9beb48175bfe10e97c6ca
+
+
+  error-message:
+    type: object
+    properties:
+      Error:
+        type: integer
+        example: 4..
+      message:
+        type: string
+        example: Error message
+ 
+  success-message:
+    type: object
+    properties:
+      Success:
+        type: integer
+        example: 2..
+      message:
+        type: string
+        example: Error message
+
+
+  

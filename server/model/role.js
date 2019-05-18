@@ -40,21 +40,20 @@ const roleSchema = new Schema({
 const Role = mongoose.model('Role', roleSchema);
 
 //CREATE DEFAULT ROLES REGULAR & ADMIN ROLES
-Role.create({
-	title : 'admin',
-})
-	.then(() => {})
-	.catch(err => {
-		//Do something with error
-	});
-Role.create({
-	title : 'regular',
-})
-	.then(() => {})
-	.catch(err => {
-		//Do something with error
-	});
-
+	Role.create({
+		title : 'admin',
+	})
+		.then(() => {})
+		.catch(err => {
+			//Do something with error
+		});
+	Role.create({
+		title : 'regular',
+	})
+		.then(() => {})
+		.catch(err => {
+			//Do something with error
+		});
 //console.log(error)
 
 // Role.create({

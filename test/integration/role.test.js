@@ -8,6 +8,12 @@ import { User } from '../../server/model/user';
 import { Role } from '../../server/model/role';
 
 describe('TEST FOR ROLE', () => {
+	beforeAll(async () => {
+		await Document.deleteMany({});
+		await Category.deleteMany({});
+		await User.deleteMany({});
+		await Role.deleteMany({});
+	});
 	const adminUser = new User({
 		username : 'adminUserName',
 		name     : {
@@ -32,6 +38,18 @@ describe('TEST FOR ROLE', () => {
 	});
 	regularUser.save();
 	const isLogin = regularUser.generateAuthToken(true);
+	let role;
+	let role2
+	beforeAll(async () => {
+		role = new Role({
+			title: 'admin'
+		})
+		role.save();
+		role2 = new Role({
+			title: 'regular'
+		})
+		role2.save()
+	});
 
 	afterAll(async () => {
 		await Document.deleteMany({});
@@ -91,12 +109,7 @@ describe('TEST FOR ROLE', () => {
 		});
 	});
 	describe('/GET:id GET CREATED ROLE BY ID', () => {
-    let role;
-    let role2
-		beforeAll(async () => {
-      role = await Role.findOne({ title: 'admin' });
-      role2 = await Role.findOne({ title: 'regular' });
-		});
+
 		it('should return a 401 if user is not logged in', async () => {
 			const res = await request(app).get(`/api/roles/${role._id}`);
 			expect(res.status).toBe(401);
@@ -119,12 +132,8 @@ describe('TEST FOR ROLE', () => {
 		});
   });
   describe('/PUT: EDIT ROLE BY ADMIN', () => {
-    let role;
-    let role2
     let rolevet;
 		beforeAll(async () => {
-      role = await Role.findOne({ title: 'admin' });
-      role2 = await Role.findOne({ title: 'regular' });
       rolevet = await Role.findOne({ title: 'veteran' });
 
 		});
@@ -176,5 +185,5 @@ describe('TEST FOR ROLE', () => {
       const res = await request(app).delete(`/api/roles/${role2._id}`).set('x-auth-token', isAdmin)
       expect(res.status).toBe(200)
     });
-  });
+	});
 });
