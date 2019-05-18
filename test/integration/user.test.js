@@ -103,8 +103,8 @@ describe('Test for User', () => {
 			'should return a user with a given id',
 			async () => {
 				const res = await request(app).get(`/api/users/${user._id}`).set('x-auth-token', token);
-				expect(res.body).toHaveProperty('email', user.email);
-				expect(res.body).toHaveProperty('username', user.username);
+				expect(res.body.result).toHaveProperty('email', user.email);
+				expect(res.body.result).toHaveProperty('username', user.username);
 			},
 			50000,
 		);
@@ -151,7 +151,7 @@ describe('Test for User', () => {
 			'should create a user and return the user object if successful',
 			async () => {
 				const res = await request(app).post('/api/users/').send(payload);
-				expect(res.body).toHaveProperty('username', payload.username);
+				expect(res.body.result).toHaveProperty('username', payload.username);
 			},
 			50000,
 		);
@@ -159,7 +159,7 @@ describe('Test for User', () => {
 			'should not return the user password if created',
 			async () => {
 				const res = await request(app).post('/api/users/').send(payload);
-				expect(res.body).not.toHaveProperty('password', payload.password);
+				expect(res.body.result).not.toHaveProperty('password', payload.password);
 			},
 			50000,
 		);
@@ -276,7 +276,7 @@ describe('Test for User', () => {
 				};
 				const res = await request(app).post('/api/users/').send(missingRolePayload);
 				expect(res.status).toBe(201);
-				expect(res.body.roleId).toHaveProperty('title', 'regular');
+				expect(res.body.result.roleId).toHaveProperty('title', 'regular');
 			},
 			50000,
 		);
@@ -390,8 +390,8 @@ describe('Test for User', () => {
 						password: 'test1Password',
 					})
 					.set('Accept', 'application/json');
-				expect(res.body).toHaveProperty('username', user.username);
-				expect(res.body).toHaveProperty('email', user.email);
+				expect(res.body.result).toHaveProperty('username', user.username);
+				expect(res.body.result).toHaveProperty('email', user.email);
 			},
 			50000,
 		);

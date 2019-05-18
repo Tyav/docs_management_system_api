@@ -32,6 +32,7 @@ router.post('/', [ tokenAuth, adminAuth ], async (req, res) => {
 
 //GET ALL CATEGORIES
 router.get('/', async (req, res) => {
+  const token = req.header('x-auth-token'); //get token
 	let data = await Category.find({}); //get all the available categories
 	res.status(200).send({token, result:data});
 });

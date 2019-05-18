@@ -101,11 +101,11 @@ describe('TEST FOR ROLE', () => {
 		});
 		it('should return roles including admin role if user is admin', async () => {
 			const res = await request(app).get('/api/roles/').set('x-auth-token', isAdmin);
-			expect(res.body.length).toBe(3);
+			expect(res.body.result.length).toBe(3);
 		});
 		it('should return roles excluding admin role if user is not admin', async () => {
 			const res = await request(app).get('/api/roles/').set('x-auth-token', isLogin);
-			expect(res.body.length).toBe(2);
+			expect(res.body.result.length).toBe(2);
 		});
 	});
 	describe('/GET:id GET CREATED ROLE BY ID', () => {
@@ -165,7 +165,7 @@ describe('TEST FOR ROLE', () => {
       const res = await request(app).put(`/api/roles/${rolevet._id}`).set('x-auth-token', isAdmin).send({
         title: 'veteran'
       });
-      expect(res.body.title).toMatch('veteran')
+      expect(res.body.result.title).toMatch('veteran')
     });
   });
   describe('/DELETE ROLE BY ADMIN', () => {
