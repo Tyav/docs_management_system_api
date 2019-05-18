@@ -2,7 +2,7 @@ import 'babel-polyfill';
 import { Document } from '../../../server/model/document';
 import mongoose from 'mongoose';
 
-describe('Test for Role model', () => {
+describe('Test for Document model', () => {
 	describe('Creation Test', () => {
 		it('should pass validation if all required infomation is supplied', async () => {
 			let testDoc = new Document({
@@ -16,8 +16,8 @@ describe('Test for Role model', () => {
 		});
 		it('should fail validation if required infomation is not supplied', async () => {
 			let testDoc = new Document({
-				//title is not supplied
-				content: 'Some test content',
+				title: 'Fiction',
+				//content: 'Some test content', NOT SUPPLIED
 				creatorId: new mongoose.Types.ObjectId().toHexString(),
 				access: 'public',
 				categoryId: new mongoose.Types.ObjectId().toHexString(),

@@ -5,8 +5,6 @@ const Schema = mongoose.Schema;
 const docSchema = new Schema({
 	title       : {
 		type      : String,
-		unique    : true,
-		required  : true,
 		minlength : 1,
 		maxlength : 255,
 	},
@@ -18,8 +16,13 @@ const docSchema = new Schema({
 		maxlength : 5000,
 	},
 	creatorId   : {
-		type     : mongoose.Schema.Types.ObjectId,
-		required : true,
+		type : mongoose.Schema.Types.ObjectId,
+		ref  : 'User',
+		// {
+		// 	_id      : mongoose.Schema.Types.ObjectId,
+		// 	username : String,
+		// 	avatar   : String,
+		// },
 	},
 	access      : {
 		type    : String,
@@ -27,9 +30,8 @@ const docSchema = new Schema({
 		default : 'public',
 	},
 	categoryId  : {
-		type     : mongoose.Schema.Types.ObjectId,
-		required : true,
-		ref      : 'users',
+		type : mongoose.Schema.Types.ObjectId,
+		ref  : 'Category',
 	},
 	createdAt   : {
 		type     : Date,
@@ -38,6 +40,7 @@ const docSchema = new Schema({
 	},
 	modifiedAt  : {
 		type : Date,
+		set  : v => new Date(v),
 	},
 	deleted     : {
 		type    : Boolean,
@@ -49,8 +52,17 @@ const docSchema = new Schema({
 		default : Date.now(),
 	},
 	role        : {
-		type : mongoose.Schema.Types.ObjectId,
+		type :  mongoose.Schema.Types.ObjectId,
+			ref : 'Role',
+		},
+	likes:{
+		type: Number,
+		default: 0
 	},
+	dislikes:{
+		type: Number,
+		default: 0
+	}
 });
 
 //model for documents

@@ -4,17 +4,18 @@ Joi.objectId = objId(Joi);
 
 //validation for creation of a new user at the API level
 
-let validateCreateUser = (objectValue) => {
+let validateCreateUser = objectValue => {
 	let schema = Joi.object()
 		.keys({
-			username: Joi.string().min(3).max(255).required(),
-			name: Joi.object().keys({
-				firstName: Joi.string().min(3).max(255).required(),
-				lastName: Joi.string().min(3).max(255).required(),
+			username : Joi.string().min(3).max(255).required(),
+			name     : Joi.object().keys({
+				firstName : Joi.string().min(3).max(255).required(),
+				lastName  : Joi.string().min(3).max(255).required(),
 			}),
-			email: Joi.string().email({ minDomainAtoms: 2 }),
-			password: Joi.string().min(8),
-			roleId: Joi.objectId(),
+			email    : Joi.string().email({ minDomainAtoms: 2 }),
+			password : Joi.string().min(8),
+			roleId   : Joi.objectId(),
+			avatar   : Joi.string(),
 		})
 		.and('username', 'name', 'email', 'password');
 
@@ -22,23 +23,26 @@ let validateCreateUser = (objectValue) => {
 };
 
 // validation for login of user at API level
-let validateLogin = (objectValue) => {
+let validateLogin = objectValue => {
 	let schema = Joi.object().keys({
-		username: Joi.string().min(3).max(255).required(),
-		password: Joi.string().min(8).required(),
+		username : Joi.string().min(3).max(255).required(),
+		password : Joi.string().min(8).required(),
 	});
 	return Joi.validate(objectValue, schema);
 };
 
-let validateEditUser = (objectValue) => {
-	let schema = Joi.object().keys({
-		name: Joi.object().keys({
-			firstName: Joi.string().min(3).max(255),
-			lastName: Joi.string().min(3).max(255),
-		}),
-		password: Joi.string().min(8).required(),
-		newPassword: Joi.string().min(8),
-	}).with('newPassword', 'password');
+let validateEditUser = objectValue => {
+	let schema = Joi.object()
+		.keys({
+			name        : Joi.object().keys({
+				firstName : Joi.string().min(3).max(255),
+				lastName  : Joi.string().min(3).max(255),
+			}),
+			password    : Joi.string().min(8).required(),
+			newPassword : Joi.string().min(8),
+			avatar      : Joi.string(),
+		})
+		.with('newPassword', 'password');
 	return Joi.validate(objectValue, schema);
 };
 

@@ -15,5 +15,20 @@ const cateSchema = new Schema({
 });
 
 const Category = mongoose.model('Category', cateSchema);
+Category.create({
+	title : 'admin',
+})
+	.then(() => {})
+	.catch(err => {
+		//Do something with error
+	});
+Category.create({
+	title : 'regular',
+})
+	.then(() => {})
+	.catch(err => {
+		//Do something with error
+	});
+
 
 export { Category };

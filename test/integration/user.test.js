@@ -432,8 +432,20 @@ describe('Test for User', () => {
 	});
 	describe('/DELETE a user', () => {
 		let user, user2;
-		let editToken, editToken2;
-		beforeEach(async () => {
+		let editToken, editToken2,adminToken;
+		beforeEach(async () => {		
+			let useradmin = new User({
+			username: 'testAdmin1',
+			name: {
+				firstName: 'testFirstName1',
+				lastName: 'testLastName1',
+			},
+			email: 'admin@test.com',
+			password: 'test1Password',
+			roleId: roleId,
+		});
+		adminToken = useradmin.generateAuthToken(true, true);
+
 			user = new User({
 				username: 'testUserName2',
 				name: {
@@ -485,6 +497,26 @@ describe('Test for User', () => {
 			async () => {
 				const res = await request(app).delete(`/api/users/${user2._id}`).set('x-auth-token', editToken2);
 				expect(res.status).toBe(200);
+			},
+			50000,
+		);
+		it(
+			'should delete an account flagged as deleted by the user',
+			async () => {
+				await request(app).delete(`/api/users/${user2._id}`).set('x-auth-token', editToken2);
+				const res = await request(app).delete(`/api/users/${user2._id}`).set('x-auth-token', adminToken);
+				let user = await User.findById(user2._id)
+				//console.log(user2._id)
+				expect(user).toBe(null);
+			},
+			50000,
+		);
+		it(
+			'should return a 404 if user is already deleted',
+			async () => {
+				await request(app).delete(`/api/users/${user2._id}`).set('x-auth-token', editToken2);
+				const res = await request(app).delete(`/api/users/${user2._id}`).set('x-auth-token', editToken2);
+				expect(res.status).toBe(404);
 			},
 			50000,
 		);

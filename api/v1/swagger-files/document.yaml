@@ -146,7 +146,11 @@ definitions:
         description: Content of the Document
         example: This is the content of API Documents
       creatorId:
-        type: string
+        type: object
+        properties:
+          _id:
+            type: string
+          
         description: id of user/document-creator
         example: 5cb5c223edf5bf89d02378b4
       access:

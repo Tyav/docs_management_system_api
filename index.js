@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import cors from 'cors'
 // import swaggerJsdoc from 'swagger-jsdoc';
 // import swaggerUi from 'swagger-ui-express';
 
@@ -22,10 +23,17 @@ db(mongoose);
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors())
 
 //SWAGGER DOCS ROUTE
 import swag from './startup/swagger';
 swag(app);
+
+//SET HEADER
+app.use((req, res, next)=>{
+	res.set('Access-Control-Allow-Origin', '*');
+	next()
+})
 
 //USERS API ROUTES
 app.use('/api/users', users);
