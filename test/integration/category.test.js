@@ -96,7 +96,7 @@ describe('TEST FOR CATEGORY', () => {
 		});
 		it('should get all categories', async () => {
 			const res = await request(app).get('/api/categories/');
-			expect(res.body.length).toEqual(2);
+			expect(res.body.result.length).toEqual(2);
 		});
 	});
 	describe('/GET BY ID: Test to get category by id', () => {
@@ -115,7 +115,7 @@ describe('TEST FOR CATEGORY', () => {
 		});
 		it('should get category by id', async () => {
 			const res = await request(app).get(`/api/categories/${category._id}`);
-			expect(res.body).toHaveProperty('title', 'music');
+			expect(res.body.result).toHaveProperty('title', 'music');
 		});
 		it('should return 404 status if category is not available', async () => {
 			const res = await request(app).get(`/api/categories/${mongoose.Types.ObjectId()}`);
@@ -155,7 +155,7 @@ describe('TEST FOR CATEGORY', () => {
 			const res = await request(app).put(`/api/categories/${category._id}`).set('x-auth-token', isAdmin).send({
 				title : 'movies',
 			});
-			expect(res.body).toHaveProperty('title', 'movies');
+			expect(res.body.result).toHaveProperty('title', 'movies');
 		});
 		it('should return 404 status if category is not available', async () => {
 			const res = await request(app).put(`/api/categories/${mongoose.Types.ObjectId()}`).set('x-auth-token', isAdmin).send({

@@ -163,7 +163,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access     : 'public',
 					categoryId : scifi._id,
 				});
-				expect(res.body).toHaveProperty('title', 'testDoc2');
+				expect(res.body.result).toHaveProperty('title', 'testDoc2');
 				expect(res.status).toBe(200);
 			},
 			50000,
@@ -177,7 +177,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access     : 'role',
 					categoryId : scifi._id,
 				});
-				expect(res.body.role._id).toBe(regularUser.roleId.toHexString());
+				expect(res.body.result.role._id).toBe(regularUser.roleId.toHexString());
 				expect(res.status).toBe(200);
 			},
 			50000,
@@ -217,7 +217,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access     : 'public',
 					categoryId : scifi._id,
 				});
-				expect(res.body.createdAt).toBeDefined();
+				expect(res.body.result.createdAt).toBeDefined();
 			},
 			50000,
 		);
@@ -229,7 +229,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					content    : 'I am a basic test doc78',
 					categoryId : scifi._id,
 				});
-				expect(res.body.access).toBe('public');
+				expect(res.body.result.access).toBe('public');
 			},
 			50000,
 		);
@@ -240,7 +240,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					title      : 'test8',
 					content    : 'I am a basic test doc7',
 				});
-				expect(res.body.categoryId.title).toBe('general');
+				expect(res.body.result.categoryId.title).toBe('general');
 			},
 			50000,
 		);
@@ -292,7 +292,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return all documents if request is made by an admin',
 			async () => {
 				const res = await request(app).get('/api/documents/').set('x-auth-token', isAdmin);
-				expect(res.body.length).toBe(4);
+				expect(res.body.result.length).toBe(4);
 			},
 			50000,
 		);
@@ -300,7 +300,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return all only documents that a public and created by the logged in user if not admin',
 			async () => {
 				const res = await request(app).get('/api/documents/').set('x-auth-token', isLogin);
-				expect(res.body.length).toBe(3);
+				expect(res.body.result.length).toBe(3);
 			},
 			50000,
 		);
@@ -308,7 +308,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return documents with access as role and if creator is has same role as user',
 			async () => {
 				const res = await request(app).get('/api/documents/').set('x-auth-token', isLogin2);
-				expect(res.body.length).toBe(2);
+				expect(res.body.result.length).toBe(2);
 			},
 			50000,
 		);
@@ -316,7 +316,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return a given number of documents by query if requested',
 			async () => {
 				const res = await request(app).get('/api/documents/?pageNumber=1&pageSize=2').set('x-auth-token', isAdmin);
-				expect(res.body.length).toBe(2);
+				expect(res.body.result.length).toBe(2);
 			},
 			50000,
 		);
@@ -324,7 +324,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return documents sorted by published date',
 			async () => {
 				const res = await request(app).get('/api/documents/').set('x-auth-token', isAdmin);
-				expect(res.body[0].title).toBe('testDoc3');
+				expect(res.body.result[0].title).toBe('testDoc3');
 			},
 			50000,
 		);
@@ -332,7 +332,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return documents with only access public if user is not logged in',
 			async () => {
 				const res = await request(app).get('/api/documents/');
-				expect(res.body[0].title).toBe('testDoc1');
+				expect(res.body.result[0].title).toBe('testDoc1');
 			},
 			50000,
 		);
@@ -351,7 +351,7 @@ describe('TEST FOR DOCUMENTS', () => {
 				testDoc.deleted = true
 				await testDoc.save()
 				const res = await request(app).get('/api/documents?deleted=true').set('x-auth-token', isAdmin);
-				expect(res.body[0].title).toBe('testDoc4');
+				expect(res.body.result[0].title).toBe('testDoc4');
 			},
 			50000,
 		);
@@ -360,7 +360,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			async () => {
 				let testDoc = await Document.findOne({title: 'testDoc4'});
 				const res = await request(app).get('/api/documents?deleted=false').set('x-auth-token', isAdmin);
-				expect(res.body).not.toContain(testDoc);
+				expect(res.body.result).not.toContain(testDoc);
 			},
 			50000,
 		);
@@ -413,7 +413,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			'should return the document with the given ID',
 			async () => {
 				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isAdmin);
-				expect(res.body._id).toBe(roleDoc1._id.toHexString());
+				expect(res.body.result._id).toBe(roleDoc1._id.toHexString());
 			},
 			50000,
 		);
@@ -454,7 +454,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			async () => {
 				const res = await request(app).get(`/api/documents/${privateDoc1._id}`).set('x-auth-token', isAdmin);
 				expect(res.status).toBe(200);
-				expect(res.body).toHaveProperty('title', privateDoc1.title);
+				expect(res.body.result).toHaveProperty('title', privateDoc1.title);
 			},
 			50000,
 		);
@@ -463,7 +463,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			async () => {
 				const res = await request(app).get(`/api/documents/${privateDoc1._id}`).set('x-auth-token', isLogin);
 				expect(res.status).toBe(200);
-				expect(res.body).toHaveProperty('title', privateDoc1.title);
+				expect(res.body.result).toHaveProperty('title', privateDoc1.title);
 			},
 			50000,
 		);
@@ -561,7 +561,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access  : 'private',
 				});
 				expect(res.status).toBe(200);
-				expect(res.body).toHaveProperty('title', 'newTitle');
+				expect(res.body.result).toHaveProperty('title', 'newTitle');
 			},
 			50000,
 		);
@@ -574,7 +574,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access  : 'private',
 				});
 				expect(res.status).toBe(200);
-				expect(new Date(res.body.modifiedAt).toDateString()).toMatch(new Date().toDateString());
+				expect(new Date(res.body.result.modifiedAt).toDateString()).toMatch(new Date().toDateString());
 			},
 			50000,
 		);
@@ -587,7 +587,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access  : 'role',
 				});
 				expect(res.status).toBe(200);
-				expect(res.body.role._id).toBe(regularUser.roleId.toHexString());
+				expect(res.body.result.role._id).toBe(regularUser.roleId.toHexString());
 			},
 			50000,
 		);
@@ -599,7 +599,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					content : 'I am a basic test doc12',
 				});
 				expect(res.status).toBe(200);
-				expect(res.body.access).toBe('role');
+				expect(res.body.result.access).toBe('role');
 			},
 			50000,
 		);
@@ -611,7 +611,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access  : 'private',
 				});
 				expect(res.status).toBe(200);
-				expect(res.body.title).toBe('newTitle');
+				expect(res.body.result.title).toBe('newTitle');
 			},
 			50000,
 		);
@@ -623,7 +623,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access : 'role',
 				});
 				expect(res.status).toBe(200);
-				expect(res.body.content).toBe('I am a basic test doc12');
+				expect(res.body.result.content).toBe('I am a basic test doc12');
 			},
 			50000,
 		);
