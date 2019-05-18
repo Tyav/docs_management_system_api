@@ -45,7 +45,8 @@ if (process.env.NODE_ENV === 'staging' || 'test'){
 }
 
 //CREATE SERVER
-const port = process.env.PORT || 5050;
+let port = process.env.PORT || 5050;
+if (process.env.NODE_ENV === 'staging') port = 80
 if (process.env.NODE_ENV !== 'test') {
 	app.listen(port, () => {
 	console.log(`listening to ${port}...`);
