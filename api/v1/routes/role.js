@@ -6,6 +6,7 @@ import tokenAuth from '../utils/auth';
 import loginAuth from '../utils/isLogin';
 import ifLogin from '../utils/ifLogin';
 import { authId } from '../utils/validateId';
+import docLog from '../utils/docLog'
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.post('/', [ tokenAuth, adminAuth ], async (req, res) => {
 });
 
 //GET: VIEW ALL ROLE
-router.get('/', [ tokenAuth ], async (req, res) => {
+router.get('/', [ docLog ], async (req, res) => {
 	const token = req.header('x-auth-token'); //get token
 
 	if (req.user.isAdmin === true) {
