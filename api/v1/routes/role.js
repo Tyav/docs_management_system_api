@@ -85,7 +85,7 @@ router.put('/:id', [ authId, tokenAuth, adminAuth ], async (req, res) => {
 router.delete('/:id',[authId, tokenAuth, adminAuth],async(req,res)=>{
 
   await Role.findOneAndDelete({ _id: req.params.id })
-  res.status(200).send({ token, Success: 200, message: 'Role successfully deleted' })
+  res.status(200).send({ Success: 200, message: 'Role successfully deleted' })
 
 })
 
