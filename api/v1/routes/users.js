@@ -15,11 +15,12 @@ import ifLogin from '../utils/ifLogin';
 //GETS
 //ALL USERS [GET /users/]
 router.get('/', [ tokenAuth, adminAuth ], async (req, res) => {
+	const token = req.header('x-auth-token');
+
 	//do some authorization if user is admin
 	let deleted = req.query.deleteduser || false;
-	const token = req.header('x-auth-token');
 	const users = await User.find({ deleted: deleted }).select('_id username email name createdAt roleId modifiedAt verified avatar').populate({path: 'roleId', select:'_id title'});
-	res.status(200).header('x-auth-token', token).send(users);
+	res.status(200).send({token, result:users});
 });
 
 //SINGLE USER [GET /users/<id>]
@@ -28,8 +29,8 @@ router.get('/:id', [ tokenAuth, idAuth ], async (req, res) => {
 	//get user from database
 	const user = await User.findById(req.params.id);
 	//return a 404 if user is deleted or not in database
-	if (!user || user.deleted) return res.status(404).header('x-auth-token', token).send({ Error: 404, message: 'User not found' });
-	res.status(200).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email', 'name', 'createdAt', 'roleId', 'modifiedAt', 'verified', 'avatar' ]));
+	if (!user || user.deleted) return res.status(404).send({token, Error: 404, message: 'User not found' });
+	res.status(200).send({token, result:_.pick(user, [ '_id', 'username', 'email', 'name', 'createdAt', 'roleId', 'modifiedAt', 'verified', 'avatar' ])});
 });
 
 //CREATE USER [POST /users/]
@@ -69,7 +70,7 @@ router.post('/', async (req, res) => {
 	let userOut = _.pick(user, [ '_id', 'username', 'email', 'name', 'createdAt', 'modifiedAt', 'verified', 'avatar' ])
 	userOut.roleId = { _id: role._id, title: role.title }
 	//set the key 'x-auth-token' with generated token in the header
-	res.status(201).header('x-auth-token', token).send(userOut);
+	res.status(201).send({token, result:userOut});
 });
 
 //LOGIN USER [POST /users/login]
@@ -97,7 +98,7 @@ router.post('/login', [ ifLogin ], async (req, res) => {
 	const token = user.generateAuthToken(true, user.roleId.publicWrite);
 	
 	//keep the user logged in = 200
-	res.status(200).header('x-auth-token', token).send(_.pick(user, [ '_id', 'username', 'email', 'roleId._id','roleId.title', 'name', 'createdAt', 'modifiedAt', 'verified', 'avatar' ]));
+	res.status(200).header('x-auth-token', token).send({token, result:_.pick(user, [ '_id', 'username', 'email', 'roleId._id','roleId.title', 'name', 'createdAt', 'modifiedAt', 'verified', 'avatar' ])});
 });
 
 //LOGOUT USER [POST /users/logout]
@@ -111,15 +112,16 @@ router.post('/logout', [ tokenAuth ], (req, res) => {
 // EDIT USER [PUT /users/<id>]
 //[idAuth,tokenAuth, loginAuth],
 router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
+	const token = req.header('x-auth-token'); //get token
 	//compared id in token with id from parameter. if not same return 403
-	if (req.params.id !== req.user._id) return res.status(403).send({ Error: 403, message: 'Forbidden' });
+	if (req.params.id !== req.user._id) return res.status(403).send({ token,Error: 403, message: 'Forbidden' });
 	const { error } = validateEditUser(req.body);
-	if (error) return res.status(400).send({ Error: 400, message: error.details[0].message });
+	if (error) return res.status(400).send({ token, Error: 400, message: error.details[0].message });
 	const user = await User.findById(req.params.id);
 
 	//perform salt and bcrypt
 	const passwordCheck = await bcrypt.compare(req.body.password, user.password);
-	if (!passwordCheck) return res.status(400).send({ Error: 400, message: 'Wrong Password' });
+	if (!passwordCheck) return res.status(400).send({ token,Error: 400, message: 'Wrong Password' });
 
 	//SET NEW VALUES TO UNDEFINED
 	let newPassword;
@@ -152,26 +154,26 @@ router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
 	)
 	.select('_id username email name createdAt roleId modifiedAt verified avatar')
 	.populate({path: 'roleId', select:'_id title'});
-	const token = req.header('x-auth-token');
-	res.status(200).header('x-auth-token', token).send(_.pick(updatedUser, [ '_id', 'username', 'email', 'roleId', 'name', 'createdAt', 'modifiedAt', 'verified', 'avatar']));
-});
+	res.status(200).send({token, result:_.pick(updatedUser, [ '_id', 'username', 'email', 'roleId', 'name', 'createdAt', 'modifiedAt', 'verified', 'avatar'])});
+}); 
 
 //DELETE USER [DELETE /users/<id>]
 router.delete('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
+	const token = req.header('x-auth-token'); //get token
 	//401 if not logged in [done in token and login auth]
 	if (req.user.isAdmin) {
 		//delete user if user has performed a soft delete
 		await User.findOneAndRemove({ _id: req.params.id, deleted: true });
 		const token = req.header('x-auth-token');
-		return res.status(200).header('x-auth-token', token).send({ Success: 200, message: '4User deleted' });
+		return res.status(200).send({ token, Success: 200, message: '4User deleted' });
 	}
 	//403 if logged but not the owner
-	if (req.params.id !== req.user._id) return res.status(403).send({ Error: 403, message: 'Forbidden' });
+	if (req.params.id !== req.user._id) return res.status(403).send({ token,Error: 403, message: 'Forbidden' });
 
 	//get user and edit deleted, username, email
 	let deletedUser = await User.findOne({ _id: req.params.id, deleted: false });
 	if (!deletedUser) {
-		return res.status(404).send({ error: 404, message: 'User not found' });
+		return res.status(404).send({token, Error: 404, message: 'User not found' });
 	}
 	//chenge user data
 	deletedUser.deleted = true;
@@ -182,7 +184,7 @@ router.delete('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 	await deletedUser.save();
 
 	//200 should delete user
-	res.status(200).send({ Success: 200, message: 'User deleted' });
+	res.status(200).send({ token,Success: 200, message: 'User deleted' });
 });
 
 module.exports = router;

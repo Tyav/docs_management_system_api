@@ -192,8 +192,6 @@ path:
           schema:
             $ref: "#/definitions/error-message"
 
-
-
   /api/users/login:
     post:
       tags:
@@ -225,8 +223,7 @@ path:
           headers:
             x-auth-token:
               type: string
-              description: token sent to user to validate login
-        
+              description: token sent to user to validate login 
         400:
           description: user error is defined for user to identify error
           schema:
@@ -305,7 +302,9 @@ definitions:
         writeOnly: true
       verified:
         type: boolean
-
+      avatar:
+        type: string
+        example: "http://avatar-url"
     required:
       - username
       - email
@@ -344,6 +343,10 @@ definitions:
         type: string
         writeOnly: true
         example: "1234567890"
+      avatar:
+        type: string
+        example: "http://avatar-url"
+        description: this is the users profile avatar link
       roleId:
         type: string
         pattern: '^[a-fA-F0-9]{24}$'

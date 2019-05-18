@@ -28,7 +28,8 @@ router.post('/users', async (req, res) => {
 			},
 			email    : faker.internet.email(),
 			password : adminPassword,
-			roleId   : adminRole._id,
+      roleId   : adminRole._id,
+      avatar: faker.lorem.sentence(4,8)
 		});
 	}
 	for (let i = 0; i < regularSeed; i++) {
@@ -40,7 +41,8 @@ router.post('/users', async (req, res) => {
 			},
 			email    : faker.internet.email(),
 			password : regularPassword,
-			roleId   : regularRole._id,
+      roleId   : regularRole._id,
+      avatar: faker.lorem.sentence(6,8)
 		});
   }
   let admin = await User.find({roleId: adminRole._id})
@@ -69,7 +71,7 @@ router.post('/documents', async (req, res) => {
     //console.log(faker.date.between('9-9-2018', '5-7-2019'))
     //console.log(faker.lorem.paragraphs(paragraghCount,'./n'))
     await Document.create({
-      title: faker.lorem.sentence(titleText,8),
+      title: faker.lorem.sentence(titleText,5),
       content: faker.lorem.paragraphs(paragraghCount,'.\n'),
       creatorId: users[userIndex]._id,
       access: 'public',
