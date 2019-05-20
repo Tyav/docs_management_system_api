@@ -17,9 +17,15 @@ path:
         200:
           description: all users are retrieved.
           schema:
-            type: array
-            items: 
-             $ref: "#/definitions/User"
+            type: object
+            properties:
+              token:
+                description: jwt contain users id and other referrential informations
+                type: string
+              result:
+                type: array
+                items: 
+                  $ref: "#/definitions/User"
         404:
          description: user not found
          schema:
@@ -50,11 +56,13 @@ path:
         201:
           description: returns seleted Users' Information
           schema:
-            $ref: "#/definitions/User"
-            headers:
-            x-auth-token:
-              type: string
-              description: jwt contain users id and other referrential informations
+            type: object
+            properties:
+              token:
+                type: string
+                description: jwt contain users id and other referrential informations
+              result:
+                $ref: "#/definitions/User"
         400:
           description: Bad Request
           schema:
@@ -78,7 +86,13 @@ path:
         200:
           description: single user is retrieved.
           schema:
-            $ref: "#/definitions/User"
+            type: object
+            properties:
+              token:
+                type: string
+                description: jwt contain users id and other referrential informations
+              result:
+                $ref: "#/definitions/User"
         404:
          description: user not found
          schema:
@@ -361,19 +375,29 @@ definitions:
   error-message:
     type: object
     properties:
-      Error:
-        type: integer
-        example: 4..
-      message:
+      token:
         type: string
-        example: Error message
+      result:
+        type: object
+        properties:
+          Error:
+            type: integer
+            example: 4..
+          message:
+            type: string
+            example: Error message
  
   success-message:
     type: object
     properties:
-      Success:
-        type: integer
-        example: 2..
-      message:
+      token:
         type: string
-        example: Error message
+      result:
+        type: object
+        properties:
+          Success:
+            type: integer
+            example: 2..
+          message:
+            type: string
+            example: Error message
