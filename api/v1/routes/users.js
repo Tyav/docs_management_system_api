@@ -49,6 +49,7 @@ router.post('/', async (req, res) => {
 	let roleId = role._id;
 	//check if email has been taken
 	let checkEmail = await User.findOne({ email: req.body.email });
+	//frontEnd engineer checks for this to redirect to forgot or login page.
 	if (checkEmail) return res.status(400).send({ Error: 400, message: 'Email is already in use' });
 	//check if username has been taken
 	let checkUsername = await User.findOne({ username: req.body.username });
@@ -61,8 +62,6 @@ router.post('/', async (req, res) => {
 	const salt = await bcrypt.genSalt(10);
 	user.password = await bcrypt.hash(user.password, salt);
 	await user.save();
-	
-
 	//generate a token for user.
 	//first parameter for isLogin and
 	//second for isAdmin which will be set to true if role.publicWrite is set to true
