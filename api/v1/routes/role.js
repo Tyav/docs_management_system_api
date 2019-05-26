@@ -69,6 +69,8 @@ router.put('/:id', [ authId, tokenAuth, adminAuth ], async (req, res) => {
 	//check for role
 	const roleCheck = await Role.findOne({ _id: req.params.id });
 	if (!roleCheck) return res.status(404).send({ token, result: { Error: 404, message: 'Role Does not exist' } });
+	//get available value
+	
 	const updatedRole = await Role.findOneAndUpdate(
 		{ _id: req.params.id },
 		{

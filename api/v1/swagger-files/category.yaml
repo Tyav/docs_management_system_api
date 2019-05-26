@@ -1,10 +1,10 @@
 
 path:
-  /api/roles/:
+  /api/categories/:
     get:
       tags:
-        - Role
-      description: Return roles available to users
+        - Category
+      description: Return categories available to users
       produces:
         - application/json
       parameters:
@@ -13,7 +13,6 @@ path:
           description: user token required
           schema:
             type: string
-          required: true
       responses:
         200:
           description: all users are retrieved.
@@ -26,15 +25,11 @@ path:
               result:
                 type: array
                 items: 
-                  $ref: "#/definitions/role"
-        400:
-         description: Bad Request
-         schema:
-           $ref: "#/definitions/error-message"
+                  $ref: "#/definitions/category"
     post:
       tags:
-        - Role
-      description: Create roles to be used
+        - Category
+      description: Create categories to be used
       produces:
         - application/json
       parameters:
@@ -46,19 +41,13 @@ path:
           required: true
         - name: payload
           in: body
-          description: payload to create role object
+          description: payload to create category object
           schema:
             type: object
             properties:
               title:
                 type: string
-                example: critics
-              readAll:
-                type: boolean
-                example: true
-              writeAll:
-                type: boolean
-                example: false
+                example: movies
 
       responses:
         200:
@@ -70,7 +59,7 @@ path:
                 type: string
                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
               result: 
-                $ref: "#/definitions/role"
+                $ref: "#/definitions/category"
         400:
          description: Bad Request
          schema:
@@ -84,11 +73,11 @@ path:
          schema:
            $ref: "#/definitions/error-message"
 
-  /api/roles/{id}:
+  /api/categories/{id}:
     get:
       tags:
-        - Role
-      description: This return a Role if Role is not restricted to user
+        - Category
+      description: This return a Category if Category is not restricted to user
       produces:
         - application/json
       parameters:
@@ -97,14 +86,14 @@ path:
           schema:
             type: string
         - name: id
-          description: role id
+          description: category id
           in: path
           schema:
             type: string
             example: 43edc49a9D8BEfac83ca0cAb
       responses:
         200:
-          description: specific role is retrieved.
+          description: specific category is retrieved.
           schema:
             type: object
             properties:
@@ -112,7 +101,7 @@ path:
                 type: string
                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
               result:            
-                $ref: "#/definitions/role"
+                $ref: "#/definitions/category"
         400:
          description: Bad Request
          schema:
@@ -128,13 +117,13 @@ path:
 
     put:
       tags:
-        - Role
-      description: Edit an existing role
+        - Category
+      description: Edit an existing category
       produces:
         - application/json
       parameters:
         - name: id
-          description: role id
+          description: category id
           in: path
           schema:
             type: string
@@ -152,16 +141,10 @@ path:
             properties:
               title: 
                 type: string
-                example: roleTitle
-              readAll:
-                type: boolean
-                example: true
-              writeAll:
-                type: boolean
-                example: false
+                example: categoryTitle
       response:
         200:
-          description: updated role is retrieved.
+          description: updated category is retrieved.
           schema:
             type: object
             properties:
@@ -169,7 +152,7 @@ path:
                 type: string
                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
               result:            
-                $ref: "#/definitions/role"
+                $ref: "#/definitions/category"
         400:
          description: Bad Request
          schema:
@@ -189,13 +172,13 @@ path:
 
     delete:
       tags:
-        - Role
-      description: delete an existing role
+        - Category
+      description: delete an existing category
       produces:
         - application/json
       parameters:
         - name: id
-          description: role id
+          description: category id
           in: path
           schema:
             type: string
@@ -207,7 +190,7 @@ path:
           required: true
       responses:
         200:
-          description: specific role is retrieved.
+          description: specific category is retrieved.
           schema:
             type: object
             properties:
@@ -222,7 +205,7 @@ path:
                     example: 200
                   message:
                     type: string
-                    example: Role successfully deleted
+                    example: Category successfully deleted
         400:
          description: Bad Request
          schema:
@@ -237,7 +220,7 @@ path:
            $ref: "#/definitions/error-message"
 
 definitions:
-  role:
+  category:
     type: object
     properties:
       _id: 
@@ -246,11 +229,5 @@ definitions:
       title: 
         type: string
         example: regular
-      writeAll:
-        type: boolean
-        example: false
-      readAll:
-        type: boolean
-        example: false
 
 

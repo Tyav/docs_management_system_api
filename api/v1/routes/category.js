@@ -10,7 +10,7 @@ import { authId } from '../utils/validateId';
 const router = express.Router();
 
 //CREATE CATEGORY
-router.post('/', [ tokenAuth, adminAuth ], async (req, res) => {
+router.post('/', [  tokenAuth, adminAuth ], async (req, res) => {
   const token = req.header('x-auth-token'); //get token
 
 	//user should be logged in
@@ -62,7 +62,7 @@ router.put('/:id', [ tokenAuth, adminAuth, authId ], async (req, res) => {
 //DELETE CATEGORY
 router.delete('/:id', [ tokenAuth, adminAuth, authId ], async (req, res) => {
 	const token = req.header('x-auth-token'); //get token
-	let deletedCategory = await Category.findOneAndRemove(
+	await Category.findOneAndRemove(
     {_id: req.params.id}
   );
 	res.status(200).send({token,result:{success: 200, message: 'Category deleted successfully'}});
