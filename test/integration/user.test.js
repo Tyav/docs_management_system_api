@@ -120,7 +120,7 @@ describe('Test for User', () => {
 			'should return an INVALID ID error message if invalid id is given',
 			async () => {
 				const res = await request(app).get(`/api/users/${342}`).set('x-auth-token', token);
-				expect(res.body.message).toBe('Invalid Id');
+				expect(res.body.result.message).toBe('Invalid Id');
 			},
 			50000,
 		);
@@ -320,8 +320,8 @@ describe('Test for User', () => {
 		it(
 			'should return an INVALID ID error message if invalid id is given',
 			async () => {
-				const res = await request(app).put(`/api/users/${5456}`);
-				expect(res.body.message).toBe('Invalid Id');
+				const res = await request(app).put(`/api/users/${5456}`).set('x-auth-token', editToken2);
+				expect(res.body.result.message).toBe('Invalid Id');
 			},
 			50000,
 		);

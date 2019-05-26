@@ -1,0 +1,233 @@
+
+path:
+  /api/categories/:
+    get:
+      tags:
+        - Category
+      description: Return categories available to users
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          description: user token required
+          schema:
+            type: string
+      responses:
+        200:
+          description: all users are retrieved.
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result:
+                type: array
+                items: 
+                  $ref: "#/definitions/category"
+    post:
+      tags:
+        - Category
+      description: Create categories to be used
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          description: user token required
+          schema:
+            type: string
+          required: true
+        - name: payload
+          in: body
+          description: payload to create category object
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: movies
+
+      responses:
+        200:
+          description: all users are retrieved.
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result: 
+                $ref: "#/definitions/category"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+         description: Unauthorized 
+         schema:
+           $ref: "#/definitions/error-message"
+        403:
+         description: Forbidden
+         schema:
+           $ref: "#/definitions/error-message"
+
+  /api/categories/{id}:
+    get:
+      tags:
+        - Category
+      description: This return a Category if Category is not restricted to user
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+        - name: id
+          description: category id
+          in: path
+          schema:
+            type: string
+            example: 43edc49a9D8BEfac83ca0cAb
+      responses:
+        200:
+          description: specific category is retrieved.
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result:            
+                $ref: "#/definitions/category"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+          description: Unauthorized User
+          schema:
+            $ref: "#/definitions/error-message"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+
+    put:
+      tags:
+        - Category
+      description: Edit an existing category
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: category id
+          in: path
+          schema:
+            type: string
+            example: 43edc49a9D8BEfac83ca0cAb
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: Edit Payload
+          description: Payload used for creating document
+          in: body
+          schema:
+            type: object
+            properties:
+              title: 
+                type: string
+                example: categoryTitle
+      response:
+        200:
+          description: updated category is retrieved.
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result:            
+                $ref: "#/definitions/category"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+          description: Unauthorized User
+          schema:
+            $ref: "#/definitions/error-message"
+        403:
+          description: Forbidden
+          schema:
+            $ref: "#/definitions/error-message"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+
+    delete:
+      tags:
+        - Category
+      description: delete an existing category
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: category id
+          in: path
+          schema:
+            type: string
+            example: 43edc49a9D8BEfac83ca0cAb
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: specific category is retrieved.
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result:
+                type: object 
+                properties:
+                  Success: 
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: Category successfully deleted
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+          description: Unauthorized User
+          schema:
+            $ref: "#/definitions/error-message"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+
+definitions:
+  category:
+    type: object
+    properties:
+      _id: 
+        type: string
+        example: 5cb5c223edf5bf89d02378b4
+      title: 
+        type: string
+        example: regular
+
+

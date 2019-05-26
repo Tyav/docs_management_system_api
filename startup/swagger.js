@@ -25,6 +25,11 @@ const options = {
 				name        : 'Role',
 				description : 'Everything about the Roles API',
 			},
+			{
+				name        : 'Category',
+				description : 'Everything about the Categories API',
+			},
+
 		],
 		// schemes  : [ 'https', 'http' ],
 		// host     : 'localhost:4040/',
