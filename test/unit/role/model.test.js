@@ -20,8 +20,26 @@ describe('Test for Role model', () => {
 		it('should set the publicWrite property true if title is admin', async () => {
 			let user = new Role({
 				title: 'admin',
+				writeAll: false,
+				readAll: false
 			});
-			expect(user.publicWrite).toBeTruthy();
+			expect(user.writeAll).toBeTruthy();
+		});
+		it('should set the writeAll property false if title is not admin', async () => {
+			let user = new Role({
+				title: 'notAdmin',
+				writeAll: true,
+				readAll: true
+			});
+			expect(user.writeAll).toBeFalsy();
+		});
+		it('should set the readAll property true if readAll was already set to true', async () => {
+			let user = new Role({
+				title: 'notAdmin',
+				writeAll: true,
+				readAll: true
+			});
+			expect(user.readAll).toBeTruthy();
 		});
 	});
 });

@@ -472,7 +472,7 @@ describe('TEST FOR DOCUMENTS', () => {
 			async () => {
 				const res = await request(app).get(`/api/documents/${roleDoc1._id}`).set('x-auth-token', isLogin2);
 				expect(res.status).toBe(404);
-				expect(res.body.message).toBe('Document not found');
+				expect(res.body.result.message).toBe('Document not found');
 			},
 			50000,
 		);
@@ -510,7 +510,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access  : 'private',
 				});
 				expect(res.status).toBe(401);
-				expect(res.body.message).toBe('Access denied, Log in');
+				expect(res.body.result.message).toBe('Access denied, Log in');
 			},
 			50000,
 		);
@@ -523,7 +523,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access  : 'private',
 				});
 				expect(res.status).toBe(401);
-				expect(res.body.message).toBe('Access denied, Not an author');
+				expect(res.body.result.message).toBe('Access denied, Not an author');
 			},
 			50000,
 		);
@@ -536,7 +536,7 @@ describe('TEST FOR DOCUMENTS', () => {
 					access  : 'private',
 				});
 				expect(res.status).toBe(404);
-				expect(res.body.message).toBe('Document not found');
+				expect(res.body.result.message).toBe('Document not found');
 			},
 			50000,
 		);
@@ -675,32 +675,32 @@ describe('TEST FOR DOCUMENTS', () => {
 		it('should return 200 on successful delete', async () => {
 			const res = await request(app).delete(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin);
 			expect(res.status).toBe(200);
-			expect(res.body.message).toBe('Document Deleted');
+			expect(res.body.result.message).toBe('Document Deleted');
 		});
 		it('should return 401 if user is not logged in', async () => {
 			const res = await request(app).delete(`/api/documents/${publicDoc1._id}`);
 			expect(res.status).toBe(401);
-			expect(res.body.message).toBe('Access denied, Log in');
+			expect(res.body.result.message).toBe('Access denied, Log in');
 		});
 		it('should return 404 if document id is invalid', async () => {
 			const res = await request(app).delete(`/api/documents/${3245}`).set('x-auth-token', isLogin);
 			expect(res.status).toBe(400);
-			expect(res.body.message).toBe('Invalid Id');
+			expect(res.body.result.message).toBe('Invalid Id');
 		});
 		it('should return 404 if id is valid but not a document id', async () => {
 			const res = await request(app).delete(`/api/documents/${mongoose.Types.ObjectId()}`).set('x-auth-token', isLogin);
 			expect(res.status).toBe(404);
-			expect(res.body.message).toBe('Document not found');
+			expect(res.body.result.message).toBe('Document not found');
 		});
 		it('should return 404 if document has been previously deleted by user', async () => {
 			const res = await request(app).delete(`/api/documents/${deleteDoc._id}`).set('x-auth-token', isLogin);
 			expect(res.status).toBe(404);
-			expect(res.body.message).toBe('Document not found');
+			expect(res.body.result.message).toBe('Document not found');
 		});
 		it('should return 404 if document is not created by user', async () => {
 			const res = await request(app).delete(`/api/documents/${publicDoc2._id}`).set('x-auth-token', isLogin);
 			expect(res.status).toBe(404);
-			expect(res.body.message).toBe('Document not found');
+			expect(res.body.result.message).toBe('Document not found');
 		});
 		it('should perform a soft delete on document if user is not an admin', async () => {
 			await request(app).delete(`/api/documents/${publicDoc1._id}`).set('x-auth-token', isLogin);

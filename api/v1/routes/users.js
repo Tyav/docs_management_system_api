@@ -110,7 +110,7 @@ router.post('/logout', [ tokenAuth ], (req, res) => {
 
 // EDIT USER [PUT /users/<id>]
 //[idAuth,tokenAuth, loginAuth],
-router.put('/:id', [ idAuth, tokenAuth ], async (req, res) => {
+router.put('/:id', [tokenAuth , idAuth ], async (req, res) => {
 	const token = req.header('x-auth-token'); //get token
 	//compared id in token with id from parameter. if not same return 403
 	if (req.params.id !== req.user._id) return res.status(403).send({ token,Error: 403, message: 'Forbidden' });

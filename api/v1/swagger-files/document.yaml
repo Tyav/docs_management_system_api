@@ -2,7 +2,7 @@ path:
   /api/documents:
     get:
       tags:
-        - Documents
+        - Document
       description: This return all document if user is an admin, but selects certain document for non-administrative users based on user role and document settings
       produces:
         - application/json
@@ -27,9 +27,15 @@ path:
         200:
           description: all users are retrieved.
           schema:
-            type: array
-            items: 
-             $ref: "#/definitions/Document"
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result:
+                type: array
+                items: 
+                $ref: "#/definitions/Document"
         404:
          description: user not found
          schema:
@@ -45,7 +51,7 @@ path:
 
     post:
       tags:
-        - Documents
+        - Document
       description: Creates a new document
       produces:
         - application/json
@@ -77,19 +83,72 @@ path:
         200:
           description: document object is returned after creation
           schema:
-            $ref: "#/definitions/Document"
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result:            
+                $ref: "#/definitions/Document"
         400:
          description: Bad Request
          schema:
            $ref: "#/definitions/error-message"
   /api/documents/{id}:
+    get:
+      tags:
+        - Document
+      description: This return a document if user is the owner, belongs to the document creator's role if document access is set to role or if document is set as public
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+        - name: id
+          description: document id
+          in: path
+          schema:
+            type: string
+            example: 43edc49a9D8BEfac83ca0cAb
+      responses:
+        200:
+          description: all users are retrieved.
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result:            
+                $ref: "#/definitions/Document"
+        404:
+         description: user not found
+         schema:
+           $ref: "#/definitions/error-message"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
+        401:
+          description: Unauthorized User
+          schema:
+            $ref: "#/definitions/error-message"
+
     put:
       tags:
-        - Documents
+        - Document
       description: Edit an existing Document
       produces:
         - application/json
       parameters:
+        - name: id
+          description: document id
+          in: path
+          schema:
+            type: string
+            example: 43edc49a9D8BEfac83ca0cAb
         - name: x-auth-token
           in: header
           schema:
@@ -118,12 +177,50 @@ path:
         200:
           description: document object is returned after creation
           schema:
-            $ref: "#/definitions/Document"
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result:            
+                $ref: "#/definitions/Document"
         400:
          description: Bad Request
          schema:
            $ref: "#/definitions/error-message"
-
+    delete:
+      tags:
+        - Document
+      description: Edit an existing Document
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: document id
+          in: path
+          schema:
+            type: string
+            example: 43edc49a9D8BEfac83ca0cAb
+        - name: x-auth-token
+          in: header
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: document object is returned after creation
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
+              result:            
+                $ref: "#/definitions/Document"
+        400:
+         description: Bad Request
+         schema:
+           $ref: "#/definitions/error-message"
 
 definitions:
   Document:
@@ -150,17 +247,31 @@ definitions:
         properties:
           _id:
             type: string
-          
-        description: id of user/document-creator
-        example: 5cb5c223edf5bf89d02378b4
+            description: id of user/document-creator
+            example: 5cb5c223edf5bf89d02378b4
+          username:
+            type: string
+            description: username of user/document-creator
+            example: general
+          avatar:
+            type: string
+            description: avatar of user/document-creator
+            example: http://avatar-url...
       access:
         type: string
         enum: [private, private, role]
         default: public
       categoryId:
-        type: string
-        description: category that document belongs to
-        example: 43edc49a9D8BEfac83ca0cAb
+        type: object
+        properties:
+          _id:
+            type: string
+            description: id of document-category
+            example: 5cb5c223edf5bf89d02378b4
+          title:
+            type: string
+            description: title of the category that the document belongs to
+            example: general
       createdAt:
         type: string
         format: date-time
@@ -174,55 +285,70 @@ definitions:
         format: date-time
         description: date format can be submitted in any valid date format e.g dd-mm-yyyy, mm-dd-yyyy, yyyy/mm/dd
       role: 
-        type: string
+        type: object
+        properties:
+          _id:
+            type: string
+            description: id of role
+            example: 5cb5c223edf5bf89d02378b4
+          title:
+            type: string
+            description: title of the role that the document creator belongs to
+            example: regular
+      likes:
+        type: number
+        example: 34
+      dislikes:
+        type: number
+        example: 2
 
-  returnedDocument:
-    type: object
-    properties:
-      _id:
-        type: string
-        description: document _id
-        example: 43edc49a9D8BEfac83ca0cAb
-      title:
-        type: string
-        minLength: 1
-        maxLength: 255
-        description: title of document from the user/creator
-        example: API Documentation
-      content:
-        type: string
-        minLength: 1
-        maxLength: 5000
-        description: Content of the Document
-        example: This is the content of API Documents
-      creatorId:
-        type: string
-        description: id of user/document-creator
-        example: 5cb5c223edf5bf89d02378b4
-      access:
-        type: string
-        enum: [private, private, role]
-        default: public
-      categoryId:
-        type: string
-        description: category that document belongs to
-        example: 43edc49a9D8BEfac83ca0cAb
-      createdAt:
-        type: string
-        format: date-time
-        readOnly: true
-      modifiedAt:
-        type: string
-        format: date-time
-        readOnly: true
-      publishDate:
-        type: string
-        format: date-time
-        description: date format can be submitted in any valid date format e.g dd-mm-yyyy, mm-dd-yyyy, yyyy/mm/dd
-      role: 
-        type: string
-        description: Role id of creator.
-        example: 5cb9beb48175bfe10e97c6ca
+  # returnedDocument:
+  #   type: object
+  #   properties:
+  #     _id:
+  #       type: string
+  #       description: document _id
+  #       example: 43edc49a9D8BEfac83ca0cAb
+  #     title:
+  #       type: string
+  #       minLength: 1
+  #       maxLength: 255
+  #       description: title of document from the user/creator
+  #       example: API Documentation
+  #     content:
+  #       type: string
+  #       minLength: 1
+  #       maxLength: 5000
+  #       description: Content of the Document
+  #       example: This is the content of API Documents
+  #     creatorId:
+  #       type: string
+  #       description: id of user/document-creator
+  #       example: 5cb5c223edf5bf89d02378b4
+  #     access:
+  #       type: string
+  #       enum: [private, private, role]
+  #       default: public
+  #     categoryId:
+  #       type: string
+  #       description: category that document belongs to
+  #       example: 43edc49a9D8BEfac83ca0cAb
+  #     createdAt:
+  #       type: string
+  #       format: date-time
+  #       readOnly: true
+  #     modifiedAt:
+  #       type: string
+  #       format: date-time
+  #       readOnly: true
+  #     publishDate:
+  #       type: string
+  #       format: date-time
+  #       description: date format can be submitted in any valid date format e.g dd-mm-yyyy, mm-dd-yyyy, yyyy/mm/dd
+  #     role: 
+  #       type: string
+  #       description: Role id of creator.
+  #       example: 5cb9beb48175bfe10e97c6ca
 
 
   error-message:

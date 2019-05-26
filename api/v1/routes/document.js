@@ -20,7 +20,7 @@ router.post('/', [ tokenAuth, loginAuth ], async (req, res) => {
 	const token = req.header('x-auth-token');
 	//CREATE DOCUMENT
 	const { error } = validateDoc(req.body);
-	if (error) return res.status(400).send({ token,Error: 'Bad Request', message: error.details[0].message });
+	if (error) return res.status(400).send({ token,result:{Error: 'Bad Request', message: error.details[0].message }});
 	//give a default category of general if not stated
 	
 	if (!req.body.categoryId){
@@ -94,7 +94,7 @@ router.get('/', [ tokenCheck ], async (req, res) => {
 		.sort({ publishDate: 1 })
 		//select a set of informations to release
 		
-	res.status(200).header('x-auth-token', token).send({token, result:userDocs});
+	res.status(200).send({token, result:userDocs});
 });
 
 //GET: GET DOCUMENT BY ID
@@ -102,7 +102,7 @@ router.get('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 	const token = req.header('x-auth-token');
 	if (req.user.isAdmin === true) {
 		const adminDoc = await Document.findOne({ _id: req.params.id });
-		if (!adminDoc) return res.status(404).send({ token,Error: 404, message: 'Document not found' });
+		if (!adminDoc) return res.status(404).send({ token,result:{Error: 404, message: 'Document not found' }});
 		return res.status(200).send({token, result:adminDoc});
 	}
 
@@ -116,7 +116,7 @@ router.get('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 		.populate({path:'categoryId',select: '_id title'})
 		.populate({path:'role', select:'_id title'})
 	//check if doc exist
-	if (!doc) return res.status(404).send({ token,Error: 404, message: 'Document not found' });
+	if (!doc) return res.status(404).send({ token,result:{Error: 404, message: 'Document not found' }});
 	//check if doc access is private
 
 	res.status(200).send({token, result:doc});
@@ -128,14 +128,14 @@ router.put('/:id', [ tokenAuth, loginAuth ], async (req, res) => {
 	//valdate payload
 	const { error } = validateDocEdit(req.body);
 	//update contents should be validated.
-	if (error) return res.status(400).send({ token,Error: 'Bad Request', message: error.details[0].message });
+	if (error) return res.status(400).send({ token,result:{Error: 'Bad Request', message: error.details[0].message }});
 	//find document
 	const doc = await Document.findById(req.params.id);
 	//check if doc exist: 404
-	if (!doc) return res.status(404).send({ token,Error: 404, message: 'Document not found' });
+	if (!doc) return res.status(404).send({ token,result:{Error: 404, message: 'Document not found' }});
 	//users can only edit document created by them: fail-401 || success-200
 	//check if user is creator
-	if (doc.creatorId.toHexString() !== req.user._id) return res.status(401).send({ token,Error: 401, message: 'Access denied, Not an author' });
+	if (doc.creatorId.toHexString() !== req.user._id) return res.status(401).send({ token,result:{Error: 401, message: 'Access denied, Not an author' }});
 	//documents that are edited should have a modified date property: modifiedAt
 	const title = req.body.title || doc.title;
 	const content = req.body.content || doc.content;
@@ -184,19 +184,19 @@ router.delete('/:id', [ tokenAuth, authId ], async (req, res) => {
 	if (req.user.isAdmin && doc1) {
 
 		await Document.findOneAndDelete({ _id: req.params.id });
-		return res.status(200).send({ token,Error: 200, message: 'Document Deleted' });
+		return res.status(200).send({ token,result:{Error: 200, message: 'Document Deleted' }});
 	}
 	//USER
 	//get document by id if document creator Id is equal to users Id, and document is not delete
 	const doc = await Document.findOne({ _id: req.params.id, creatorId: req.user._id, deleted: false });
 	//return 404 if no document
 
-	if (!doc) return res.status(404).send({ token,Error: 404, message: 'Document not found' });
+	if (!doc) return res.status(404).send({ token,result:{Error: 404, message: 'Document not found' }});
 	//make a soft delete if user is not admin
 	doc.deleted = true;
 	doc.save();
 	//200 on successful delete
-	res.status(200).send({ token, success: 200, message: 'Document Deleted' });
+	res.status(200).send({ token, result:{success: 200, message: 'Document Deleted' }});
 });
 
 module.exports = router;

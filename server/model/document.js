@@ -41,6 +41,7 @@ const docSchema = new Schema({
 	modifiedAt  : {
 		type : Date,
 		set  : v => new Date(v),
+		default:null
 	},
 	deleted     : {
 		type    : Boolean,
