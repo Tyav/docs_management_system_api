@@ -22,6 +22,7 @@ path:
               token:
                 description: jwt contain users id and other referrential informations
                 type: string
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
               result:
                 type: array
                 items: 
@@ -61,6 +62,7 @@ path:
               token:
                 type: string
                 description: jwt contain users id and other referrential informations
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
               result:
                 $ref: "#/definitions/User"
         400:
@@ -91,6 +93,7 @@ path:
               token:
                 type: string
                 description: jwt contain users id and other referrential informations
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
               result:
                 $ref: "#/definitions/User"
         404:
@@ -142,7 +145,6 @@ path:
           schema:
             type: string
           required: true
-
         - in: header
           name: x-auth-token
           description: token is needed for user to be confirmed logged in
@@ -188,7 +190,20 @@ path:
         200:
           description: users details have been successfully updated
           schema:
-            $ref: "#/definitions/success-message"
+            type: object
+            properties:
+              token: 
+                type: null
+                example: null
+              result:
+                type: object
+                properties:
+                  Success:
+                    type: integer
+                    example: 2..
+                  message:
+                    type: string
+                    example: Success message
         400:
           description: user error is defined for user to identify error
           schema:
@@ -233,11 +248,7 @@ path:
         200:
           description: logs in a user and returns a user object in the response body and a token in the response header
           schema:
-            $ref: "#/definitions/User"
-          headers:
-            x-auth-token:
-              type: string
-              description: token sent to user to validate login 
+            $ref: "#/definitions/Success-message"
         400:
           description: user error is defined for user to identify error
           schema:
@@ -250,15 +261,49 @@ path:
       description: Logs User out
       produces:
         - application/json
+      parameters:
+        - name: token
+          in: head
+          description: user token
+          schema:
+            type: string
+            required: true
+            description: fadfadsfasd
       responses:
         200:
           description: logs users out of the system
           schema:
-            $ref: "#/definitions/success-message"
+            type: object
+            properties:
+              token: 
+                type: null
+                example: null
+              result:
+                type: object
+                properties:
+                  Success:
+                    type: integer
+                    example: 2..
+                  message:
+                    type: string
+                    example: Success message
         401:
           description: returns this if a user is already logged out
           schema: 
-            $ref: "#/definitions/error-message"
+            type: object
+            properties:
+              token: 
+                type: null
+                example: null
+              result:
+                type: object
+                properties:
+                  Success:
+                    type: integer
+                    example: 2..
+                  message:
+                    type: string
+                    example: Error message
   
   
 
@@ -294,15 +339,13 @@ definitions:
       email:
         type: string
         format: email
-      password:
-        type: string
-        writeOnly: true
       roleId:
         type: object
         properties:
           _id:
             type: string
             pattern: '^[a-fA-F0-9]{24}$'
+            example: 43edc49a9D8BEfac83ca0cAb
           title:
             type: string
             example: regular
@@ -313,19 +356,20 @@ definitions:
       modifiedAt: 
         type: string
         format: date-time
+        example: 2019-05-25T19:28:48.530Z || null
         writeOnly: true
       verified:
         type: boolean
       avatar:
         type: string
         example: "http://avatar-url"
-    required:
-      - username
-      - email
-      - name
-      - roleId
-      - password
-      - createdAt
+    # required:
+    #   - username
+    #   - email
+    #   - name
+    #   - roleId
+    #   - password
+    #   - createdAt
 
   newUserPayload:
     type: object
@@ -355,8 +399,7 @@ definitions:
         example: johnd@example.com
       password:
         type: string
-        writeOnly: true
-        example: "1234567890"
+        example: "123456789"
       avatar:
         type: string
         example: "http://avatar-url"
@@ -377,6 +420,7 @@ definitions:
     properties:
       token:
         type: string
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
       result:
         type: object
         properties:
@@ -392,12 +436,14 @@ definitions:
     properties:
       token:
         type: string
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1Y2U5YjNjZTNjZjc3YTIzMjg3NGViNTEiLCJpc0FkbWluIjpmYWxzZSwiaXNMb2dnZWQiOnRydWUsInJvbGUiOiI1Y2RjMmQ1MTQ2NWJiNDRkM2E5MGMwMmMiLCJpYXQiOjE1NTg4MTk3OTF9.NH-CzRu4JcCou7gXJ40GDUtjeJRde9pWfsQ-fL_EM1s"
       result:
-        type: object
-        properties:
-          Success:
-            type: integer
-            example: 2..
-          message:
-            type: string
-            example: Error message
+        $ref: "#/definitions/User"
+        # type: object
+        # properties:
+        #   Success:
+        #     type: integer
+        #     example: 2..
+        #   message:
+        #     type: string
+        #     example: Error message

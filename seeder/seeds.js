@@ -8,6 +8,7 @@ const router = express.Router();
 import { User } from '../server/model/user';
 import { Role } from '../server/model/role';
 import { Document } from '../server/model/document';
+import {Category} from '../server/model/category'
 //SEEDS USERS' DATA TO DATABASE
 router.post('/users', async (req, res) => {
 	await User.deleteMany({});
@@ -54,7 +55,8 @@ router.post('/users', async (req, res) => {
 
 router.post('/documents', async (req, res) => {
 	await Document.deleteMany({});
-	let users = await User.find({});
+  let users = await User.find({});
+  let category = await Category.find({})
 	let publicAccess = req.query.public || 20;
 	let privateAccess = req.query.private || 12;
   let role = req.query.role || 8;
@@ -63,6 +65,7 @@ router.post('/documents', async (req, res) => {
   //creating public
   let i = 0
   while(i < publicAccess){
+    let categoryIndex = Math.floor(Math.random() * category.length)
     let userIndex = Math.floor(Math.random() * users.length)
     let titleText = Math.floor(Math.random() * 5) + 1
     let paragraghCount = Math.floor(Math.random() * 3) + 1
@@ -75,7 +78,7 @@ router.post('/documents', async (req, res) => {
       content: faker.lorem.paragraphs(paragraghCount,'.\n'),
       creatorId: users[userIndex]._id,
       access: 'public',
-      categoryId: mongoose.Types.ObjectId(),
+      categoryId: category[categoryIndex]._id,
       createdAt: date,
       publishDate: date
     })
@@ -84,6 +87,7 @@ router.post('/documents', async (req, res) => {
   //creating private
   i = 0
   while(i < privateAccess){
+    let categoryIndex = Math.floor(Math.random() * category.length)
     let userIndex = Math.floor(Math.random() * users.length)
     let titleText = Math.floor(Math.random() * 5) + 1
     let paragraghCount = Math.floor(Math.random() * 3) + 1
@@ -96,7 +100,7 @@ router.post('/documents', async (req, res) => {
       content: faker.lorem.paragraphs(paragraghCount,'.\n'),
       creatorId: users[userIndex]._id,
       access: 'private',
-      categoryId: mongoose.Types.ObjectId(),
+      categoryId: category[categoryIndex]._id,
       createdAt: date,
       publishDate: date
     })
@@ -105,6 +109,7 @@ router.post('/documents', async (req, res) => {
   //creating role based documents
   i = 0
   while(i < role){
+    let categoryIndex = Math.floor(Math.random() * category.length)
     let userIndex = Math.floor(Math.random() * users.length)
     let titleText = Math.floor(Math.random() * 5) + 1
     let paragraghCount = Math.floor(Math.random() * 3) + 1
@@ -115,7 +120,7 @@ router.post('/documents', async (req, res) => {
       content: faker.lorem.paragraphs(paragraghCount,'.\n'),
       creatorId: users[userIndex]._id,
       access: 'role',
-      categoryId: mongoose.Types.ObjectId(),
+      categoryId: category[categoryIndex]._id,
       createdAt: date,
       publishDate: date,
       role: users[userIndex].roleId

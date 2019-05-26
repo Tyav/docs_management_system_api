@@ -21,7 +21,7 @@ describe('Test for Role model', () => {
 			let user = new Role({
 				title: 'admin',
 			});
-			expect(user.publicWrite).toBeTruthy();
+			expect(user.writeAll).toBeTruthy();
 		});
 	});
 });

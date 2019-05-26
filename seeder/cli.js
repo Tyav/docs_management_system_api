@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import { User } from '../server/model/user';
 import { Role } from '../server/model/role';
 import { Document } from '../server/model/document';
+import {Category} from '../server/model/category.js'
 
 import db from '../startup/db';
 db(mongoose)
@@ -56,6 +57,7 @@ class Seeder {
 	static async documents() {
 		await Document.deleteMany({});
 		let users = await User.find({});
+		let category = await Category.find({})
 		let publicAccess = 20;
 		let privateAccess = 12;
 		let role = 8;
@@ -63,6 +65,7 @@ class Seeder {
 		//creating public
 		let i = 0;
 		while (i < publicAccess) {
+			let categoryIndex = Math.floor(Math.random() * category.length)
 			let userIndex = Math.floor(Math.random() * users.length);
 			let titleText = Math.floor(Math.random() * 5) + 1;
 			let paragraghCount = Math.floor(Math.random() * 3) + 1;
@@ -75,7 +78,7 @@ class Seeder {
 				content     : faker.lorem.paragraphs(paragraghCount, '.\n'),
 				creatorId   : users[userIndex]._id,
 				access      : 'public',
-				categoryId  : mongoose.Types.ObjectId(),
+				categoryId  : category[categoryIndex]._id,
 				createdAt   : date,
 				publishDate : date,
 			});
@@ -84,6 +87,7 @@ class Seeder {
 		//creating private
 		i = 0;
 		while (i < privateAccess) {
+			let categoryIndex = Math.floor(Math.random() * category.length)
 			let userIndex = Math.floor(Math.random() * users.length);
 			let titleText = Math.floor(Math.random() * 5) + 1;
 			let paragraghCount = Math.floor(Math.random() * 3) + 1;
@@ -96,7 +100,7 @@ class Seeder {
 				content     : faker.lorem.paragraphs(paragraghCount, '.\n'),
 				creatorId   : users[userIndex]._id,
 				access      : 'private',
-				categoryId  : mongoose.Types.ObjectId(),
+				categoryId  : category[categoryIndex]._id,
 				createdAt   : date,
 				publishDate : date,
 			});
@@ -105,6 +109,7 @@ class Seeder {
 		//creating role based documents
 		i = 0;
 		while (i < role) {
+			let categoryIndex = Math.floor(Math.random() * category.length)
 			let userIndex = Math.floor(Math.random() * users.length);
 			let titleText = Math.floor(Math.random() * 5) + 1;
 			let paragraghCount = Math.floor(Math.random() * 3) + 1;
@@ -115,7 +120,7 @@ class Seeder {
 				content     : faker.lorem.paragraphs(paragraghCount, '.\n'),
 				creatorId   : users[userIndex]._id,
 				access      : 'role',
-				categoryId  : mongoose.Types.ObjectId(),
+				categoryId  : category[categoryIndex]._id,
 				createdAt   : date,
 				publishDate : date,
 				role        : users[userIndex].roleId,

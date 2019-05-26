@@ -77,7 +77,7 @@ describe('TEST FOR CATEGORY', () => {
 				title : 'detective',
 			});
 			expect(res.status).toBe(400);
-			expect(res.body.message).toBe('Cannot create duplicate category of detective');
+			expect(res.body.result.message).toBe('Cannot create duplicate category of detective');
 		});
 	});
 	//CREATE CATEGORY
@@ -119,11 +119,11 @@ describe('TEST FOR CATEGORY', () => {
 		});
 		it('should return 404 status if category is not available', async () => {
 			const res = await request(app).get(`/api/categories/${mongoose.Types.ObjectId()}`);
-			expect(res.body.Error).toBe(404);
+			expect(res.body.result.Error).toBe(404);
 		});
 		it('should return 400 status if category id is not valid', async () => {
 			const res = await request(app).get(`/api/categories/${'sdfesdfdsfd'}`);
-			expect(res.body.Error).toBe(400);
+			expect(res.body.result.Error).toBe(400);
 		});
 	});
 	describe('/PUT: Test to edit Category by id', () => {
@@ -137,13 +137,13 @@ describe('TEST FOR CATEGORY', () => {
 		});
 		it('should return a 401 if user is not logged in', async () => {
 			const res = await request(app).put(`/api/categories/${category._id}`);
-			expect(res.body.Error).toBe(401);
+			expect(res.body.result.Error).toBe(401);
 		});
 		it('should return a 403 status code if logged in user is not an admin', async () => {
 			const res = await request(app).put(`/api/categories/${category._id}`).set('x-auth-token', isLogin).send({
 				title : 'moive',
 			});
-			expect(res.body.Error).toBe(403);
+			expect(res.body.result.Error).toBe(403);
 		});
 		it('should return a 200 status code on success', async () => {
 			const res = await request(app).put(`/api/categories/${category._id}`).set('x-auth-token', isAdmin).send({
@@ -161,13 +161,13 @@ describe('TEST FOR CATEGORY', () => {
 			const res = await request(app).put(`/api/categories/${mongoose.Types.ObjectId()}`).set('x-auth-token', isAdmin).send({
 				title : 'header',
 			});
-			expect(res.body.Error).toBe(404);
+			expect(res.body.result.Error).toBe(404);
 		});
 		it('should return 400 status if category id is not valid', async () => {
 			const res = await request(app).put(`/api/categories/${'sdfesdfdsfd'}`).set('x-auth-token', isAdmin).send({
 				title : 'header',
 			});
-			expect(res.body.Error).toBe(400);
+			expect(res.body.result.Error).toBe(400);
 		});
 	});
 	describe('/DELETE: Test to Delete Category by id', () => {
@@ -181,11 +181,11 @@ describe('TEST FOR CATEGORY', () => {
 		});
 		it('should return a 401 if user is not logged in', async () => {
 			const res = await request(app).delete(`/api/categories/${category._id}`);
-			expect(res.body.Error).toBe(401);
+			expect(res.body.result.Error).toBe(401);
 		});
 		it('should return a 403 status code if logged in user is not an admin', async () => {
 			const res = await request(app).delete(`/api/categories/${category._id}`).set('x-auth-token', isLogin);
-			expect(res.body.Error).toBe(403);
+			expect(res.body.result.Error).toBe(403);
 		});
 		it('should return a 200 status code on successful delete', async () => {
 			const res = await request(app).delete(`/api/categories/${category._id}`).set('x-auth-token', isAdmin);
@@ -198,7 +198,7 @@ describe('TEST FOR CATEGORY', () => {
 		});
 		it('should return 400 status if category id is not valid', async () => {
 			const res = await request(app).delete(`/api/categories/${'sdfesdfdsfd'}`).set('x-auth-token', isAdmin);
-			expect(res.body.Error).toBe(400);
+			expect(res.body.result.Error).toBe(400);
 		});
 	}); //DELETE CATEGORY
 });

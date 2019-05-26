@@ -12,25 +12,25 @@ const roleSchema = new Schema({
 		unique    : true,
 		lowercase : true,
 	},
-	publicWrite : {
+	writeAll : {
 		//right to edit or delete any document
 		type     : Boolean,
-		default  : function() {
+		default  : function(v) {
 			if (this.title === 'admin') {
-				return true;
+				return true; //set writeAll to true if role is admin
 			}
-			return false;
+			return false; //else replace writeAll with false value to ensure that only admin can writeAll
 		},
 		required : true,
 	},
 	readAll     : {
 		//right to read all documents including deleted files
 		type     : Boolean,
-		default  : function() {
-			if (this.publicWrite) {
-				return true;
+		default: function() {
+			if (this.writeAll) {
+				return true;//set readAll to true if role is admin
 			}
-			return false;
+			return false;//else replace readAll with initial value
 		},
 		required : true,
 	},
